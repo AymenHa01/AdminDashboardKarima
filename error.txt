@@ -1,0 +1,715 @@
+     ╵              ~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS5012: Cannot read file 'D:/Freelance/tsconfig.json': ENOENT: no such file or directory, open 'D:\Freelance\tsconfig.json'. [plugin angular-compiler]
+
+
+X [ERROR] TS2792: Cannot find module 'undici-types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    node_modules/@types/node/http.d.ts:2058:35:
+      2058 │     const WebSocket: typeof import("undici-types").WebSocket;
+           ╵                                    ~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'undici-types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    node_modules/@types/node/http.d.ts:2062:36:
+      2062 │     const CloseEvent: typeof import("undici-types").CloseEvent;
+           ╵                                     ~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'undici-types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    node_modules/@types/node/http.d.ts:2066:38:
+      2066 │     const MessageEvent: typeof import("undici-types").MessageEvent;
+           ╵                                       ~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'undici-types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    node_modules/@types/node/web-globals/fetch.d.ts:3:24:
+      3 │ import * as undici from "undici-types";
+        ╵                         ~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'undici-types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    node_modules/@types/node/worker_threads.d.ts:66:33:
+      66 │     import { MessageEvent } from "undici-types";
+         ╵                                  ~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/common'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    server.ts:1:30:
+      1 │ import { APP_BASE_HREF } from '@angular/common';
+        ╵                               ~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/ssr'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    server.ts:2:29:
+      2 │ import { CommonEngine } from '@angular/ssr';
+        ╵                              ~~~~~~~~~~~~~~
+
+
+X [ERROR] TS1259: Module '"D:/Freelance/admiart/adminApp/node_modules/@types/express/index"' can only be default-imported using the 'allowSyntheticDefaultImports' flag [plugin angular-compiler]
+
+    server.ts:3:7:
+      3 │ import express from 'express';
+        ╵        ~~~~~~~
+
+  This module is declared with 'export =', and can only be used with a default import when using the 'allowSyntheticDefaultImports' flag.
+
+    node_modules/@types/express/index.d.ts:128:0:
+      128 │ export = e;
+          ╵ ~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/core'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app-routing.module.ts:1:25:
+      1 │ import { NgModule } from '@angular/core';
+        ╵                          ~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/router'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app-routing.module.ts:2:37:
+      2 │ import { RouterModule, Routes } from '@angular/router';
+        ╵                                      ~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS-991010: Value at position 0 in the NgModule.imports of AppRoutingModule is not a reference
+  Value could not be determined statically. [plugin angular-compiler]
+
+    src/app/app-routing.module.ts:63:11:
+      63 │   imports: [RouterModule.forRoot(routes)],
+         ╵            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Unable to evaluate this expression statically.
+
+    src/app/app-routing.module.ts:63:12:
+      63 │   imports: [RouterModule.forRoot(routes)],
+         ╵             ~~~~~~~~~~~~~~~~~~~~
+
+  Unknown reference.
+
+    src/app/app-routing.module.ts:63:12:
+      63 │   imports: [RouterModule.forRoot(routes)],
+         ╵             ~~~~~~~~~~~~
+
+
+X [ERROR] NG8001: 'router-outlet' is not a known element:
+1. If 'router-outlet' is an Angular component, then verify that it is part of this module.
+2. If 'router-outlet' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@NgModule.schemas' of this component to suppress this message. [plugin angular-compiler]
+
+    src/app/app.component.html:4:0:
+      4 │ <router-outlet></router-outlet>
+        ╵ ~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component AppComponent.
+
+    src/app/app.component.ts:5:15:
+      5 │   templateUrl: './app.component.html',
+        ╵                ~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/core'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.component.ts:1:26:
+      1 │ import { Component } from '@angular/core';
+        ╵                           ~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/core'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.server.ts:1:25:
+      1 │ import { NgModule } from '@angular/core';
+        ╵                          ~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/platform-server'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.server.ts:2:29:
+      2 │ import { ServerModule } from '@angular/platform-server';
+        ╵                              ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS-991010: Value at position 1 in the NgModule.imports of AppServerModule is not a reference
+  Value could not be determined statically. [plugin angular-compiler]
+
+    src/app/app.module.server.ts:8:11:
+      8 │   imports: [
+        ╵            ^
+
+  Unknown reference.
+
+    src/app/app.module.server.ts:10:4:
+      10 │     ServerModule,
+         ╵     ~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/core'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:1:50:
+      1 │ import { NgModule , CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+        ╵                                                   ~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/platform-browser'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:2:54:
+      2 │ ...rModule, provideClientHydration } from '@angular/platform-browser';
+        ╵                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/platform-browser/animations'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:3:40:
+      3 │ ...wserAnimationsModule } from '@angular/platform-browser/animations';
+        ╵                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/card'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:7:27:
+      7 │ import { CardModule } from 'primeng/card';
+        ╵                            ~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/api'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:20:31:
+      20 │ import { MessageService } from 'primeng/api';
+         ╵                                ~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/toast'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:21:28:
+      21 │ import { ToastModule } from 'primeng/toast';
+         ╵                             ~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/toolbar'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:22:30:
+      22 │ import { ToolbarModule } from 'primeng/toolbar';
+         ╵                               ~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/table'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:23:28:
+      23 │ import { TableModule } from 'primeng/table';
+         ╵                             ~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/button'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:24:29:
+      24 │ import { ButtonModule } from 'primeng/button';
+         ╵                              ~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/confirmdialog'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:25:36:
+      25 │ import { ConfirmDialogModule } from 'primeng/confirmdialog';
+         ╵                                     ~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/api'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:26:36:
+      26 │ import { ConfirmationService } from 'primeng/api';
+         ╵                                     ~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/inputnumber'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:27:34:
+      27 │ import { InputNumberModule } from 'primeng/inputnumber';
+         ╵                                   ~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/inputswitch'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:28:34:
+      28 │ import { InputSwitchModule } from 'primeng/inputswitch';
+         ╵                                   ~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/dropdown'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:29:31:
+      29 │ import { DropdownModule } from 'primeng/dropdown';
+         ╵                                ~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/forms'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:30:49:
+      30 │ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+         ╵                                                  ~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/editor'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:31:29:
+      31 │ import { EditorModule } from 'primeng/editor';
+         ╵                              ~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/progressbar'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:32:34:
+      32 │ import { ProgressBarModule } from 'primeng/progressbar';
+         ╵                                   ~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/common'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:33:29:
+      33 │ import { CommonModule } from '@angular/common';
+         ╵                              ~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/common/http'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:46:52:
+      46 │ ...HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+         ╵                                               ~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/platform-browser/animations/async'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:48:39:
+      48 │ ...imationsAsync } from '@angular/platform-browser/animations/async';
+         ╵                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/material/dialog'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:49:32:
+      49 │ import { MatDialogModule } from '@angular/material/dialog';
+         ╵                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/material/icon'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:50:30:
+      50 │ import { MatIconModule } from '@angular/material/icon';
+         ╵                               ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@coreui/angular'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:51:28:
+      51 │ import { AlertModule } from '@coreui/angular';
+         ╵                             ~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'ngx-cookie-service'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:55:30:
+      55 │ import { CookieService } from 'ngx-cookie-service';
+         ╵                               ~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/dialog'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:56:29:
+      56 │ import { DialogModule } from 'primeng/dialog';
+         ╵                              ~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/material/form-field'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:60:35:
+      60 │ import { MatFormFieldModule } from '@angular/material/form-field';
+         ╵                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/material/input'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:61:31:
+      61 │ import { MatInputModule } from '@angular/material/input';
+         ╵                                ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/material/button'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:62:32:
+      62 │ import { MatButtonModule } from '@angular/material/button';
+         ╵                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/material/progress-spinner'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/app.module.ts:63:41:
+      63 │ ...ProgressSpinnerModule } from '@angular/material/progress-spinner';
+         ╵                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS-991010: Value at position 0 in the NgModule.imports of AppModule is not a reference
+  Value could not be determined statically. [plugin angular-compiler]
+
+    src/app/app.module.ts:97:11:
+      97 │   imports: [
+         ╵            ^
+
+  Unknown reference.
+
+    src/app/app.module.ts:98:4:
+      98 │     BrowserModule,
+         ╵     ~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/core'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/artists/artist-form/artist-form.component.ts:1:26:
+      1 │ import { Component } from '@angular/core';
+        ╵                           ~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/forms'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/artists/artist-form/artist-form.component.ts:2:51:
+      2 │ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+        ╵                                                    ~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS-992003: No suitable injection token for parameter 'fb' of class 'ArtistFormComponent'.
+  Consider using the @Inject decorator to specify an injection token. [plugin angular-compiler]
+
+    src/app/artists/artist-form/artist-form.component.ts:15:22:
+      15 │   constructor(private fb: FormBuilder ,private artiste :  ArtisteS...
+         ╵                       ~~
+
+  This type does not have a value, so it cannot be used as injection token.
+
+    src/app/artists/artist-form/artist-form.component.ts:15:26:
+      15 │   constructor(private fb: FormBuilder ,private artiste :  ArtisteS...
+         ╵                           ~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/core'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/artists/artist-list/artist-list.component.ts:1:34:
+      1 │ import { Component, OnInit } from '@angular/core';
+        ╵                                   ~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/router'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/artists/artist-list/artist-list.component.ts:2:23:
+      2 │ import { Router } from '@angular/router';
+        ╵                        ~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/material/dialog'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/artists/artist-list/artist-list.component.ts:4:26:
+      4 │ import { MatDialog } from '@angular/material/dialog';
+        ╵                           ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/api'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/artists/artist-list/artist-list.component.ts:8:31:
+      8 │ import { MessageService } from 'primeng/api';
+        ╵                                ~~~~~~~~~~~~~
+
+
+X [ERROR] TS-992003: No suitable injection token for parameter 'router' of class 'ArtistListComponent'.
+  Consider using the @Inject decorator to specify an injection token. [plugin angular-compiler]
+
+    src/app/artists/artist-list/artist-list.component.ts:46:12:
+      46 │     private router: Router,
+         ╵             ~~~~~~
+
+  This type does not have a value, so it cannot be used as injection token.
+
+    src/app/artists/artist-list/artist-list.component.ts:46:20:
+      46 │     private router: Router,
+         ╵                     ~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/core'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/ateliers/atelier-form/atelier-form.component.ts:1:26:
+      1 │ import { Component } from '@angular/core';
+        ╵                           ~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/forms'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/ateliers/atelier-form/atelier-form.component.ts:2:51:
+      2 │ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+        ╵                                                    ~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS-992003: No suitable injection token for parameter 'fb' of class 'AtelierFormComponent'.
+  Consider using the @Inject decorator to specify an injection token. [plugin angular-compiler]
+
+    src/app/ateliers/atelier-form/atelier-form.component.ts:13:22:
+      13 │   constructor(private fb: FormBuilder , private  Atelier :AtelierS...
+         ╵                       ~~
+
+  This type does not have a value, so it cannot be used as injection token.
+
+    src/app/ateliers/atelier-form/atelier-form.component.ts:13:26:
+      13 │   constructor(private fb: FormBuilder , private  Atelier :AtelierS...
+         ╵                           ~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/core'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/ateliers/atelier-list/atelier-list.component.ts:1:34:
+      1 │ import { Component, OnInit } from '@angular/core';
+        ╵                                   ~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/router'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/ateliers/atelier-list/atelier-list.component.ts:2:23:
+      2 │ import { Router } from '@angular/router';
+        ╵                        ~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/api'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/ateliers/atelier-list/atelier-list.component.ts:5:31:
+      5 │ import { MessageService } from 'primeng/api';
+        ╵                                ~~~~~~~~~~~~~
+
+
+X [ERROR] TS-992003: No suitable injection token for parameter 'messageService' of class 'AtelierListComponent'.
+  Consider using the @Inject decorator to specify an injection token. [plugin angular-compiler]
+
+    src/app/ateliers/atelier-list/atelier-list.component.ts:29:12:
+      29 │     private messageService: MessageService,
+         ╵             ~~~~~~~~~~~~~~
+
+  This type does not have a value, so it cannot be used as injection token.
+
+    src/app/ateliers/atelier-list/atelier-list.component.ts:29:28:
+      29 │     private messageService: MessageService,
+         ╵                             ~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/core'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/evenements/evenement-form/evenement-form.component.ts:1:34:
+      1 │ import { Component, OnInit } from '@angular/core';
+        ╵                                   ~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/forms'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/evenements/evenement-form/evenement-form.component.ts:2:51:
+      2 │ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+        ╵                                                    ~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS-992003: No suitable injection token for parameter 'formBuilder' of class 'EvenementFormComponent'.
+  Consider using the @Inject decorator to specify an injection token. [plugin angular-compiler]
+
+    src/app/evenements/evenement-form/evenement-form.component.ts:12:22:
+      12 │   constructor(private formBuilder: FormBuilder ,private evenemt:Ev...
+         ╵                       ~~~~~~~~~~~
+
+  This type does not have a value, so it cannot be used as injection token.
+
+    src/app/evenements/evenement-form/evenement-form.component.ts:12:35:
+      12 │ ...ctor(private formBuilder: FormBuilder ,private evenemt:Evenemen...
+         ╵                              ~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/core'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/evenements/evenement-list/evenement-list.component.ts:1:34:
+      1 │ import { Component, OnInit } from '@angular/core';
+        ╵                                   ~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/router'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/evenements/evenement-list/evenement-list.component.ts:2:23:
+      2 │ import { Router } from '@angular/router';
+        ╵                        ~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/material/dialog'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/evenements/evenement-list/evenement-list.component.ts:5:26:
+      5 │ import { MatDialog } from '@angular/material/dialog';
+        ╵                           ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module 'primeng/api'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/evenements/evenement-list/evenement-list.component.ts:8:31:
+      8 │ import { MessageService } from 'primeng/api';
+        ╵                                ~~~~~~~~~~~~~
+
+
+X [ERROR] TS-992003: No suitable injection token for parameter 'router' of class 'EvenementListComponent'.
+  Consider using the @Inject decorator to specify an injection token. [plugin angular-compiler]
+
+    src/app/evenements/evenement-list/evenement-list.component.ts:51:12:
+      51 │     private router: Router,
+         ╵             ~~~~~~
+
+  This type does not have a value, so it cannot be used as injection token.
+
+    src/app/evenements/evenement-list/evenement-list.component.ts:51:20:
+      51 │     private router: Router,
+         ╵                     ~~~~~~
+
+
+X [ERROR] NG8003: No directive found with exportAs 'ngForm'. [plugin angular-compiler]
+
+    src/app/formations/formation-form/formation-form.component.html:1:46:
+      1 │ <form (ngSubmit)="onSubmit()" #formationForm="ngForm">
+        ╵                                               ~~~~~~
+
+  Error occurs in the template of component FormationFormComponent.
+
+    src/app/formations/formation-form/formation-form.component.ts:8:15:
+      8 │   templateUrl: './formation-form.component.html',
+        ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'. [plugin angular-compiler]
+
+    src/app/formations/formation-form/formation-form.component.html:4:63:
+      4 │ ...s="form-control" required [(ngModel)]="formation.name" name="name">
+        ╵                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component FormationFormComponent.
+
+    src/app/formations/formation-form/formation-form.component.ts:8:15:
+      8 │   templateUrl: './formation-form.component.html',
+        ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'ngModel' since it isn't a known property of 'textarea'. [plugin angular-compiler]
+
+    src/app/formations/formation-form/formation-form.component.html:9:61:
+      9 │ ...trol" required [(ngModel)]="formation.description" name="descrip...
+        ╵                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component FormationFormComponent.
+
+    src/app/formations/formation-form/formation-form.component.ts:8:15:
+      8 │   templateUrl: './formation-form.component.html',
+        ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'. [plugin angular-compiler]
+
+    src/app/formations/formation-form/formation-form.component.html:14:68:
+      14 │ ...trol" required [(ngModel)]="formation.formateur" name="formateur">
+         ╵                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component FormationFormComponent.
+
+    src/app/formations/formation-form/formation-form.component.ts:8:15:
+      8 │   templateUrl: './formation-form.component.html',
+        ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'. [plugin angular-compiler]
+
+    src/app/formations/formation-form/formation-form.component.html:19:64:
+      19 │ ...form-control" required [(ngModel)]="formation.debut" name="debut">
+         ╵                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component FormationFormComponent.
+
+    src/app/formations/formation-form/formation-form.component.ts:8:15:
+      8 │   templateUrl: './formation-form.component.html',
+        ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'. [plugin angular-compiler]
+
+    src/app/formations/formation-form/formation-form.component.html:24:62:
+      24 │ ...ss="form-control" required [(ngModel)]="formation.fin" name="fin">
+         ╵                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component FormationFormComponent.
+
+    src/app/formations/formation-form/formation-form.component.ts:8:15:
+      8 │   templateUrl: './formation-form.component.html',
+        ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'. [plugin angular-compiler]
+
+    src/app/formations/formation-form/formation-form.component.html:29:67:
+      29 │ ...rm-control" required [(ngModel)]="formation.heures" name="heures">
+         ╵                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component FormationFormComponent.
+
+    src/app/formations/formation-form/formation-form.component.ts:8:15:
+      8 │   templateUrl: './formation-form.component.html',
+        ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'. [plugin angular-compiler]
+
+    src/app/formations/formation-form/formation-form.component.html:34:65:
+      34 │ ...="form-control" required [(ngModel)]="formation.prix" name="prix">
+         ╵                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component FormationFormComponent.
+
+    src/app/formations/formation-form/formation-form.component.ts:8:15:
+      8 │   templateUrl: './formation-form.component.html',
+        ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'. [plugin angular-compiler]
+
+    src/app/formations/formation-form/formation-form.component.html:39:55:
+      39 │ ..." class="form-control" [(ngModel)]="formation.image" name="image">
+         ╵                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component FormationFormComponent.
+
+    src/app/formations/formation-form/formation-form.component.ts:8:15:
+      8 │   templateUrl: './formation-form.component.html',
+        ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/core'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/formations/formation-form/formation-form.component.ts:1:34:
+      1 │ import { Component, OnInit } from '@angular/core';
+        ╵                                   ~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/core'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/formations/formation-list/formation-list.component.ts:1:34:
+      1 │ import { Component, OnInit } from '@angular/core';
+        ╵                                   ~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/router'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/formations/formation-list/formation-list.component.ts:5:23:
+      5 │ import { Router } from '@angular/router';
+        ╵                        ~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2792: Cannot find module '@angular/material/dialog'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? [plugin angular-compiler]
+
+    src/app/formations/formation-list/formation-list.component.ts:6:26:
+      6 │ import { MatDialog } from '@angular/material/dialog';
+        ╵                           ~~~~~~~~~~~~~~~~~~~~~~~~~~

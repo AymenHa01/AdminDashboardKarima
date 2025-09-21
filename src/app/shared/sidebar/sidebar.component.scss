@@ -1,0 +1,75 @@
+// Variables
+$primary-color: #6366f1;
+$secondary-color: #9fe605;
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+$background-dark: #1f2937;
+$background-light: #f9fafb;
+$transition: all 0.3s ease;
+$danger-color  : red ; 
+// Sidebar Styles
+.admin-sidebar {
+  width: 200px;
+  background-color: $background-dark;
+  color: $text-secondary;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 1rem;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: $transition;
+
+  .logo {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    img {
+      width: 130px;
+      transition: $transition;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  .links {
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        margin-bottom: 1rem;
+
+        a {
+          color: $text-secondary;
+          text-decoration: none;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          transition: $transition;
+
+          i {
+            font-size: 1.2rem;
+            color: $primary-color;
+          }
+
+          &:hover {
+            color: $primary-color;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+
+  .logout {
+    color: $danger-color;
+
+    &:hover {
+      color: lighten($danger-color, 10%);
+    }
+  }
+}

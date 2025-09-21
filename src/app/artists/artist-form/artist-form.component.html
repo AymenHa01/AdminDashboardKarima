@@ -1,0 +1,45 @@
+<div class="container">
+    <form [formGroup]="artisteForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="nom">Nom</label>
+        <input id="nom" type="text" formControlName="nom" class="form-control" />
+        <div *ngIf="artisteForm.get('nom').invalid && artisteForm.get('nom').touched" class="error">
+          Le nom est requis et doit comporter au moins 2 caractères.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="prenom">Prénom</label>
+        <input id="prenom" type="text" formControlName="prenom" class="form-control" />
+        <div *ngIf="artisteForm.get('prenom').invalid && artisteForm.get('prenom').touched" class="error">
+          Le prénom est requis et doit comporter au moins 2 caractères.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" class="form-control" />
+        <div *ngIf="artisteForm.get('email').invalid && artisteForm.get('email').touched" class="error">
+          Un email valide est requis.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="numero">Numéro</label>
+        <input id="numero" type="text" formControlName="numero" class="form-control" />
+        <div *ngIf="artisteForm.get('numero').invalid && artisteForm.get('numero').touched" class="error">
+          Le numéro doit comporter 10 chiffres.
+        </div>
+      </div>
+  
+   
+      <div id="upload-container">
+        <input type="file"  id="fileInput"  (change)="SelectImage($event)"> 
+        <div [ngStyle]="{ 'width': progress + '%', 'background-color': 'blue', 'height': '10px' }"></div>
+        <span id="progressText">{{ progress }}%</span>
+      </div>
+      
+      <button type="submit" class="btn btn-primary" [disabled]="artisteForm.invalid">Submit</button>
+    </form>
+  </div>
+  

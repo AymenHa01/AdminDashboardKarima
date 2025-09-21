@@ -1,0 +1,56 @@
+<div class="container">
+    <h2>Evenement Form</h2>
+    <form [formGroup]="evenementForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" formControlName="name" required>
+        <div *ngIf="evenementForm.get('name').invalid && evenementForm.get('name').touched" class="error-message">
+          Name is required.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea id="description" formControlName="description" rows="3" required></textarea>
+        <div *ngIf="evenementForm.get('description').invalid && evenementForm.get('description').touched" class="error-message">
+          Description is required.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="dateDebut">Start Date:</label>
+        <input type="date" id="dateDebut" formControlName="dateDebut" required>
+        <div *ngIf="evenementForm.get('dateDebut').invalid && evenementForm.get('dateDebut').touched" class="error-message">
+          Start Date is required.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="dateFin">End Date:</label>
+        <input type="date" id="dateFin" formControlName="dateFin" required>
+        <div *ngIf="evenementForm.get('dateFin').invalid && evenementForm.get('dateFin').touched" class="error-message">
+          End Date is required.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="prix">Price:</label>
+        <input type="number" id="prix" formControlName="prix" step="0.01" required>
+        <div *ngIf="evenementForm.get('prix').invalid && evenementForm.get('prix').touched" class="error-message">
+          Price is required and must be a positive number.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="image">Image URL:</label>
+        <input type="text" id="image" formControlName="image">
+      </div>
+  
+      <div class="form-group">
+        <button type="submit" [disabled]="evenementForm.invalid">Submit</button>
+      </div>
+  
+    </form>
+  </div>
+  

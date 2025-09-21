@@ -1,0 +1,91 @@
+<div class="admin-container">
+    <app-sidebar></app-sidebar>
+    <main class="content-area">
+        <header class="admin-header">
+            <div class="header-content">
+                <div class="title-section">
+                    <h1>Sous Atelier Management</h1>
+                    <p class="subtitle">Gérer les sous ateliers</p>
+                </div>
+                <div class="actions-section">
+                    <p-button icon="pi pi-arrow-left" 
+                        label="Retour aux Ateliers" 
+                        (click)="goBack()"
+                        styleClass="p-button-secondary">
+                    </p-button>
+                </div>
+            </div>
+        </header>
+
+        <section class="form-section">
+            <div class="form-card">
+                <header class="card-header">
+                    <h2>Create New Sous Atelier</h2>
+                    <i class="pi pi-plus-circle"></i>
+                </header>
+                <form [formGroup]="sousAtelierForm" (ngSubmit)="onSubmit()" class="sous-atelier-form">
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="name">
+                                <i class="pi pi-tag"></i> Name
+                            </label>
+                            <input id="name" 
+                                type="text" 
+                                pInputText 
+                                formControlName="name"
+                                placeholder="Enter name" />
+                            <small class="error-message" *ngIf="sousAtelierForm.get('name')?.invalid && sousAtelierForm.get('name')?.touched">
+                                Name is required
+                            </small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="description">
+                                <i class="pi pi-info-circle"></i> Description
+                            </label>
+                            <textarea id="description" 
+                                pInputText 
+                                formControlName="description"
+                                placeholder="Enter description" rows="3"></textarea>
+                            <small class="error-message" *ngIf="sousAtelierForm.get('description')?.invalid && sousAtelierForm.get('description')?.touched">
+                                Description is required
+                            </small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="prix">
+                                <i class="pi pi-dollar"></i> Prix
+                            </label>
+                            <input id="prix" 
+                                type="number" 
+                                pInputText 
+                                formControlName="prix"
+                                placeholder="Enter prix" step="0.01" />
+                            <small class="error-message" *ngIf="sousAtelierForm.get('prix')?.invalid && sousAtelierForm.get('prix')?.touched">
+                                Prix is required and must be a positive number
+                            </small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="image">
+                                <i class="pi pi-image"></i> Image
+                            </label>
+                            <input id="image" 
+                                type="file" 
+                                (change)="onFileChange($event)" />
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <p-button type="submit" 
+                            label="Save" 
+                            icon="pi pi-check" 
+                            [disabled]="sousAtelierForm.invalid"
+                            styleClass="p-button-success">
+                        </p-button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+</div>

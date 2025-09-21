@@ -1,0 +1,8 @@
+
+<div class="admin-wrapper">
+  <app-sidebar></app-sidebar>
+  
+  <div class="admin-main" [class.sidebar-collapsed]="isCollapsed">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,350 @@
+// Variables
+$primary-color: #6366f1;
+$secondary-color: #4f46e5;
+$danger-color: #ef4444;
+$success-color: #22c55e;
+$warning-color: #f59e0b;
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+$background-light: #f9fafb;
+$border-radius: 12px;
+$transition: all 0.3s ease;
+
+// Mixins
+@mixin card-shadow {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+@mixin hover-shadow {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+// Global Styles
+.admin-container {
+  padding: 2rem;
+  background-color: $background-light;
+  min-height: 100vh;
+}
+
+.admin-header {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  h1 {
+    color: $text-primary;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: $text-secondary;
+    font-size: 1.1rem;
+  }
+}
+
+.content-area {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 400px 1fr;
+  }
+}
+
+// Card Styles
+.form-card, .list-card {
+  background: white;
+  border-radius: $border-radius;
+  @include card-shadow;
+  overflow: hidden;
+  transition: $transition;
+
+  &:hover {
+    @include hover-shadow;
+  }
+}
+
+.card-header {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, $primary-color, $secondary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  i {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+}
+
+// Form Styles
+.atelier-form {
+  padding: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.form-field {
+  margin-bottom: 1.25rem;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: $text-primary;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+
+    i {
+      color: $primary-color;
+    }
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: $border-radius;
+    transition: $transition;
+
+    &:focus {
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+    }
+  }
+}
+
+// Table Styles
+.p-datatable {
+  .p-datatable-header {
+    background: white;
+    padding: 1rem;
+    font-weight: 600;
+  }
+
+  th {
+    background: $background-light !important;
+    color: $text-primary !important;
+    font-weight: 600 !important;
+    padding: 1rem !important;
+  }
+
+  tr {
+    transition: $transition;
+
+    &:hover {
+      background-color: rgba($primary-color, 0.02) !important;
+    }
+  }
+
+  td {
+    padding: 1rem !important;
+  }
+}
+
+// Action Buttons
+.actions-cell {
+  width: 150px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: $transition;
+  color: white;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &.edit {
+    background-color: $warning-color;
+  }
+
+  &.delete {
+    background-color: $danger-color;
+  }
+}
+
+// Empty State
+.empty-message {
+  text-align: center;
+  padding: 2rem !important;
+  color: $text-secondary;
+
+  i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  span {
+    font-size: 1.1rem;
+  }
+}
+
+// Responsive Adjustments
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 1rem;
+  }
+
+  .content-area {
+    gap: 1rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions-cell {
+    width: 120px;
+  }
+
+  .action-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+// Fix layout during editing
+:host ::ng-deep {
+  .table-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow-x: auto;
+  }
+
+  .p-datatable {
+    .p-datatable-tbody > tr > td {
+      padding: 0.5rem;
+      min-height: 3rem;
+      vertical-align: middle;
+
+      // Make all cells same height and width during editing
+      input {
+        width: 100%;
+        height: 2rem;
+        padding: 0.25rem 0.5rem;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: inherit;
+        color: inherit;
+        background-color: #fff;
+        margin: 0;
+      }
+
+      // Fix width for specific columns
+      &:nth-child(1) { // ID
+        width: 50px;
+        min-width: 50px;
+      }
+
+      &:nth-child(2) { // Name
+        width: 120px;
+        min-width: 120px;
+      }
+
+      &:nth-child(3) { // Description
+        width: 150px;
+        min-width: 150px;
+      }
+
+      &:nth-child(4) { // Formateur
+        width: 120px;
+        min-width: 120px;
+      }
+
+      &:nth-child(5), // Date Début
+      &:nth-child(6) { // Date Fin
+        width: 120px;
+        min-width: 120px;
+      }
+
+      &:nth-child(7), // Heures
+      &:nth-child(8) { // Prix
+        width: 80px;
+        min-width: 80px;
+      }
+
+      &:last-child { // Actions
+        width: 100px;
+        min-width: 100px;
+      }
+    }
+
+    // Smaller text and padding for header
+    .p-datatable-header {
+      padding: 0.5rem;
+    }
+
+    .p-datatable-thead > tr > th {
+      padding: 0.5rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  .actions-cell {
+    .action-buttons {
+      display: flex;
+      gap: 0.25rem;
+      justify-content: center;
+
+      .p-button.p-button-icon-only {
+        width: 2rem;
+        height: 2rem;
+      }
+    }
+  }
+
+  // Make sure text and inputs align properly
+  .p-datatable-tbody > tr > td {
+    > ng-container {
+      display: block;
+      min-height: 2rem;
+      line-height: 2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  // Style for empty message
+  .empty-message {
+    text-align: center;
+    padding: 1rem !important;
+    
+    i {
+      margin-right: 0.5rem;
+    }
+  }
+}

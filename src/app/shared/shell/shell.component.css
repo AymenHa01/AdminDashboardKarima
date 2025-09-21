@@ -1,0 +1,75 @@
+/* Admin Shell Layout */
+.admin-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.admin-main {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  position: relative;
+}
+
+.admin-main.sidebar-collapsed {
+  margin-left: 70px;
+}
+
+/* Content Area */
+.admin-main .page-content {
+  padding: 2rem;
+  max-width: 100%;
+}
+
+/* Mobile Layout */
+@media (max-width: 768px) {
+  .admin-main {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .admin-main.sidebar-collapsed {
+    margin-left: 0;
+  }
+  
+  .admin-main .page-content {
+    padding: 1rem;
+  }
+}
+
+/* Page Header Styles */
+.page-header {
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.page-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0.5rem 0 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .page-header {
+    padding: 1rem;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+  }
+}

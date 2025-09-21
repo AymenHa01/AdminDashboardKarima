@@ -1,0 +1,34 @@
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Space between items */
+}
+
+.image-item {
+  position: relative; /* Positioning for button */
+  width: 100px; /* Adjust size as needed */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.image {
+  max-width: 100%; /* Responsive image */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 5px; /* Optional: add some rounded corners */
+}
+
+.delete-button {
+  position: absolute; /* Position button over image */
+  top: 5px; /* Adjust position */
+  right: 5px; /* Adjust position */
+  background-color: red; /* Button color */
+  color: white; /* Text color */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 5px 10px; /* Button padding */
+  transition: background-color 0.3s; /* Smooth transition */
+}
+
+.delete-button:hover {
+  background-color: darkred; /* Darker shade on hover */
+}

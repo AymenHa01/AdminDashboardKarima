@@ -1,0 +1,223 @@
+<p-toast></p-toast>
+
+<div class="admin-container">
+    <app-sidebar></app-sidebar>
+    <header class="admin-header">
+        <h1>Atelier Management</h1>
+        <p class="subtitle">Manage your creative workshops effortlessly</p>
+    </header>
+
+    <main class="content-area">
+        <!-- New Atelier Form -->
+        <section class="form-section">
+            <div class="form-card">
+                <header class="card-header">
+                    <h2>Create New Atelier</h2>
+                    <i class="pi pi-plus-circle"></i>
+                </header>
+                <form #atelierForm="ngForm" class="atelier-form">
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="name">
+                                <i class="pi pi-tag"></i> Name
+                            </label>
+                            <input
+                                id="name"
+                                type="text"
+                                pInputText
+                                [(ngModel)]="selectedAtelier.name"
+                                name="name"
+                                required
+                                placeholder="Enter name"
+                            />
+                        </div>
+                        <div class="form-field">
+                            <label for="description">
+                                <i class="pi pi-info-circle"></i> Description
+                            </label>
+                            <input
+                                id="description"
+                                type="text"
+                                pInputText
+                                [(ngModel)]="selectedAtelier.description"
+                                name="description"
+                                required
+                                placeholder="Enter description"
+                            />
+                        </div>
+                        <div class="form-field">
+                            <label for="image">
+                                <i class="pi pi-image"></i> Image
+                            </label>
+                            <input id="image" type="file" (change)="onFileChange($event, '')" />
+                        </div>
+                    </div>
+                    <footer class="form-actions">
+                        <p-button
+                            label="Save"
+                            icon="pi pi-save"
+                            (click)="SaveAtelier()"
+                            [disabled]="!atelierForm.valid"
+                            styleClass="p-button-raised"
+                        ></p-button>
+                    </footer>
+                </form>
+            </div>
+        </section>
+
+        <!-- Atelier List -->
+        <section class="list-section">
+            <div class="list-card">
+                <header class="card-header">
+                    <div class="header-content">
+                        <h2>Atelier List</h2>
+                        <i class="pi pi-list"></i>
+                    </div>
+                    <div class="search-filter">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input 
+                                type="text" 
+                                pInputText 
+                                placeholder="Search by atelier name..." 
+                                [(ngModel)]="searchText"
+                                (input)="onSearchChange($event)"
+                                class="search-input"
+                            />
+                        </span>
+                        <button 
+                            *ngIf="searchText" 
+                            type="button" 
+                            pButton 
+                            icon="pi pi-times" 
+                            (click)="clearSearch()"
+                            class="p-button-text p-button-sm clear-button"
+                            pTooltip="Clear search"
+                            tooltipPosition="top"
+                        ></button>
+                    </div>
+                </header>
+                <p-table
+                    [value]="filteredAteliers"
+                    [paginator]="true"
+                    [rows]="5"
+                    [showCurrentPageReport]="true"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} ateliers"
+                    [rowsPerPageOptions]="[5, 10, 20]"
+                    styleClass="p-datatable-gridlines p-datatable-sm"
+                    [tableStyle]="{ 'min-width': '50rem' }"
+                    responsiveLayout="scroll"
+                    [editMode]="'row'"
+                    dataKey="id"
+                    [editingRowKeys]="editingRowKeys"
+                >   
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th style="width:8rem">Actions</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-atelier let-editing="editing" let-ri="rowIndex">
+                        <tr [pEditableRow]="atelier">
+                            <td class="image-cell">
+                                <div class="atelier-image">
+                                    <img [src]="url + '/' + atelier.image" [alt]="atelier.name" (click)="showImage(atelier.image)"/>
+
+                                    <div *ngIf="editing" class="p-fluid">
+                                        <input type="file" (change)="onFileChange($event, atelier.id)" accept="image/*" />
+                                        
+                                        <!-- Upload Progress -->
+                                        <div *ngIf="uploadingImages[atelier.id] || uploadProgress[atelier.id] > 0" class="upload-progress">
+                                            <p-progressBar [value]="uploadProgress[atelier.id]" [showValue]="true"></p-progressBar>
+                                            <small *ngIf="uploadingImages[atelier.id]">Uploading image...</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <input pInputText type="text" [(ngModel)]="atelier.name" required>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{atelier.name}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <input pInputText type="text" [(ngModel)]="atelier.description" required>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{atelier.description}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td class="actions-cell">
+                                <div class="action-buttons">
+                                    <button *ngIf="!editing" pButton type="button" 
+                                        icon="pi pi-pencil" 
+                                        (click)="onRowEditInit(atelier)"
+                                        class="p-button-rounded p-button-info mr-2">
+                                    </button>
+                                    <button *ngIf="editing" pButton type="button" 
+                                        icon="pi pi-check" 
+                                        (click)="onRowEditSave(atelier)"
+                                        [disabled]="uploadingImages[atelier.id]"
+                                        class="p-button-rounded p-button-success mr-2">
+                                    </button>
+                                    <button *ngIf="editing" pButton type="button" 
+                                        icon="pi pi-times" 
+                                        (click)="onRowEditCancel(atelier, ri)"
+                                        class="p-button-rounded p-button-danger mr-2">
+                                    </button>
+                                    <button *ngIf="!editing" pButton type="button"
+                                        icon="pi pi-trash" 
+                                        (click)="DeleteAtelier(atelier.id)"
+                                        class="p-button-rounded p-button-danger mr-2">
+                                    </button>
+                                    <button *ngIf="!editing" pButton type="button"
+                                        icon="pi pi-list" 
+                                        (click)="navigateToSousAteliers(atelier.id)"
+                                        pTooltip="Voir les sous ateliers"
+                                        tooltipPosition="top"
+                                        class="p-button-rounded p-button-success">
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                
+                <!-- No results message -->
+                <div *ngIf="filteredAteliers.length === 0 && searchText" class="no-results">
+                    <i class="pi pi-search"></i>
+                    <h3>No ateliers found</h3>
+                    <p>No ateliers match your search for "<strong>{{searchText}}</strong>"</p>
+                    <button type="button" pButton label="Clear Search" icon="pi pi-times" 
+                            (click)="clearSearch()" class="p-button-outlined"></button>
+                </div>
+                
+                <!-- Empty state message -->
+                <div *ngIf="ateliers.length === 0 && !searchText" class="empty-state">
+                    <i class="pi pi-inbox"></i>
+                    <h3>No ateliers yet</h3>
+                    <p>Create your first atelier using the form above.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<p-confirmDialog
+    [style]="{ width: '50vw' }"
+    [baseZIndex]="10000"
+    rejectButtonStyleClass="p-button-text"
+></p-confirmDialog>
+
+<p-dialog header="Image" [(visible)]="imageDialog" [modal]="true" [style]="{width: '50vw'}" [baseZIndex]="10000">
+    <img [src]="selectedImage" width="100%" *ngIf="selectedImage"/>
+</p-dialog>

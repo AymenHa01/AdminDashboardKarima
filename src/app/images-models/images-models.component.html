@@ -1,0 +1,6 @@
+<div class="image-grid">
+  <div class="image-item" *ngFor="let image of images; let i = index">
+    <img [src]="image.path" class="image" alt="Image {{ i + 1 }}">
+    <button  class="delete-button">Delete</button>
+  </div>
+</div>

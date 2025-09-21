@@ -1,0 +1,360 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { ArtisteService } from '../../services/artiste.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ImagesADDComponent } from '../../images-add/images-add.component';
+import { BlobStorgeService } from '../../../blob-storge.service';
+import { ImagesModelsComponent } from '../../images-models/images-models.component';
+import { MessageService } from 'primeng/api';
+
+@Component({
+  selector: 'app-artist-list',
+  templateUrl: './artist-list.component.html',
+  styleUrls: ['./artist-list.component.scss']
+})
+export class ArtistListComponent implements OnInit {
+  url: string;
+  artists: any[] = [];
+  file: any;
+  editingId: number | null = null;
+  editedArtist: any = null;
+  newArtist: any = {
+    id: 0,
+    name: '',
+    description: '',
+    specialite: '',
+    telephone: '',
+    email: '',
+    image: ''
+  };
+  progress: number = 0;
+
+  // Tableau management properties
+  tableauDialogVisible: boolean = false;
+  selectedArtist: any = null;
+  artistTableaux: any[] = [];
+  newTableau: any = {
+    titre: '',
+    Description: '',
+    image: '',
+    artiste: null
+  };
+  tableauFile: any;
+
+  constructor(
+    private artisteService: ArtisteService,
+    private router: Router,
+    private dialog: MatDialog,
+    private blob: BlobStorgeService,
+    private messageService: MessageService
+  ) {
+    // Initialize blob storage URL from service configuration
+    this.url = this.blob.getBlobStorageUrl();
+  }
+
+  ngOnInit(): void {
+    this.loadArtists();
+  }
+
+  toggleEdit(artist: any) {
+    if (this.editingId === artist.id) {
+      // Save changes
+      this.artisteService.AddArtiste(this.editedArtist).subscribe(
+        () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Artiste mis à jour avec succès'
+          });
+          this.editingId = null;
+          this.editedArtist = null;
+          this.loadArtists();
+        },
+        error => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Erreur lors de la mise à jour de l\'artiste'
+          });
+          console.error('Erreur lors de la mise à jour:', error);
+        }
+      );
+    } else {
+      // Start editing
+      this.editingId = artist.id;
+      this.editedArtist = { ...artist };
+    }
+  }
+
+  isEditing(artist: any): boolean {
+    return this.editingId === artist.id;
+  }
+
+  cancelEdit(artist: any) {
+    this.editingId = null;
+    this.editedArtist = null;
+  }
+
+  DeleteArtist(id: number) {
+    this.artisteService.DeleteArtiste(id).subscribe(
+      () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Artiste supprimé avec succès'
+        });
+        this.loadArtists();
+      },
+      error => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Erreur lors de la suppression de l\'artiste'
+        });
+        console.error('Erreur lors de la suppression:', error);
+      }
+    );
+  }
+
+  saveArtist() {
+    if (this.file && this.file.target && this.file.target.files) {
+      this.newArtist.image = this.file.target.files[0].name;
+      this.artisteService.AddArtiste(this.newArtist).subscribe(
+        response => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Artiste ajouté avec succès'
+          });
+          this.UploadImages(this.file);
+          this.loadArtists();
+          this.resetNewArtist();
+        },
+        error => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Erreur lors de l\'ajout de l\'artiste'
+          });
+          console.error('Erreur lors de l\'ajout de l\'artiste', error);
+        }
+      );
+    }
+  }
+
+  loadArtists(): void {
+    this.artisteService.GetAllArtistes().subscribe(
+      (data: any) => {
+        this.artists = data;
+      },
+      (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Erreur lors de la récupération des artistes'
+        });
+        console.error('Erreur lors de la récupération des artistes:', error);
+      }
+    );
+  }
+
+  resetNewArtist() {
+    this.newArtist = {
+      id: 0,
+      name: '',
+      description: '',
+      specialite: '',
+      telephone: '',
+      email: '',
+      image: ''
+    };
+    this.file = null;
+  }
+
+  UploadImages(file: any) {
+    if (file && file.target && file.target.files && file.target.files[0]) {
+      const fileName = file.target.files[0].name;
+      
+      this.blob.uploadImage(file.target.files[0], fileName, (event: ProgressEvent) => {
+        if (event.lengthComputable) {
+          this.progress = Math.round(100 * event.loaded / event.total);
+          if (this.progress === 100) {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Image téléchargée avec succès'
+            });
+            this.openModal(this.newArtist.id);
+          }
+        }
+      });
+    }
+  }
+
+  openModal(id: number): void {
+    const dialogRef = this.dialog.open(ImagesADDComponent, {
+      width: '500px',
+      height: '500px',
+      data: {
+        type: "A",
+        id: id
+      }
+    });
+  }
+
+  openImages(artist: any): void {
+    const dialogRef = this.dialog.open(ImagesModelsComponent, {
+      width: '500px',
+      height: '500px',
+      data: artist.media
+    });
+  }
+
+  onFileChange(event: any) {
+    this.file = event;
+  }
+
+  // Tableau Management Methods
+  manageTableaux(artist: any) {
+    this.selectedArtist = artist;
+    this.tableauDialogVisible = true;
+    this.loadArtistTableaux(artist.id);
+    this.resetTableauForm();
+  }
+
+  loadArtistTableaux(artistId: number) {
+    this.artisteService.GetTableauxByArtiste(artistId).subscribe({
+      next: (data: any) => {
+        this.artistTableaux = data || [];
+        console.log('Tableaux loaded:', this.artistTableaux);
+      },
+      error: (error) => {
+        console.error('Error loading tableaux:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load tableaux'
+        });
+        this.artistTableaux = [];
+      }
+    });
+  }
+
+  addTableau() {
+    if (!this.newTableau.titre || !this.newTableau.Description) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'Please fill in all required fields'
+      });
+      return;
+    }
+
+    // Set the artist for the tableau
+    this.newTableau.artiste = {
+      id: this.selectedArtist.id
+    };
+
+    // If there's a file, upload it first (similar to atelier pattern)
+    if (this.tableauFile) {
+      this.newTableau.image = this.tableauFile.name;
+      
+      this.blob.uploadImage(this.tableauFile, this.tableauFile.name, (progressEvent: ProgressEvent) => {
+        if (progressEvent.lengthComputable) {
+          this.progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+          if (this.progress === 100) {
+            this.submitTableau();
+          }
+        }
+      });
+    } else {
+      this.submitTableau();
+    }
+  }
+
+  private submitTableau() {
+    this.artisteService.AddTableau(this.newTableau).subscribe({
+      next: (response: any) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Tableau added successfully'
+        });
+        
+        // Show image upload success if there was a file
+        if (this.tableauFile) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Image Upload',
+            detail: 'Image uploaded successfully to blob storage'
+          });
+        }
+        
+        this.loadArtistTableaux(this.selectedArtist.id);
+        this.resetTableauForm();
+        this.progress = 0; // Reset progress
+      },
+      error: (error) => {
+        console.error('Error adding tableau:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to add tableau'
+        });
+      }
+    });
+  }
+
+  deleteTableau(tableauId: number) {
+    if (confirm('Are you sure you want to delete this tableau?')) {
+      this.artisteService.DeleteTableau(tableauId).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Tableau deleted successfully'
+          });
+          this.loadArtistTableaux(this.selectedArtist.id);
+        },
+        error: (error) => {
+          console.error('Error deleting tableau:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to delete tableau'
+          });
+        }
+      });
+    }
+  }
+
+  onTableauFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.tableauFile = file;
+      // Show file selected message
+      this.messageService.add({
+        severity: 'info',
+        summary: 'File Selected',
+        detail: `Selected: ${file.name}`
+      });
+    }
+  }
+
+  private resetTableauForm() {
+    this.newTableau = {
+      titre: '',
+      Description: '',
+      image: '',
+      artiste: null
+    };
+    this.tableauFile = null;
+    this.progress = 0;
+    
+    // Reset file input
+    const fileInput = document.getElementById('tableauImage') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
+}

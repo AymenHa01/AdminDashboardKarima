@@ -1,0 +1,32 @@
+<h2 mat-dialog-title class="dialog-title">Ajouter Des Images</h2>
+
+  <mat-dialog-content>
+    <div class="image-list">
+      <div *ngFor="let image of Images; let i = index" class="image-item">
+        <img [src]="Path+image.target.files[0].name" alt="Image">
+        <button mat-icon-button color="warn" (click)="deleteImage(image)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="upload-button">
+      <input type="file" (change)="onAddImage($event)" multiple id="fileInput" style="display: none;">
+      <label for="fileInput" mat-raised-button color="primary">
+        <mat-icon>add_a_photo</mat-icon> Add Image
+      </label>
+    </div>
+
+    <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
+    <p *ngIf="messsage">{{messsage}}</p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="primary" (click)="AddImages()">Upload</button>
+  </mat-dialog-actions>
+
+  <div id="upload-container">
+    <div [ngStyle]="{ 'width': progress + '%', 'background-color': 'white', 'height': '10px' }"></div>
+    <span id="progressText" style="color: aliceblue;">{{ progress }}% {{messsage }} </span>
+  </div>

@@ -1,0 +1,95 @@
+<p-toast></p-toast>
+<div class="admin-page">
+    <p-card [header]="editmode ? 'Edit Clothes' : 'Add Clothes'" subheader="You can add or edit clothes here">
+        <div class="grid p-mb-5">
+            <div class="col-12">
+                <p-toolbar>
+                    <div class="p-toolbar-group-left"></div>
+                    <div class="p-toolbar-group-right">
+                        <p-button [label]="editmode ? 'Update' : 'Create'" icon="pi pi-plus" styleClass="p-button-warning mr-2"></p-button>
+                        <p-button label="Cancel" icon="pi pi-arrow-circle-left" styleClass="p-button-info"></p-button>
+                    </div>
+                </p-toolbar>
+            </div>
+        </div>
+        <br>
+        <div class="grid">
+            <div class="col-12">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Icon</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-template pTemplate="body" let-categories>
+                            <tr>
+                                <td>{{categories.id}}</td>
+                                <td>{{categories.name}}</td>
+                                <td>{{categories.icon}}</td>
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col-12">
+                <form [formGroup]="form">
+                    <div class="p-fluid p-formgrid grid">
+                        <div class="p-field col">
+                            <label for="name">Name</label>
+                            <input formControlName="name" id="name" type="text" pInputText>
+                            <small class="p-error">Name is required</small>
+                        </div>
+                        <div class="p-field col">
+                            <label for="brand">Brand</label>
+                            <input formControlName="brand" id="brand" type="text" pInputText>
+                            <small class="p-error">Brand is required</small>
+                        </div>
+                        <div class="p-field col">
+                            <label for="price">Price</label><br>
+                            <p-inputNumber formControlName="price" mode="decimal" inputId="price" [useGrouping]="false"></p-inputNumber>
+                            <small class="p-error">Price is required</small>
+                        </div>
+                    </div>
+                    <div class="p-fluid p-formgrid grid">
+                        <div class="p-field col-4">
+                            <label for="countInStock">Count In Stock</label><br>
+                            <p-inputNumber formControlName="countInStock" mode="decimal" inputId="countInStock" [useGrouping]="false"></p-inputNumber>
+                            <small class="p-error">Count In Stock is required</small>
+                        </div>
+                        <div class="p-field col-4">
+                            <label for="category">Category</label><br>
+                            <p-dropdown [options]="categories" formControlName="category" optionLabel="name" optionValue="id" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a category"></p-dropdown>
+                            <small class="p-error">Category is required</small>
+                        </div>
+                        <div class="p-field col-4">
+                            <label for="isFeatured">Is Featured</label><br>
+                            <p-inputSwitch formControlName="isFeatured"></p-inputSwitch>
+                        </div>
+                        <div class="p-field col-12">
+                            <label for="description">Description</label><br>
+                            <textarea pInputTextarea formControlName="description" [rows]="7" [cols]="30"></textarea>
+                            <small class="p-error">Description is required</small>
+                        </div>
+                        <div class="p-field col-12">
+                            <label for="richDescription">Clothes Details</label><br>
+                            <p-editor formControlName="richDescription" [style]="{'height':'120px'}"></p-editor>
+                        </div>
+                        <div class="p-field col-12">
+                            <label for="mainImage">Main Image</label><br>
+                            <input type="file" id="mainImage" class="p-inputtext" accept="image/*" />
+                            <small class="p-error">Image is required</small>
+                            <div class="col-2 mt-2 pl-0">
+                                <img alt="" style="width:100%">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </p-card>
+</div>

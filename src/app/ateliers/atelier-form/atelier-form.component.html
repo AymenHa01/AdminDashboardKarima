@@ -1,0 +1,33 @@
+<form [formGroup]="atelierForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="name">Name:</label>
+      <input id="name" formControlName="name" type="text">
+      <!-- <div *ngIf="atelierForm.get('name').invalid && atelierForm.get('name')">
+        Name is required.
+      </div> -->
+    </div>
+  
+    <div>
+      <label for="description">Description:</label>
+      <input id="description" formControlName="description" type="text">
+    </div>
+  
+    <div>
+      <label for="image">Image URL:</label>
+      <input id="image"  type="file" formControlName="image" >
+    </div>
+<!--   
+    <div formArrayName="sousateliers">
+      <h3>Sous Ateliers</h3>
+      <div *ngFor="let sousAtelier of sousateliers.controls; let i = index" [formGroupName]="i">
+        <label for="sousAtelierName">Sous Atelier Name:</label>
+        <input id="sousAtelierName" formControlName="name" type="text">
+        <button type="button" >Remove</button>
+      </div>
+    </div> -->
+  
+    <button type="button" (click)="addSousAtelier()">Add Sous Atelier</button>
+  
+    <button type="submit" [disabled]="atelierForm.invalid">Submit</button>
+  </form>
+  

@@ -1,0 +1,434 @@
+<p-toast></p-toast>
+
+<div class="admin-page" [class.sidebar-collapsed]="isSidebarCollapsed">
+    <app-sidebar></app-sidebar>
+
+    <p-card header="Sous-Ateliers" subheader="Liste des sous-ateliers"> 
+
+        <!-- View Toggle Buttons -->
+        <div class="view-controls">
+            <p-button 
+                *ngIf="!showForm" 
+                label="Ajouter un nouveau sous-atelier" 
+                icon="pi pi-plus" 
+                (click)="showAddForm()" 
+                styleClass="p-button-success">
+            </p-button>
+            
+            <div *ngIf="showForm" class="form-controls">
+                <p-button 
+                    label="Voir la liste" 
+                    icon="pi pi-list" 
+                    (click)="showList()" 
+                    styleClass="p-button-info">
+                </p-button>
+                <p-button 
+                    label="Annuler" 
+                    icon="pi pi-times" 
+                    (click)="showList()" 
+                    styleClass="p-button-secondary">
+                </p-button>
+            </div>
+        </div>
+
+        <!-- Vertical Form with Better Structure -->
+        <div class="form-container" *ngIf="showForm">
+            <h4>Ajouter un nouveau sous-atelier</h4>
+            <div class="form-grid">
+                <!-- Name Field -->
+                <div class="form-group">
+                    <label for="name">Nom *</label>
+                    <input 
+                        id="name"
+                        type="text" 
+                        placeholder="Entrez le nom" 
+                        [(ngModel)]="newSousAtelier.name" 
+                        class="form-input">
+                </div>
+
+                <!-- Description Field (Larger) -->
+                <div class="form-group">
+                    <label for="description">Description *</label>
+                    <textarea 
+                        id="description"
+                        placeholder="Entrez la description" 
+                        [(ngModel)]="newSousAtelier.description" 
+                        class="form-textarea"
+                        rows="4">
+                    </textarea>
+                </div>
+
+                <!-- Prix Field -->
+                <div class="form-group">
+                    <label for="prix">Prix *</label>
+                    <input 
+                        id="prix"
+                        type="number" 
+                        placeholder="Entrez le prix" 
+                        [(ngModel)]="newSousAtelier.prix" 
+                        class="form-input">
+                </div>
+
+                <!-- Image Field -->
+                <div class="form-group">
+                    <label for="image">Image</label>
+                    <div class="image-upload-container">
+                        <input 
+                            type="file" 
+                            #imageInput 
+                            (change)="onFormImageSelected($event)" 
+                            accept="image/*" 
+                            class="file-input"
+                            id="image">
+                        <p-button 
+                            label="Choisir une image" 
+                            icon="pi pi-upload" 
+                            (click)="imageInput.click()" 
+                            styleClass="p-button-outlined">
+                        </p-button>
+                        
+                        <!-- Image Preview -->
+                        <div class="image-preview" *ngIf="formImagePreview">
+                            <img [src]="formImagePreview" alt="Preview" class="preview-image">
+                            <p-button 
+                                icon="pi pi-times" 
+                                (click)="formImagePreview = null; selectedFormImage = null; newSousAtelier.image = null" 
+                                styleClass="p-button-rounded p-button-text p-button-sm remove-image-btn">
+                            </p-button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-actions">
+                    <p-button 
+                        label="Ajouter le sous-atelier" 
+                        icon="pi pi-plus" 
+                        (click)="checkForm()" 
+                        styleClass="p-button-success">
+                    </p-button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Separator -->
+        <p-divider *ngIf="showForm"></p-divider>
+
+        <!-- Sous-Ateliers List Table -->
+        <div class="p-grid" *ngIf="!showForm">
+            <div class="p-col-12">
+                <p-table [paginator]="true" [rows]="5" [value]="sousAteliers" styleClass="p-datatable-gridlines" [tableStyle]="{'min-width': '50rem'}">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Id</th>
+                            <th>Image</th>
+                            <th>Description</th>
+                            <th>Titre</th>
+                            <th>Prix</th>
+                            <th>Atelier</th>
+                            <th>Images</th>
+                            <th>Actions</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-sousAtelier>
+                        <tr>
+                            <td>{{sousAtelier.id}}</td>
+                            <td class="main-image-cell">
+                                <div class="main-image-container">
+                                    <!-- Edit mode image upload -->
+                                    <div *ngIf="isEditing(sousAtelier.id)" class="edit-image-container">
+                                        <div class="current-image" *ngIf="editingImagePreviews[sousAtelier.id] || sousAtelier.image">
+                                            <img 
+                                                [src]="editingImagePreviews[sousAtelier.id] || (url + '/' + sousAtelier.image)"
+                                                alt="{{sousAtelier.name}}" 
+                                                class="main-image-thumbnail">
+                                        </div>
+                                        <div class="image-upload-controls">
+                                            <input 
+                                                type="file" 
+                                                #imageEditInput
+                                                (change)="onInlineImageSelected($event, sousAtelier.id)" 
+                                                accept="image/*" 
+                                                class="file-input">
+                                            <p-button 
+                                                icon="pi pi-upload" 
+                                                (click)="imageEditInput.click()" 
+                                                styleClass="p-button-outlined p-button-sm"
+                                                [disabled]="uploadingInlineImages[sousAtelier.id]"
+                                                title="Changer l'image">
+                                            </p-button>
+                                        </div>
+                                        <!-- Upload progress -->
+                                        <div *ngIf="uploadingInlineImages[sousAtelier.id] || inlineUploadProgress[sousAtelier.id] > 0" class="inline-upload-progress">
+                                            <p-progressBar [value]="inlineUploadProgress[sousAtelier.id]" [showValue]="true"></p-progressBar>
+                                            <small *ngIf="uploadingInlineImages[sousAtelier.id]">Upload en cours...</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- View mode -->
+                                    <div *ngIf="!isEditing(sousAtelier.id)">
+                                        <img 
+                                            *ngIf="sousAtelier.image; else noMainImage"
+                                            [src]="url + '/' + sousAtelier.image" 
+                                            alt="{{sousAtelier.name}}" 
+                                            class="main-image-thumbnail"
+                                            (click)="openImageGallery(sousAtelier)">
+                                        <ng-template #noMainImage>
+                                            <div class="no-main-image" (click)="openAddImageDialog(sousAtelier)">
+                                                <i class="pi pi-image"></i>
+                                                <span>Pas d'image</span>
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <input 
+                                    *ngIf="isEditing(sousAtelier.id); else viewDescription"
+                                    type="text" 
+                                    [(ngModel)]="sousAtelier.description" 
+                                    class="editable-field edit-active">
+                                <ng-template #viewDescription>
+                                    <span>{{sousAtelier.description}}</span>
+                                </ng-template>
+                            </td>
+                            <td>
+                                <input 
+                                    *ngIf="isEditing(sousAtelier.id); else viewName"
+                                    type="text" 
+                                    [(ngModel)]="sousAtelier.name" 
+                                    class="editable-field edit-active">
+                                <ng-template #viewName>
+                                    <span>{{sousAtelier.name}}</span>
+                                </ng-template>
+                            </td>
+                            <td>
+                                <input 
+                                    *ngIf="isEditing(sousAtelier.id); else viewPrix"
+                                    type="number" 
+                                    [(ngModel)]="sousAtelier.prix" 
+                                    class="editable-field edit-active">
+                                <ng-template #viewPrix>
+                                    <span>{{sousAtelier.prix}}€</span>
+                                </ng-template>
+                            </td>
+                            <td>{{sousAtelier.atelier.name}}</td>
+                            <td>
+                                <div class="table-images-container">
+                                    <!-- Display existing images -->
+                                    <div class="table-images-grid" *ngIf="sousAtelier.media && sousAtelier.media.length > 0">
+                                        <div *ngFor="let image of sousAtelier.media.slice(0, 3)" class="table-image-item">
+                                            <img [src]="getImageUrl(image)" alt="Image" class="table-image-thumbnail">
+                                        </div>
+                                        <div *ngIf="sousAtelier.media.length > 3" class="more-images-indicator">
+                                            +{{ sousAtelier.media.length - 3 }}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Image actions -->
+                                    <div class="table-image-actions">
+                                        <p-button 
+                                            icon="pi pi-plus" 
+                                            styleClass="p-button-success p-button-sm" 
+                                            (click)="openAddImageDialog(sousAtelier)" 
+                                            title="Ajouter Image">
+                                        </p-button>
+                                        <p-button 
+                                            icon="pi pi-eye" 
+                                            styleClass="p-button-secondary p-button-sm" 
+                                            (click)="openImageGallery(sousAtelier)" 
+                                            title="Voir toutes les images">
+                                        </p-button>
+                                    </div>
+                                    
+                                    <!-- No images state -->
+                                    <div *ngIf="!sousAtelier.media || sousAtelier.media.length === 0" class="no-table-images">
+                                        <span>Aucune image</span>
+                                        <p-button 
+                                            icon="pi pi-plus" 
+                                            styleClass="p-button-success p-button-sm" 
+                                            (click)="openAddImageDialog(sousAtelier)" 
+                                            title="Ajouter Image">
+                                        </p-button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="actions-column">
+                                <div class="action-buttons">
+                                    <!-- Edit mode buttons -->
+                                    <div *ngIf="isEditing(sousAtelier.id)" class="edit-mode-actions">
+                                        <p-button 
+                                            icon="pi pi-check" 
+                                            styleClass="p-button-success p-button-sm" 
+                                            (click)="saveSousAtelier(sousAtelier)"
+                                            [disabled]="uploadingInlineImages[sousAtelier.id]"
+                                            title="Sauvegarder">
+                                        </p-button>
+                                        <p-button 
+                                            icon="pi pi-times" 
+                                            styleClass="p-button-secondary p-button-sm" 
+                                            (click)="exitEditMode(sousAtelier.id)"
+                                            title="Annuler">
+                                        </p-button>
+                                    </div>
+                                    
+                                    <!-- View mode buttons -->
+                                    <div *ngIf="!isEditing(sousAtelier.id)" class="view-mode-actions">
+                                        <p-button 
+                                            icon="pi pi-pencil" 
+                                            styleClass="p-button-warning p-button-sm" 
+                                            (click)="enterEditMode(sousAtelier.id)"
+                                            title="Modifier">
+                                        </p-button>
+                                        <p-button 
+                                            icon="pi pi-trash" 
+                                            styleClass="p-button-danger p-button-sm" 
+                                            (click)="DeleteSousAtelier(sousAtelier.id)"
+                                            title="Supprimer">
+                                        </p-button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </p-card>
+</div>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+<!-- Add Image Dialog -->
+<p-dialog header="Ajouter des Images" [(visible)]="showAddImageDialog" [modal]="true" [style]="{width: '60vw'}" [closable]="true" (onHide)="closeAddImageDialog()">
+    <div class="add-image-dialog-content">
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <h4>Sélectionner des images à ajouter</h4>
+            <input type="file" #addImageFileInput (change)="onAddImageSelected($event)" multiple accept="image/*" class="file-input">
+            <p-button 
+                label="Choisir des images" 
+                icon="pi pi-upload" 
+                (click)="addImageFileInput.click()" 
+                styleClass="p-button-success">
+            </p-button>
+            
+            <!-- Upload Progress -->
+            <div *ngIf="isUploading || uploadProgress > 0" class="upload-progress">
+                <p-progressBar [value]="uploadProgress" [showValue]="true"></p-progressBar>
+                <p *ngIf="uploadError" class="error-message">{{ uploadError }}</p>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<!-- Image Management Dialog -->
+<p-dialog header="Gestion des Images - Sous-Atelier" [(visible)]="showImageDialog" [modal]="true" [style]="{width: '80vw'}" [closable]="true" (onHide)="closeImageDialog()">
+    <div class="image-dialog-content">
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <h4>Ajouter de nouvelles images</h4>
+            <input type="file" #fileInput (change)="onImageSelected($event)" multiple accept="image/*" class="file-input">
+            <p-button label="Choisir des images" icon="pi pi-upload" (click)="fileInput.click()" class="upload-btn"></p-button>
+            
+            <!-- Upload Progress -->
+            <div *ngIf="isUploading || uploadProgress > 0" class="upload-progress">
+                <p-progressBar [value]="uploadProgress" [showValue]="true"></p-progressBar>
+                <p *ngIf="uploadError" class="error-message">{{ uploadError }}</p>
+            </div>
+        </div>
+
+        <!-- Images List -->
+        <div class="images-list" *ngIf="sousAtelierImages.length > 0">
+            <div class="images-header">
+                <h4>Images existantes ({{ sousAtelierImages.length }})</h4>
+                <p-button 
+                    label="Télécharger toutes les images" 
+                    icon="pi pi-download" 
+                    (click)="downloadAllImages()" 
+                    styleClass="p-button-info p-button-sm"
+                    [disabled]="isDownloading">
+                </p-button>
+            </div>
+            
+            <!-- Download Progress -->
+            <div *ngIf="isDownloading || downloadProgress > 0" class="download-progress">
+                <p-progressBar [value]="downloadProgress" [showValue]="true"></p-progressBar>
+                <p class="download-status">
+                    <span *ngIf="isDownloading">Téléchargement en cours: {{ currentDownloadingImage }}</span>
+                    <span *ngIf="!isDownloading && downloadProgress > 0">Téléchargement terminé!</span>
+                    <br>
+                    <small>{{ downloadedCount }} / {{ totalDownloadCount }} images téléchargées</small>
+                </p>
+            </div>
+            
+            <div class="images-grid">
+                <div *ngFor="let image of sousAtelierImages" class="image-item">
+                    <img [src]="getImageUrl(image)" alt="Image" class="image-thumbnail">
+                    <div class="image-actions">
+                        <p-button 
+                            icon="pi pi-download" 
+                            styleClass="p-button-success p-button-sm" 
+                            (click)="downloadSingleImage(image)" 
+                            title="Télécharger" 
+                            [disabled]="isDownloading">
+                        </p-button>
+                        <p-button 
+                            icon="pi pi-trash" 
+                            styleClass="p-button-danger p-button-sm" 
+                            (click)="deleteImage(image)" 
+                            title="Supprimer" 
+                            [disabled]="isDownloading">
+                        </p-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="sousAtelierImages.length === 0 && !isUploading" class="no-images">
+            <p>Aucune image pour ce sous-atelier</p>
+        </div>
+    </div>
+</p-dialog>
+
+<!-- Image Gallery Dialog -->
+<p-dialog header="Images - Sous-Atelier" [(visible)]="showImageGallery" [modal]="true" [style]="{width: '90vw'}" [closable]="true" (onHide)="closeImageGallery()">
+    <div class="simple-gallery-content">
+        <!-- Add Media Button -->
+        <div class="gallery-add-section">
+            <input type="file" #simpleFileInput (change)="onSimpleImageSelected($event)" multiple accept="image/*" class="file-input">
+            <p-button 
+                label="Ajouter Media" 
+                icon="pi pi-plus" 
+                (click)="simpleFileInput.click()" 
+                styleClass="p-button-success">
+            </p-button>
+            
+            <!-- Upload Progress -->
+            <div *ngIf="isUploading || uploadProgress > 0" class="upload-progress">
+                <p-progressBar [value]="uploadProgress" [showValue]="true"></p-progressBar>
+                <p *ngIf="uploadError" class="error-message">{{ uploadError }}</p>
+            </div>
+        </div>
+        
+        <!-- Images Display -->
+        <div class="simple-images-section">
+            <h4>{{ sousAtelierImages.length }} image(s)</h4>
+            <div class="simple-gallery-grid" *ngIf="sousAtelierImages.length > 0">
+                <div *ngFor="let image of sousAtelierImages" class="simple-gallery-item">
+                    <img [src]="getImageUrl(image)" alt="Image" class="simple-gallery-image">
+                    <div class="simple-image-actions">
+                        <p-button 
+                            icon="pi pi-trash" 
+                            styleClass="p-button-danger p-button-sm" 
+                            (click)="deleteImageFromGallery(image)" 
+                            title="Supprimer">
+                        </p-button>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="sousAtelierImages.length === 0" class="empty-gallery">
+                <p>Commencez par ajouter des images avec le bouton ci-dessus</p>
+            </div>
+        </div>
+    </div>
+</p-dialog>

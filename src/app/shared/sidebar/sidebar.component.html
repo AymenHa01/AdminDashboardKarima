@@ -1,0 +1,121 @@
+<div class="modern-sidebar" [class.collapsed]="isCollapsed">
+  <!-- Toggle Button - Always visible -->
+  <button 
+    type="button" 
+    (click)="toggleSidebar()" 
+    class="sidebar-toggle-btn"
+    [class.collapsed]="isCollapsed"
+    [title]="isCollapsed ? 'Ouvrir le menu' : 'Fermer le menu'">
+    <i class="pi pi-bars" *ngIf="isCollapsed"></i>
+    <i class="pi pi-times" *ngIf="!isCollapsed"></i>
+  </button>
+
+  <!-- Sidebar Content -->
+  <div class="sidebar-content">
+    <!-- Logo Section -->
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <i class="pi pi-home"></i>
+        </div>
+        <div class="logo-text" *ngIf="!isCollapsed">
+          <span class="logo-title">Admin</span>
+          <span class="logo-subtitle">Panel</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Section -->
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <h3 class="section-title" *ngIf="!isCollapsed">Menu Principal</h3>
+        
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a routerLink="/dashboard" routerLinkActive="active" class="nav-link" 
+               [title]="isCollapsed ? 'Tableau de bord' : ''">
+       
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a routerLink="/ateliers" routerLinkActive="active" class="nav-link" 
+               [title]="isCollapsed ? 'Ateliers' : ''">
+              <div class="nav-icon">
+                <i class="pi pi-briefcase"></i>
+              </div>
+              <span class="nav-text" *ngIf="!isCollapsed">Ateliers</span>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a routerLink="/formations" routerLinkActive="active" class="nav-link" 
+               [title]="isCollapsed ? 'Formations' : ''">
+              <div class="nav-icon">
+                <i class="pi pi-book"></i>
+              </div>
+              <span class="nav-text" *ngIf="!isCollapsed">Formations</span>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a routerLink="/evenements" routerLinkActive="active" class="nav-link" 
+               [title]="isCollapsed ? 'Événements' : ''">
+              <div class="nav-icon">
+                <i class="pi pi-calendar"></i>
+              </div>
+              <span class="nav-text" *ngIf="!isCollapsed">Événements</span>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a routerLink="/artists" routerLinkActive="active" class="nav-link" 
+               [title]="isCollapsed ? 'Artists' : ''">
+              <div class="nav-icon">
+                <i class="pi pi-star"></i>
+              </div>
+              <span class="nav-text" *ngIf="!isCollapsed">Artists</span>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a routerLink="/users" routerLinkActive="active" class="nav-link" 
+               [title]="isCollapsed ? 'Utilisateurs' : ''">
+              <div class="nav-icon">
+                <i class="pi pi-users"></i>
+              </div>
+              <span class="nav-text" *ngIf="!isCollapsed">Utilisateurs</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- User Section at Bottom -->
+      <div class="user-section">
+        <div class="user-profile" *ngIf="!isCollapsed">
+          <div class="user-avatar">
+            <i class="pi pi-user"></i>
+          </div>
+          <div class="user-info">
+            <span class="user-name">Admin User</span>
+            <span class="user-role">Administrator</span>
+          </div>
+        </div>
+        
+        <div class="user-actions">
+          <button class="logout-btn" [title]="isCollapsed ? 'Déconnexion' : ''">
+            <i class="pi pi-sign-out"></i>
+            <span *ngIf="!isCollapsed">Déconnexion</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<!-- Overlay for mobile -->
+<div class="sidebar-overlay" 
+     [class.active]="!isCollapsed" 
+     (click)="toggleSidebar()"
+     *ngIf="isMobile">
+</div>
