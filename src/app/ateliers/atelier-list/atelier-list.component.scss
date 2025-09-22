@@ -253,73 +253,240 @@ $transition: all 0.3s ease;
   border-radius: $border-radius;
   overflow: hidden;
 
-  img {
+  // Image display when not editing
+  .image-display {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-  }
-
-  .image-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: $transition;
-  }
-
-  &:hover .image-overlay {
-    opacity: 1;
-  }
-
-  .change-image-btn {
-    background: white;
-    border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     cursor: pointer;
-    transition: $transition;
+    position: relative;
 
-    &:hover {
-      transform: scale(1.1);
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: $transition;
+
+      &:hover {
+        transform: scale(1.05);
+      }
     }
 
-    i {
-      color: $primary-color;
-      font-size: 1rem;
+    .placeholder-image {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #f8f9fa;
+      color: $text-secondary;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+
+      i {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+        opacity: 0.5;
+      }
+
+      span {
+        font-size: 0.7rem;
+        opacity: 0.7;
+      }
+    }
+
+    .image-error {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff5f5;
+      color: #e53e3e;
+      border: 1px solid #fed7d7;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      text-align: center;
+      padding: 4px;
     }
   }
 
-  // Upload Progress Styles
-  .upload-progress {
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-    background-color: #f8f9fa;
-    border-radius: 6px;
-    border: 1px solid #e9ecef;
+  // Image editing interface
+  .image-editor {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 
-    small {
-      display: block;
-      margin-top: 0.25rem;
-      color: $text-secondary;
-      font-size: 0.75rem;
-      text-align: center;
+    .current-image {
+      position: relative;
+      width: 100%;
+      height: 80px;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: $transition;
+
+      &:hover {
+        border-color: $primary-color;
+        
+        .image-overlay {
+          opacity: 1;
+        }
+      }
+
+      .preview-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: $transition;
+        border-radius: 6px;
+
+        i {
+          font-size: 1.2rem;
+          color: white;
+          margin-bottom: 0.25rem;
+        }
+
+        .change-text {
+          color: white;
+          font-size: 0.7rem;
+          font-weight: 500;
+          text-align: center;
+          line-height: 1.2;
+        }
+      }
     }
 
-    .p-progressbar {
-      height: 8px;
-      
-      .p-progressbar-value {
-        background: linear-gradient(90deg, $primary-color, $secondary-color);
+    .no-image {
+      width: 100%;
+      height: 80px;
+      border: 2px dashed #d1d5db;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: $text-secondary;
+      cursor: pointer;
+      transition: $transition;
+
+      &:hover {
+        border-color: $primary-color;
+        background-color: rgba($primary-color, 0.05);
+        
+        i {
+          color: $primary-color;
+        }
+      }
+
+      i {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+        transition: $transition;
+      }
+
+      span {
+        font-size: 0.7rem;
+        font-weight: 500;
+      }
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    // Image actions container
+    .image-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      width: 100%;
+
+      .upload-btn, .remove-btn {
+        width: 100% !important;
+        font-size: 0.7rem !important;
+        padding: 0.25rem 0.5rem !important;
+        height: auto !important;
+
+        .pi {
+          margin-right: 0.25rem;
+          font-size: 0.7rem;
+        }
+      }
+
+      .upload-btn {
+        background-color: $primary-color !important;
+        border-color: $primary-color !important;
+        color: white !important;
+
+        &:hover {
+          background-color: $secondary-color !important;
+          border-color: $secondary-color !important;
+        }
+      }
+
+      .remove-btn {
+        background-color: transparent !important;
+        border-color: $danger-color !important;
+        color: $danger-color !important;
+
+        &:hover {
+          background-color: $danger-color !important;
+          color: white !important;
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    // Upload Progress Styles
+    .upload-progress {
+      margin: 0.25rem 0;
+      padding: 0.5rem;
+      background-color: #f8f9fa;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+
+      small {
+        display: block;
+        margin-top: 0.25rem;
+        color: $text-secondary;
+        font-size: 0.7rem;
+        text-align: center;
+        font-weight: 500;
+      }
+
+      .upload-progress-bar {
+        height: 6px;
+        border-radius: 3px;
+        overflow: hidden;
+        
+        ::ng-deep .p-progressbar-value {
+          background: linear-gradient(90deg, $primary-color, $secondary-color);
+          transition: width 0.3s ease;
+        }
       }
     }
   }

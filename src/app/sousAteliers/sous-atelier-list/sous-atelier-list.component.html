@@ -227,12 +227,12 @@
                                     
                                     <!-- Image actions -->
                                     <div class="table-image-actions">
-                                        <p-button 
+                                        <!-- <p-button 
                                             icon="pi pi-plus" 
                                             styleClass="p-button-success p-button-sm" 
                                             (click)="openAddImageDialog(sousAtelier)" 
                                             title="Ajouter Image">
-                                        </p-button>
+                                        </p-button> -->
                                         <p-button 
                                             icon="pi pi-eye" 
                                             styleClass="p-button-secondary p-button-sm" 
@@ -241,15 +241,9 @@
                                         </p-button>
                                     </div>
                                     
-                                    <!-- No images state -->
                                     <div *ngIf="!sousAtelier.media || sousAtelier.media.length === 0" class="no-table-images">
                                         <span>Aucune image</span>
-                                        <p-button 
-                                            icon="pi pi-plus" 
-                                            styleClass="p-button-success p-button-sm" 
-                                            (click)="openAddImageDialog(sousAtelier)" 
-                                            title="Ajouter Image">
-                                        </p-button>
+                                       
                                     </div>
                                 </div>
                             </td>

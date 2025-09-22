@@ -271,4 +271,39 @@ export class AtelierListComponent implements OnInit {
       );
     }
   }
+
+  removeImage(atelier: any) {
+    // Confirm before removing
+    if (confirm('Are you sure you want to remove this image?')) {
+      // Set image to null/empty
+      atelier.image = null;
+      
+      // Update the cloned atelier as well
+      if (this.clonedAteliers[atelier.id]) {
+        this.clonedAteliers[atelier.id].image = null;
+      }
+      
+      this.messageService.add({
+        severity: 'info', 
+        summary: 'Image Removed', 
+        detail: 'Image has been removed. Save changes to confirm.'
+      });
+    }
+  }
+
+  // Handle image load errors
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target) {
+      target.style.display = 'none';
+      // Optionally show a placeholder or error message
+      const parent = target.parentElement;
+      if (parent && !parent.querySelector('.image-error')) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'image-error';
+        errorDiv.textContent = 'Image not available';
+        parent.appendChild(errorDiv);
+      }
+    }
+  }
 }

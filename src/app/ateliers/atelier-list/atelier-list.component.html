@@ -6,7 +6,6 @@
         <h1>Atelier Management</h1>
         <p class="subtitle">Manage your creative workshops effortlessly</p>
     </header>
-
     <main class="content-area">
         <!-- New Atelier Form -->
         <section class="form-section">
@@ -64,8 +63,6 @@
                 </form>
             </div>
         </section>
-
-        <!-- Atelier List -->
         <section class="list-section">
             <div class="list-card">
                 <header class="card-header">
@@ -123,15 +120,86 @@
                         <tr [pEditableRow]="atelier">
                             <td class="image-cell">
                                 <div class="atelier-image">
-                                    <img [src]="url + '/' + atelier.image" [alt]="atelier.name" (click)="showImage(atelier.image)"/>
-
-                                    <div *ngIf="editing" class="p-fluid">
-                                        <input type="file" (change)="onFileChange($event, atelier.id)" accept="image/*" />
+                                    <!-- Display current image when not editing -->
+                                    <div *ngIf="!editing" class="image-display">
+                                        <img 
+                                            [src]="atelier.image ? (url + '/' + atelier.image) : ''" 
+                                            [alt]="atelier.name" 
+                                            (click)="showImage(atelier.image)"
+                                            (error)="onImageError($event)"
+                                            [style.display]="atelier.image ? 'block' : 'none'"
+                                        />
+                                        <div *ngIf="!atelier.image" class="placeholder-image">
+                                            <i class="pi pi-image"></i>
+                                            <span>No Image</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Image editing interface when in edit mode -->
+                                    <div *ngIf="editing" class="image-editor">
+                                        <!-- Current image preview (always show if exists) -->
+                                        <div class="current-image" *ngIf="atelier.image" (click)="fileInput.click()">
+                                            <img 
+                                                [src]="url + '/' + atelier.image" 
+                                                [alt]="atelier.name" 
+                                                class="preview-image"
+                                                (error)="onImageError($event)"
+                                            />
+                                            <div class="image-overlay">
+                                                <i class="pi pi-camera"></i>
+                                                <span class="change-text">Click to change image</span>
+                                            </div>
+                                        </div>
                                         
-                                        <!-- Upload Progress -->
-                                        <div *ngIf="uploadingImages[atelier.id] || uploadProgress[atelier.id] > 0" class="upload-progress">
-                                            <p-progressBar [value]="uploadProgress[atelier.id]" [showValue]="true"></p-progressBar>
-                                            <small *ngIf="uploadingImages[atelier.id]">Uploading image...</small>
+                                        <!-- No image placeholder (show when no image) -->
+                                        <div class="no-image" *ngIf="!atelier.image" (click)="fileInput.click()">
+                                            <i class="pi pi-image"></i>
+                                            <span>Click to add image</span>
+                                        </div>
+                                        
+                                        <!-- File input (hidden but functional) -->
+                                        <input 
+                                            type="file" 
+                                            (change)="onFileChange($event, atelier.id)" 
+                                            accept="image/*" 
+                                            class="file-input"
+                                            #fileInput
+                                        />
+                                        
+                                        <!-- Upload Progress (show during upload) -->
+                                        <div *ngIf="uploadingImages[atelier.id] && uploadProgress[atelier.id] !== undefined" class="upload-progress">
+                                            <p-progressBar 
+                                                [value]="uploadProgress[atelier.id]" 
+                                                [showValue]="true"
+                                                styleClass="upload-progress-bar"
+                                            ></p-progressBar>
+                                            <small>Uploading: {{uploadProgress[atelier.id]}}%</small>
+                                        </div>
+                                        
+                                        <!-- Action buttons container -->
+                                        <div class="image-actions">
+                                            <!-- Choose/Change Image button -->
+                                            <button 
+                                                type="button" 
+                                                pButton 
+                                                icon="pi pi-upload" 
+                                                [label]="atelier.image ? 'Change Image' : 'Choose Image'"
+                                                (click)="fileInput.click()"
+                                                class="p-button-outlined p-button-sm upload-btn"
+                                                [disabled]="uploadingImages[atelier.id]"
+                                            ></button>
+                                            
+                                            <!-- Remove Image button (only show if image exists) -->
+                                            <button 
+                                                type="button" 
+                                                pButton 
+                                                icon="pi pi-trash" 
+                                                label="Remove"
+                                                (click)="removeImage(atelier)"
+                                                class="p-button-outlined p-button-danger p-button-sm remove-btn"
+                                                [disabled]="uploadingImages[atelier.id] || !atelier.image"
+                                                *ngIf="atelier.image"
+                                            ></button>
                                         </div>
                                     </div>
                                 </div>
