@@ -18,16 +18,28 @@ export class ArtistListComponent implements OnInit {
   file: any;
   editingId: number | null = null;
   editedArtist: any = null;
+  showAddForm: boolean = false;
+  
   newArtist: any = {
     id: 0,
-    name: '',
-    description: '',
-    specialite: '',
-    telephone: '',
+    nom: '',
+    prenom: '',
     email: '',
-    image: ''
+    numero: '',
+    image: '',
+    active: true
   };
   progress: number = 0;
+
+  // Image dialog properties
+  imageDialog: boolean = false;
+  selectedImage: string = '';
+  
+  // Image edit functionality
+  imageEditDialog: boolean = false;
+  selectedArtistForImageEdit: any = null;
+  newImageFile: File | null = null;
+  imageUploadProgress: number = 0;
 
   // Tableau management properties
   tableauDialogVisible: boolean = false;
@@ -161,14 +173,140 @@ export class ArtistListComponent implements OnInit {
   resetNewArtist() {
     this.newArtist = {
       id: 0,
-      name: '',
-      description: '',
-      specialite: '',
-      telephone: '',
+      nom: '',
+      prenom: '',
       email: '',
-      image: ''
+      numero: '',
+      image: '',
+      active: true
     };
     this.file = null;
+  }
+
+  toggleActiveStatus(artist: any) {
+    const updatedArtist = { ...artist, active: !artist.active };
+    
+    this.artisteService.AddArtiste(updatedArtist).subscribe(
+      response => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `Artist ${updatedArtist.active ? 'activated' : 'deactivated'} successfully`
+        });
+        this.loadArtists();
+      },
+      error => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error updating artist status'
+        });
+        console.error('Error updating status:', error);
+      }
+    );
+  }
+
+  showImage(image: string) {
+    this.selectedImage = this.url + '/' + image;
+    this.imageDialog = true;
+  }
+
+  // Image edit functionality
+  openImageEditDialog(artist: any) {
+    this.selectedArtistForImageEdit = artist;
+    this.newImageFile = null;
+    this.imageUploadProgress = 0;
+    this.imageEditDialog = true;
+  }
+
+  onImageFileSelect(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Invalid File',
+          detail: 'Please select a valid image file'
+        });
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (file.size > maxSize) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'File Too Large',
+          detail: 'Please select an image smaller than 5MB'
+        });
+        return;
+      }
+      
+      this.newImageFile = file;
+      this.messageService.add({
+        severity: 'info',
+        summary: 'File Selected',
+        detail: `Selected: ${file.name}`
+      });
+    }
+  }
+
+  updateArtistImage() {
+    if (!this.newImageFile || !this.selectedArtistForImageEdit) {
+      return;
+    }
+
+    const fileName = `artist_${this.selectedArtistForImageEdit.id}_${Date.now()}_${this.newImageFile.name}`;
+    this.imageUploadProgress = 0;
+
+    this.blob.uploadImage(this.newImageFile, fileName, (progressEvent: ProgressEvent) => {
+      if (progressEvent.lengthComputable) {
+        this.imageUploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+        
+        if (this.imageUploadProgress === 100) {
+          // Update the artist with the new image
+          const updatedArtist = {
+            ...this.selectedArtistForImageEdit,
+            image: fileName
+          };
+
+          this.artisteService.AddArtiste(updatedArtist).subscribe({
+            next: (response: any) => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Artist image updated successfully'
+              });
+              
+              this.imageEditDialog = false;
+              this.resetImageEditDialog();
+              this.loadArtists();
+            },
+            error: (error) => {
+              console.error('Error updating artist image:', error);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to update artist image'
+              });
+            }
+          });
+        }
+      }
+    });
+  }
+
+  resetImageEditDialog() {
+    this.newImageFile = null;
+    this.imageUploadProgress = 0;
+    this.selectedArtistForImageEdit = null;
+    
+    // Reset file input
+    const fileInput = document.getElementById('imageEditInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
   }
 
   UploadImages(file: any) {

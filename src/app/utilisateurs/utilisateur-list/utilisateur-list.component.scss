@@ -565,22 +565,22 @@
   }
 }
 
-// Expanded Details
+/* Expanded details row */
 .details-row {
-  background: var(--bg-secondary) !important;
-  
   .participation-details {
     padding: 1.5rem;
+    background: #f8fafc;
     
     .details-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 1.5rem;
       
       .detail-section {
-        background: var(--bg-primary);
-        padding: 1rem;
+        background: white;
+        padding: 1.25rem;
         border-radius: var(--border-radius);
+        box-shadow: var(--shadow-sm);
         border: 1px solid var(--border-color);
         
         h4 {
@@ -599,11 +599,16 @@
         
         .items-list {
           .item {
-            padding: 0.5rem 0;
+            padding: 0.75rem 0;
             border-bottom: 1px solid var(--border-color);
             
             &:last-child {
               border-bottom: none;
+              padding-bottom: 0;
+            }
+            
+            &:first-child {
+              padding-top: 0;
             }
             
             .item-name {
@@ -614,7 +619,10 @@
             
             .item-date, .item-progress, .item-status {
               font-size: 0.8rem;
-              color: var(--text-secondary);
+              color: var(--text-muted);
+              display: flex;
+              align-items: center;
+              gap: 0.25rem;
             }
           }
         }

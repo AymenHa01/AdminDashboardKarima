@@ -2,28 +2,35 @@
 
 <div class="admin-container">
     <app-sidebar></app-sidebar>
-    <header class="admin-header">
-        <h1>Artist Management</h1>
-        <p class="subtitle">Manage your artists effortlessly</p>
-    </header>
+    
+    <div class="main-content">
+        <header class="page-header">
+            <div class="header-content">
+                <div class="header-info">
+                    <h1>Artist Management</h1>
+                    <p class="subtitle">Manage your artists effortlessly</p>
+                </div>
+                <div class="header-actions">
+                    <p-button 
+                        [label]="showAddForm ? 'Hide Form' : 'Add Artist'" 
+                        [icon]="showAddForm ? 'pi pi-minus' : 'pi pi-plus'" 
+                        (click)="showAddForm = !showAddForm"
+                        [styleClass]="showAddForm ? 'p-button-secondary' : 'p-button-success'"
+                        class="toggle-form-btn">
+                    </p-button>
+                </div>
+            </div>
+        </header>
 
-    <main class="content-area">
-        <!-- New Artist Form -->
-        <section class="form-section">
+        <!-- Collapsible Artist Form -->
+        <section class="form-section" *ngIf="showAddForm">
             <div class="form-card">
                 <header class="card-header">
                     <h2>Create New Artist</h2>
                     <i class="pi pi-plus-circle"></i>
                 </header>
-                <form (ngSubmit)="saveArtist()" #artistForm="ngForm" class="atelier-form">
+                <form (ngSubmit)="saveArtist()" #artistForm="ngForm" class="artist-form">
                     <div class="form-grid">
-                        <div class="form-field">
-                            <label for="email">
-                                <i class="pi pi-envelope"></i> Email
-                            </label>
-                            <input id="email" type="email" pInputText [(ngModel)]="newArtist.email" 
-                                name="email" required placeholder="Enter email" />
-                        </div>
                         <div class="form-field">
                             <label for="nom">
                                 <i class="pi pi-user"></i> Nom
@@ -39,6 +46,13 @@
                                 name="prenom" required placeholder="Enter first name" />
                         </div>
                         <div class="form-field">
+                            <label for="email">
+                                <i class="pi pi-envelope"></i> Email
+                            </label>
+                            <input id="email" type="email" pInputText [(ngModel)]="newArtist.email" 
+                                name="email" required placeholder="Enter email" />
+                        </div>
+                        <div class="form-field">
                             <label for="numero">
                                 <i class="pi pi-phone"></i> Num Tel
                             </label>
@@ -47,14 +61,38 @@
                         </div>
                         <div class="form-field">
                             <label for="image">
-                                <i class="pi pi-image"></i> Image
+                                <i class="pi pi-file"></i> Fichier
                             </label>
                             <input id="image" type="file" (change)="onFileChange($event)" />
                         </div>
+                        <div class="form-field">
+                            <label>
+                                <i class="pi pi-check-circle"></i> Status
+                            </label>
+                            <div class="status-toggle">
+                                <p-button 
+                                    [label]="'Active'" 
+                                    [icon]="'pi pi-check'" 
+                                    (click)="newArtist.active = true"
+                                    [styleClass]="newArtist.active ? 'p-button-success' : 'p-button-outlined'"
+                                    class="status-btn">
+                                </p-button>
+                                <p-button 
+                                    [label]="'Inactive'" 
+                                    [icon]="'pi pi-times'" 
+                                    (click)="newArtist.active = false"
+                                    [styleClass]="!newArtist.active ? 'p-button-warning' : 'p-button-outlined'"
+                                    class="status-btn">
+                                </p-button>
+                            </div>
+                        </div>
                     </div>
                     <footer class="form-actions">
-                        <p-button label="Ajouter" icon="pi pi-plus" type="submit" 
+                        <p-button label="Add Artist" icon="pi pi-plus" type="submit" 
                             styleClass="p-button-success p-button-raised"></p-button>
+                        <p-button label="Cancel" icon="pi pi-times" type="button" 
+                            (click)="showAddForm = false"
+                            styleClass="p-button-text"></p-button>
                     </footer>
                 </form>
             </div>
@@ -64,110 +102,235 @@
         <section class="list-section">
             <div class="list-card">
                 <header class="card-header">
-                    <h2>Artist List</h2>
+                    <h2>Artist List ({{artists.length}})</h2>
                     <i class="pi pi-list"></i>
                 </header>
-                <p-table [value]="artists" 
-                    [paginator]="true" 
-                    [rows]="5" 
-                    [showCurrentPageReport]="true"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} artistes"
-                    [rowsPerPageOptions]="[5,10,20]"
-                    styleClass="p-datatable-gridlines p-datatable-sm"
-                    [tableStyle]="{'width': '100%'}"
-                    responsiveLayout="scroll">
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th>ID</th>
-                            <th>Email</th>
-                            <th>Image</th>
-                            <th>Nom</th>
-                            <th>Prénom</th>
-                            <th>Num Tel</th>
-                            <th>Actions</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-artist>
-                        <tr>
-                            <td>{{artist.id}}</td>
-                            <td>
-                                <ng-container *ngIf="!isEditing(artist)">
-                                    {{artist.email}}
-                                </ng-container>
-                                <ng-container *ngIf="isEditing(artist)">
-                                    <input pInputText type="email" [(ngModel)]="editedArtist.email">
-                                </ng-container>
-                            </td>
-                            <td>
-                                <img [src]="url + '/' + artist.image" alt="Image de l'artiste" style="width: 40px; height: 40px;"/>
-                            </td>
-                            <td>
-                                <ng-container *ngIf="!isEditing(artist)">
-                                    {{artist.nom}}
-                                </ng-container>
-                                <ng-container *ngIf="isEditing(artist)">
-                                    <input pInputText type="text" [(ngModel)]="editedArtist.nom">
-                                </ng-container>
-                            </td>
-                            <td>
-                                <ng-container *ngIf="!isEditing(artist)">
-                                    {{artist.prenom}}
-                                </ng-container>
-                                <ng-container *ngIf="isEditing(artist)">
-                                    <input pInputText type="text" [(ngModel)]="editedArtist.prenom">
-                                </ng-container>
-                            </td>
-                            <td>
-                                <ng-container *ngIf="!isEditing(artist)">
-                                    {{artist.numero}}
-                                </ng-container>
-                                <ng-container *ngIf="isEditing(artist)">
-                                    <input pInputText type="tel" [(ngModel)]="editedArtist.numero">
-                                </ng-container>
-                            </td>
-                            <td class="actions-cell">
-                                <div class="action-buttons">
-                                    <p-button [icon]="isEditing(artist) ? 'pi pi-check' : 'pi pi-pencil'" 
-                                        (click)="toggleEdit(artist)"
-                                        [styleClass]="isEditing(artist) ? 'p-button-rounded p-button-success mr-2' : 'p-button-rounded p-button-info mr-2'"
-                                        pTooltip="Edit Artist">
-                                    </p-button>
-                                    <ng-container *ngIf="isEditing(artist)">
-                                        <p-button icon="pi pi-times" 
-                                            (click)="cancelEdit(artist)"
-                                            styleClass="p-button-rounded p-button-danger mr-2"
-                                            pTooltip="Cancel Edit">
-                                        </p-button>
+                <div class="table-wrapper">
+                    <p-table [value]="artists" 
+                        [paginator]="true" 
+                        [rows]="10" 
+                        [showCurrentPageReport]="true"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} artists"
+                        [rowsPerPageOptions]="[5,10,20,50]"
+                        styleClass="p-datatable-gridlines p-datatable-sm artists-table"
+                        responsiveLayout="scroll"
+                        [scrollable]="true"
+                        scrollHeight="70vh">
+                        
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="col-image">Image</th>
+                                <th class="col-id">ID</th>
+                                <th class="col-name">Nom</th>
+                                <th class="col-name">Prénom</th>
+                                <th class="col-email">Email</th>
+                                <th class="col-phone">Num Tel</th>
+                                <th class="col-status">Status</th>
+                                <th class="col-actions">Actions</th>
+                            </tr>
+                        </ng-template>
+                        
+                        <ng-template pTemplate="body" let-artist>
+                            <tr>
+                                <td class="image-cell">
+                                    <div class="artist-image">
+                                        <img [src]="url + '/' + artist.image" 
+                                             [alt]="artist.nom + ' ' + artist.prenom" 
+                                             (click)="showImage(artist.image)"/>
+                                        <div class="image-overlay">
+                                            <p-button 
+                                                icon="pi pi-camera" 
+                                                (click)="openImageEditDialog(artist)"
+                                                styleClass="p-button-rounded p-button-sm p-button-secondary"
+                                                pTooltip="Change Image"
+                                                tooltipPosition="top">
+                                            </p-button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="id-cell">{{artist.id}}</td>
+                                <td class="name-cell">
+                                    <ng-container *ngIf="!isEditing(artist)">
+                                        <span class="text-content">{{artist.nom}}</span>
                                     </ng-container>
-                                    <p-button *ngIf="!isEditing(artist)" icon="pi pi-palette" 
-                                        (click)="manageTableaux(artist)"
-                                        styleClass="p-button-rounded p-button-warning mr-2"
-                                        pTooltip="Manage Tableaux">
-                                    </p-button>
-                                    <p-button *ngIf="!isEditing(artist)" icon="pi pi-trash" 
-                                        (click)="DeleteArtist(artist.id)"
-                                        styleClass="p-button-rounded p-button-danger"
-                                        pTooltip="Delete Artist">
-                                    </p-button>
-                                </div>
-                            </td>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="emptymessage">
-                        <tr>
-                            <td colspan="7" class="empty-message">
-                                <i class="pi pi-info-circle"></i>
-                                <span>No artists found</span>
-                            </td>
-                        </tr>
-                    </ng-template>
-                </p-table>
+                                    <ng-container *ngIf="isEditing(artist)">
+                                        <input pInputText type="text" [(ngModel)]="editedArtist.nom" class="edit-input">
+                                    </ng-container>
+                                </td>
+                                <td class="name-cell">
+                                    <ng-container *ngIf="!isEditing(artist)">
+                                        <span class="text-content">{{artist.prenom}}</span>
+                                    </ng-container>
+                                    <ng-container *ngIf="isEditing(artist)">
+                                        <input pInputText type="text" [(ngModel)]="editedArtist.prenom" class="edit-input">
+                                    </ng-container>
+                                </td>
+                                <td class="email-cell">
+                                    <ng-container *ngIf="!isEditing(artist)">
+                                        <span class="text-content">{{artist.email}}</span>
+                                    </ng-container>
+                                    <ng-container *ngIf="isEditing(artist)">
+                                        <input pInputText type="email" [(ngModel)]="editedArtist.email" class="edit-input">
+                                    </ng-container>
+                                </td>
+                                <td class="phone-cell">
+                                    <ng-container *ngIf="!isEditing(artist)">
+                                        <span class="text-content">{{artist.numero}}</span>
+                                    </ng-container>
+                                    <ng-container *ngIf="isEditing(artist)">
+                                        <input pInputText type="tel" [(ngModel)]="editedArtist.numero" class="edit-input">
+                                    </ng-container>
+                                </td>
+                                <td class="status-cell">
+                                    <ng-container *ngIf="!isEditing(artist)">
+                                        <p-tag 
+                                            [value]="artist.active ? 'Active' : 'Inactive'" 
+                                            [severity]="artist.active ? 'success' : 'warning'"
+                                            (click)="toggleActiveStatus(artist)"
+                                            class="status-tag"
+                                            pTooltip="Click to toggle status">
+                                        </p-tag>
+                                    </ng-container>
+                                    <ng-container *ngIf="isEditing(artist)">
+                                        <div class="status-edit-buttons">
+                                            <p-button 
+                                                [icon]="'pi pi-check'" 
+                                                (click)="editedArtist.active = true"
+                                                [styleClass]="editedArtist.active ? 'p-button-success p-button-sm' : 'p-button-outlined p-button-sm'"
+                                                pTooltip="Active">
+                                            </p-button>
+                                            <p-button 
+                                                [icon]="'pi pi-times'" 
+                                                (click)="editedArtist.active = false"
+                                                [styleClass]="!editedArtist.active ? 'p-button-warning p-button-sm' : 'p-button-outlined p-button-sm'"
+                                                pTooltip="Inactive">
+                                            </p-button>
+                                        </div>
+                                    </ng-container>
+                                </td>
+                                <td class="actions-cell">
+                                    <div class="action-buttons">
+                                        <p-button 
+                                            [icon]="isEditing(artist) ? 'pi pi-check' : 'pi pi-pencil'" 
+                                            (click)="toggleEdit(artist)"
+                                            [styleClass]="isEditing(artist) ? 'p-button-rounded p-button-success p-button-sm' : 'p-button-rounded p-button-info p-button-sm'"
+                                            [pTooltip]="isEditing(artist) ? 'Save' : 'Edit'">
+                                        </p-button>
+                                        <ng-container *ngIf="isEditing(artist)">
+                                            <p-button 
+                                                icon="pi pi-times" 
+                                                (click)="cancelEdit(artist)"
+                                                styleClass="p-button-rounded p-button-danger p-button-sm"
+                                                pTooltip="Cancel">
+                                            </p-button>
+                                        </ng-container>
+                                        <p-button 
+                                            *ngIf="!isEditing(artist)" 
+                                            icon="pi pi-palette" 
+                                            (click)="manageTableaux(artist)"
+                                            styleClass="p-button-rounded p-button-warning p-button-sm"
+                                            pTooltip="Manage Tableaux">
+                                        </p-button>
+                                        <p-button 
+                                            *ngIf="!isEditing(artist)" 
+                                            icon="pi pi-trash" 
+                                            (click)="DeleteArtist(artist.id)"
+                                            styleClass="p-button-rounded p-button-danger p-button-sm"
+                                            pTooltip="Delete">
+                                        </p-button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="8" class="empty-message">
+                                    <div class="empty-content">
+                                        <i class="pi pi-info-circle"></i>
+                                        <span>No artists found</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
             </div>
         </section>
-    </main>
+    </div>
 </div>
 
-<!-- Tableau Management Dialog -->
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+<p-dialog header="Image" [(visible)]="imageDialog" [modal]="true" [style]="{width: '50vw'}" [baseZIndex]="10000">
+    <img [src]="selectedImage" width="100%" *ngIf="selectedImage"/>
+</p-dialog>
+
+<!-- Image Edit Dialog -->
+<p-dialog header="Edit Artist Image" 
+    [(visible)]="imageEditDialog" 
+    [modal]="true" 
+    [style]="{width: '40vw', minWidth: '300px'}" 
+    [baseZIndex]="10000"
+    [closable]="true">
+    
+    <div class="image-edit-content" *ngIf="selectedArtistForImageEdit">
+        <div class="current-image-section">
+            <h4>Current Image</h4>
+            <div class="current-image">
+                <img [src]="url + '/' + selectedArtistForImageEdit.image" 
+                     [alt]="selectedArtistForImageEdit.nom + ' ' + selectedArtistForImageEdit.prenom"
+                     style="width: 100%; max-width: 200px; height: auto; border-radius: 8px; border: 2px solid #e5e7eb;"/>
+            </div>
+        </div>
+        
+        <div class="new-image-section">
+            <h4>Select New Image</h4>
+            <div class="file-upload-section">
+                <div class="file-input-wrapper">
+                    <input 
+                        id="imageEditInput" 
+                        type="file" 
+                        (change)="onImageFileSelect($event)" 
+                        accept="image/*" 
+                        class="file-input"/>
+                    <label for="imageEditInput" class="file-input-label">
+                        <i class="pi pi-upload"></i>
+                        Choose Image File
+                    </label>
+                </div>
+                
+                <div *ngIf="newImageFile" class="selected-file-info">
+                    <i class="pi pi-file"></i>
+                    <span>Selected: {{newImageFile.name}}</span>
+                </div>
+                
+                <div *ngIf="imageUploadProgress > 0 && imageUploadProgress < 100" class="upload-progress">
+                    <p-progressBar [value]="imageUploadProgress" [showValue]="true"></p-progressBar>
+                    <small>Uploading image...</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <ng-template pTemplate="footer">
+        <div class="dialog-footer">
+            <p-button 
+                label="Cancel" 
+                icon="pi pi-times" 
+                (click)="imageEditDialog = false; resetImageEditDialog()"
+                styleClass="p-button-text">
+            </p-button>
+            <p-button 
+                label="Update Image" 
+                icon="pi pi-check" 
+                (click)="updateArtistImage()"
+                styleClass="p-button-success"
+                [disabled]="!newImageFile || imageUploadProgress > 0">
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>
 <p-dialog header="Manage Tableaux" 
     [(visible)]="tableauDialogVisible" 
     [modal]="true" 

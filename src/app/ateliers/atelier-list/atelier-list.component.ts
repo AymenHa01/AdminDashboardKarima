@@ -15,7 +15,7 @@ export class AtelierListComponent implements OnInit {
   ateliers: any[] = [];
   filteredAteliers: any[] = [];
   searchText: string = '';
-  selectedAtelier: any = { id: null, name: '', description: '', image: '' };
+  selectedAtelier: any = { id: null, name: '', description: '', image: '', active: true };
   selectedFile: File | null = null;
   progress: number = 0;
   editingRowKeys: { [key: string]: boolean } = {};
@@ -25,6 +25,9 @@ export class AtelierListComponent implements OnInit {
   url: string;
   imageDialog: boolean = false;
   selectedImage: string = '';
+  
+  // Form visibility toggle
+  showAddForm: boolean = false;
   constructor(
     private atelierService: AtelierService,
     private blob: BlobStorgeService,
@@ -42,7 +45,11 @@ export class AtelierListComponent implements OnInit {
   GetAllData() {
     this.atelierService.GetAtelier().subscribe((data: any) => {
       console.log(data);
-      this.ateliers = data;
+      // Ensure all ateliers have active property (default to true if not set)
+      this.ateliers = data.map((atelier: any) => ({
+        ...atelier,
+        active: atelier.active !== undefined ? atelier.active : true
+      }));
       this.filteredAteliers = [...this.ateliers]; // Initialize filtered list
       this.applyFilter(); // Apply current search filter if any
     });
@@ -228,7 +235,7 @@ export class AtelierListComponent implements OnInit {
             detail: 'Atelier added successfully'
           });
           this.GetAllData();
-          this.selectedAtelier = { id: null, name: '', description: '', image: '' };
+          this.selectedAtelier = { id: null, name: '', description: '', image: '', active: true };
         },
         (error) => {
           this.messageService.add({
@@ -305,5 +312,32 @@ export class AtelierListComponent implements OnInit {
         parent.appendChild(errorDiv);
       }
     }
+  }
+
+  // Toggle active status method
+  toggleActiveStatus(atelier: any) {
+    const updatedAtelier = { 
+      ...atelier, 
+      active: !atelier.active 
+    };
+    
+    this.atelierService.UpdateAtelier(updatedAtelier).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `Atelier ${updatedAtelier.active ? 'activated' : 'deactivated'} successfully`
+        });
+        this.GetAllData();
+      },
+      error: (error) => {
+        console.error('Error updating atelier status:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to update atelier status'
+        });
+      }
+    });
   }
 }

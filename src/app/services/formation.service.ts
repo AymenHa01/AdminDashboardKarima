@@ -42,7 +42,7 @@ export class FormationService {
   }
 
   updateFormation(formation: Formation): Observable<Formation> {
-    return this.http.post<Formation>(`${this.apiUrl}/AddFormation`, formation, {
+    return this.http.post<Formation>(`${this.apiUrl}/EditFormation`, formation, {
       headers: this.getHeaders()
     });
   }

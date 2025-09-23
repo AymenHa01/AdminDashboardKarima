@@ -19,16 +19,18 @@ export class EvenementListComponent implements OnInit {
   file: any;
   editingId: number | null = null;
   editedEvenement: any = null;
+  showAddForm: boolean = false;
   
   newEvenement: any = {
     id: 0,
     name: '',
     description: '',
-    debut: '',
-    fin: '',
+    dateDebut: '',
+    dateFin: '',
     lieu: '',
     prix: 0,
-    image: ''
+    image: '',
+    active: true
   };
 
   selectedFile: File | null = null;
@@ -44,6 +46,12 @@ export class EvenementListComponent implements OnInit {
   evenementMedias: any[] = [];
   selectedFiles: File[] = [];
   uploadProgress: { [key: string]: number } = {};
+
+  // Image edit functionality
+  imageEditDialog: boolean = false;
+  selectedEvenementForImageEdit: any = null;
+  newImageFile: File | null = null;
+  imageUploadProgress: number = 0;
   
   constructor(
     private evenementService: EvenementService,
@@ -169,13 +177,37 @@ export class EvenementListComponent implements OnInit {
       id: 0,
       name: '',
       description: '',
-      debut: '',
-      fin: '',
+      dateDebut: '',
+      dateFin: '',
       lieu: '',
       prix: 0,
-      image: ''
+      image: '',
+      active: true
     };
     this.file = null;
+  }
+
+  toggleActiveStatus(evenement: any) {
+    const updatedEvenement = { ...evenement, active: !evenement.active };
+    
+    this.evenementService.AddEvenemt(updatedEvenement).subscribe(
+      response => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `Event ${updatedEvenement.active ? 'activated' : 'deactivated'} successfully`
+        });
+        this.loadEvenements();
+      },
+      error => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error updating event status'
+        });
+        console.error('Error updating status:', error);
+      }
+    );
   }
 
   // UploadImages(file: any) {
@@ -250,6 +282,8 @@ export class EvenementListComponent implements OnInit {
     this.selectedEvenement = evenement;
     this.mediaDialogVisible = true;
      this.evenementMedias = evenement.media || [];
+     console.log('Evenement medias:', this.evenementMedias);
+     
     this.resetMultipleImagesForm();
   }
 
@@ -369,5 +403,103 @@ export class EvenementListComponent implements OnInit {
 
   getUploadProgressKeys(): string[] {
     return Object.keys(this.uploadProgress);
+  }
+
+  // Image edit functionality
+  openImageEditDialog(evenement: any) {
+    this.selectedEvenementForImageEdit = evenement;
+    this.newImageFile = null;
+    this.imageUploadProgress = 0;
+    this.imageEditDialog = true;
+  }
+
+  onImageFileSelect(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Invalid File',
+          detail: 'Please select a valid image file'
+        });
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (file.size > maxSize) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'File Too Large',
+          detail: 'Please select an image smaller than 5MB'
+        });
+        return;
+      }
+      
+      this.newImageFile = file;
+      this.messageService.add({
+        severity: 'info',
+        summary: 'File Selected',
+        detail: `Selected: ${file.name}`
+      });
+    }
+  }
+
+  updateEvenementImage() {
+    if (!this.newImageFile || !this.selectedEvenementForImageEdit) {
+      return;
+    }
+
+    const fileName = `evenement_${this.selectedEvenementForImageEdit.id}_${Date.now()}_${this.newImageFile.name}`;
+    this.imageUploadProgress = 0;
+
+    this.blob.uploadImage(this.newImageFile, fileName, (progressEvent: ProgressEvent) => {
+      if (progressEvent.lengthComputable) {
+        this.imageUploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+        
+        if (this.imageUploadProgress === 100) {
+          // Update the evenement with the new image
+          const updatedEvenement = {
+            ...this.selectedEvenementForImageEdit,
+            image: fileName
+          };
+
+          this.evenementService.AddEvenemt(updatedEvenement).subscribe({
+            next: (response: any) => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Event image updated successfully'
+              });
+              
+              this.imageEditDialog = false;
+              this.resetImageEditDialog();
+              this.loadEvenements();
+            },
+            error: (error) => {
+              console.error('Error updating event image:', error);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to update event image'
+              });
+            }
+          });
+        }
+      }
+    });
+  }
+
+  resetImageEditDialog() {
+    this.newImageFile = null;
+    this.imageUploadProgress = 0;
+    this.selectedEvenementForImageEdit = null;
+    
+    // Reset file input
+    const fileInput = document.getElementById('imageEditInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
   }
 }

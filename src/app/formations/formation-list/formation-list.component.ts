@@ -30,6 +30,15 @@ export class FormationListComponent implements OnInit {
   selectedFiles: File[] = [];
   uploadProgress: { [key: string]: number } = {};
 
+  // Image editing
+  imageEditDialog: boolean = false;
+  selectedFormationForImageEdit: any = null;
+  newImageFile: File | null = null;
+  imageUploadProgress: number = 0;
+  
+  // Form visibility toggle
+  showAddForm: boolean = false;
+
   newFormation: any = {
     id: 0,
     name: '',
@@ -39,7 +48,8 @@ export class FormationListComponent implements OnInit {
     fin: '',
     heures: 0,
     prix: 0,
-    image: ''
+    image: '',
+    active: true
   };
   progress: number = 0;
 
@@ -172,7 +182,8 @@ export class FormationListComponent implements OnInit {
       fin: '',
       heures: 0,
       prix: 0,
-      image: ''
+      image: '',
+      active: true
     };
     this.file = null;
   }
@@ -361,5 +372,106 @@ export class FormationListComponent implements OnInit {
 
   getUploadProgressKeys(): string[] {
     return Object.keys(this.uploadProgress);
+  }
+
+  // Image editing methods
+  openImageEditDialog(formation: any) {
+    this.selectedFormationForImageEdit = formation;
+    this.imageEditDialog = true;
+    this.newImageFile = null;
+    this.imageUploadProgress = 0;
+  }
+
+  onImageFileSelect(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.newImageFile = file;
+    }
+  }
+
+  updateFormationImage() {
+    if (!this.newImageFile || !this.selectedFormationForImageEdit) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'Please select an image file'
+      });
+      return;
+    }
+
+    const fileName = `formation_${this.selectedFormationForImageEdit.id}_${Date.now()}_${this.newImageFile.name}`;
+    
+    this.blob.uploadImage(this.newImageFile, fileName, (progressEvent: ProgressEvent) => {
+      if (progressEvent.lengthComputable) {
+        this.imageUploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+        
+        if (this.imageUploadProgress === 100) {
+          // Update formation with new image
+          const updatedFormation = { 
+            ...this.selectedFormationForImageEdit, 
+            image: fileName 
+          };
+          
+          this.formationService.updateFormation(updatedFormation).subscribe({
+            next: () => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Formation image updated successfully'
+              });
+              this.imageEditDialog = false;
+              this.loadFormations();
+              this.resetImageEditDialog();
+            },
+            error: (error) => {
+              console.error('Error updating formation image:', error);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to update formation image'
+              });
+            }
+          });
+        }
+      }
+    });
+  }
+
+  resetImageEditDialog() {
+    this.selectedFormationForImageEdit = null;
+    this.newImageFile = null;
+    this.imageUploadProgress = 0;
+    
+    // Reset file input
+    const fileInput = document.getElementById('imageEditInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
+
+  toggleActiveStatus(formation: any) {
+    const updatedFormation = { 
+      ...formation, 
+      active: !formation.active 
+    };
+    
+    this.formationService.updateFormation(updatedFormation).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `Formation ${updatedFormation.active ? 'activated' : 'deactivated'} successfully`
+        });
+        this.loadFormations();
+      },
+      error: (error) => {
+        console.error('Error updating formation status:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to update formation status'
+        });
+      }
+    });
   }
 }

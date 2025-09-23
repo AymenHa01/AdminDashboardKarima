@@ -8,6 +8,7 @@ export class Formation {
       private fin?: string,
       private heures?: number,
       private prix?: number,
-      private image?: string
+      private image?: string,
+      private active?: boolean
   ) {}
 }
