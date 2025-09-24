@@ -27,7 +27,7 @@ export class EvenementListComponent implements OnInit {
     description: '',
     dateDebut: '',
     dateFin: '',
-    lieu: '',
+    lieu: '', 
     prix: 0,
     image: '',
     active: true
