@@ -7,6 +7,7 @@ import { BlobStorgeService } from '../../../blob-storge.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ImagesADDComponent } from '../../images-add/images-add.component';
 import { SidebarService } from '../../shared/sidebar/sidebar.service';
+import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { env } from 'process';
 import { environment } from '../../../environments/environment';
@@ -22,7 +23,7 @@ export class SousAtelierListComponent implements OnInit, OnDestroy {
     atelier : {},
     name: '',
     description: '',
-    prix: null, // Use appropriate type (e.g., number)
+    prix: null, 
     image: null as string | null
   };
 
@@ -70,7 +71,8 @@ export class SousAtelierListComponent implements OnInit, OnDestroy {
     private mediaService: MediaService,
     private blobService: BlobStorgeService, 
     private dialog: MatDialog,
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
+    private messageService: MessageService
   ) { }
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id');
@@ -91,6 +93,8 @@ export class SousAtelierListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.sidebarSubscription.unsubscribe();
   }
+
+
   openModal(): void {
     const dialogRef = this.dialog.open(ImagesADDComponent, {
       width: '500px',
@@ -99,11 +103,12 @@ export class SousAtelierListComponent implements OnInit, OnDestroy {
      
     });}
 
+
+
   GetSousAtelier(){
     this.sousAtelier.GetSousAtelierById(this.id).subscribe((data : any )=>
       {this.sousAteliers=data
         console.log(data);
-        
         this.sousAtelierImages = data.media || [];  
       }
 
@@ -117,7 +122,12 @@ export class SousAtelierListComponent implements OnInit, OnDestroy {
     
     // Check if there's a new image being uploaded
     if (this.uploadingInlineImages[id]) {
-      alert('Veuillez attendre que l\'upload de l\'image soit terminé.');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Upload en cours',
+        detail: 'Veuillez attendre que l\'upload de l\'image soit terminé.',
+        life: 5000
+      });
       return;
     }
     
@@ -138,28 +148,47 @@ export class SousAtelierListComponent implements OnInit, OnDestroy {
       "image": imageToSave,
       "prix": prix
     };
+
+    console.log('Saving sous-atelier with body:', body);
+    
     
     this.sousAtelier.Edite(body).subscribe({
       next: (data: any) => {
         console.log('Sous-atelier updated successfully:', data);
         this.GetSousAtelier();
         this.exitEditMode(id);
-        alert('Sous-atelier modifié avec succès!');
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Succès',
+          detail: 'Sous-atelier modifié avec succès!',
+          life: 4000
+        });
       },
       error: (error) => {
         console.error('Error updating sous-atelier:', error);
-        alert('Erreur lors de la modification du sous-atelier.');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: 'Erreur lors de la modification du sous-atelier.',
+          life: 5000
+        });
       }
     });
   }
 
-  // New method to save sous-atelier using the object directly
+
+
   saveSousAtelier(sousAtelier: any): void {
     console.log('Saving sous-atelier:', sousAtelier);
     
     // Check if there's a new image being uploaded
     if (this.uploadingInlineImages[sousAtelier.id]) {
-      alert('Veuillez attendre que l\'upload de l\'image soit terminé.');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Upload en cours',
+        detail: 'Veuillez attendre que l\'upload de l\'image soit terminé.',
+        life: 5000
+      });
       return;
     }
     
@@ -173,17 +202,29 @@ export class SousAtelierListComponent implements OnInit, OnDestroy {
       "image": sousAtelier.image || '',
       "prix": sousAtelier.prix
     };
+
+    console.log('Saving sous-atelier with body:', body);
     
     this.sousAtelier.Edite(body).subscribe({
       next: (data: any) => {
         console.log('Sous-atelier updated successfully:', data);
         this.GetSousAtelier();
         this.exitEditMode(sousAtelier.id);
-        alert('Sous-atelier modifié avec succès!');
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Succès',
+          detail: 'Sous-atelier modifié avec succès!',
+          life: 4000
+        });
       },
       error: (error) => {
         console.error('Error updating sous-atelier:', error);
-        alert('Erreur lors de la modification du sous-atelier.');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: 'Erreur lors de la modification du sous-atelier.',
+          life: 5000
+        });
       }
     });
   }
@@ -199,17 +240,32 @@ this.sousAtelier.DeleteSousAtelier(body).subscribe((data)=> this.GetSousAtelier(
 checkForm() {
   // Validate required fields
   if (!this.newSousAtelier.name || this.newSousAtelier.name.trim() === '') {
-    alert('Veuillez entrer un nom pour le sous-atelier.');
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Champ requis',
+      detail: 'Veuillez entrer un nom pour le sous-atelier.',
+      life: 4000
+    });
     return;
   }
   
   if (!this.newSousAtelier.description || this.newSousAtelier.description.trim() === '') {
-    alert('Veuillez entrer une description pour le sous-atelier.');
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Champ requis',
+      detail: 'Veuillez entrer une description pour le sous-atelier.',
+      life: 4000
+    });
     return;
   }
   
   if (this.newSousAtelier.prix === null || this.newSousAtelier.prix === undefined || this.newSousAtelier.prix < 0) {
-    alert('Veuillez entrer un prix valide pour le sous-atelier.');
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Prix invalide',
+      detail: 'Veuillez entrer un prix valide pour le sous-atelier.',
+      life: 4000
+    });
     return;
   }
 
@@ -228,11 +284,21 @@ checkForm() {
       this.showForm = false; // Hide form after successful submission
       
       // Show success message
-      alert('Sous-atelier ajouté avec succès!');
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Succès',
+        detail: 'Sous-atelier ajouté avec succès!',
+        life: 4000
+      });
     },
     error: (error) => {
       console.error('Erreur lors de l\'ajout du sous-atelier', error);
-      alert('Erreur lors de l\'ajout du sous-atelier. Veuillez réessayer.');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erreur',
+        detail: 'Erreur lors de l\'ajout du sous-atelier. Veuillez réessayer.',
+        life: 5000
+      });
     }
   });
 }
@@ -384,7 +450,12 @@ uploadFormImage(sousAtelierId: number): void {
     this.uploadingInlineImages[sousAtelierId] = false;
     this.inlineUploadProgress[sousAtelierId] = 0;
     
-    alert('Erreur lors de l\'upload de l\'image');
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Erreur d\'upload',
+      detail: 'Erreur lors de l\'upload de l\'image. Veuillez réessayer.',
+      life: 5000
+    });
   }// Toggle form visibility
 toggleForm(): void {
   this.showForm = !this.showForm;
@@ -636,32 +707,29 @@ uploadSimpleImage(file: File): void {
   }, 1000);
 }
 
-deleteImage(image: any): void {
-  if (confirm('Êtes-vous sûr de vouloir supprimer cette image ?')) {
-    this.mediaService.deleteMedia(image.id.toString()).subscribe({
-      next: () => {
-        // Refresh images list
-        this.loadSousAtelierImages(this.selectedSousAtelier);
-      },
-      error: (error) => {
-        console.error('Error deleting image:', error);
-        alert('Erreur lors de la suppression de l\'image');
-      }
-    });
-  }
-}
 
 // Delete image from gallery
-deleteImageFromGallery(image: any): void {
+deleteImage(image: any): void {
   if (confirm('Êtes-vous sûr de vouloir supprimer cette image ?')) {
-    this.mediaService.deleteMedia(image.id.toString()).subscribe({
+    this.mediaService.deleteMediaAtelier(image.id.toString()).subscribe({
       next: () => {
         // Refresh images list in gallery
         this.loadSousAtelierImages(this.selectedSousAtelier.id);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Image supprimée',
+          detail: 'L\'image a été supprimée avec succès.',
+          life: 3000
+        });
       },
       error: (error) => {
         console.error('Error deleting image:', error);
-        alert('Erreur lors de la suppression de l\'image');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur de suppression',
+          detail: 'Erreur lors de la suppression de l\'image.',
+          life: 5000
+        });
       }
     });
   }
@@ -674,7 +742,12 @@ getImageUrl(image: any): string {
 // Download all images
 downloadAllImages(): void {
   if (this.sousAtelierImages.length === 0) {
-    alert('Aucune image à télécharger');
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Aucune image',
+      detail: 'Aucune image à télécharger pour ce sous-atelier.',
+      life: 4000
+    });
     return;
   }
 
@@ -694,7 +767,12 @@ private downloadImagesSequentially(index: number): void {
     this.isDownloading = false;
     this.downloadProgress = 100;
     this.currentDownloadingImage = '';
-    alert(`Téléchargement terminé! ${this.downloadedCount} images téléchargées.`);
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Téléchargement terminé',
+      detail: `${this.downloadedCount} images téléchargées avec succès!`,
+      life: 4000
+    });
     
     // Reset progress after a delay
     setTimeout(() => {
@@ -762,8 +840,6 @@ closeImageGallery(): void {
   this.showImageGallery = false;
   this.selectedSousAtelier = null;
   this.sousAtelierImages = [];
-  
-  // Reset upload and download state
   this.isUploading = false;
   this.uploadProgress = 0;
   this.uploadError = '';
@@ -772,6 +848,34 @@ closeImageGallery(): void {
   this.downloadedCount = 0;
   this.totalDownloadCount = 0;
   this.currentDownloadingImage = '';
+}
+
+deleteImageFromGallery(id: number): void {
+  if (confirm('Êtes-vous sûr de vouloir supprimer cette image ?')) {
+    this.mediaService.deleteMediaAtelier(id.toString()).subscribe({
+      next: () => {
+        // Refresh images list in gallery
+        this.loadSousAtelierImages(this.selectedSousAtelier.id);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Image supprimée',
+          detail: 'L\'image a été supprimée avec succès.',
+          life: 3000
+        });
+      },
+      error: (error) => {
+        console.error('Error deleting image:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur de suppression',
+          detail: 'Erreur lors de la suppression de l\'image.',
+          life: 5000
+        });
+      }
+    });
+  }
+
+
 }
 
 

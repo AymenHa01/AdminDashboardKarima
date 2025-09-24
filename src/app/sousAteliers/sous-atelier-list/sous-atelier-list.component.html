@@ -209,7 +209,7 @@
                                     [(ngModel)]="sousAtelier.prix" 
                                     class="editable-field edit-active">
                                 <ng-template #viewPrix>
-                                    <span>{{sousAtelier.prix}}€</span>
+                                    <span>{{sousAtelier.prix}} DT</span>
                                 </ng-template>
                             </td>
                             <td>{{sousAtelier.atelier.name}}</td>
@@ -355,7 +355,7 @@
                 </p>
             </div>
             
-            <div class="images-grid">
+            <!-- <div class="images-grid">
                 <div *ngFor="let image of sousAtelierImages" class="image-item">
                     <img [src]="getImageUrl(image)" alt="Image" class="image-thumbnail">
                     <div class="image-actions">
@@ -369,13 +369,13 @@
                         <p-button 
                             icon="pi pi-trash" 
                             styleClass="p-button-danger p-button-sm" 
-                            (click)="deleteImage(image)" 
+                            (click)="deleteImage(image.id)" 
                             title="Supprimer" 
                             [disabled]="isDownloading">
                         </p-button>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
 
         <div *ngIf="sousAtelierImages.length === 0 && !isUploading" class="no-images">
@@ -414,7 +414,7 @@
                         <p-button 
                             icon="pi pi-trash" 
                             styleClass="p-button-danger p-button-sm" 
-                            (click)="deleteImageFromGallery(image)" 
+                            (click)="deleteImageFromGallery(image.id)" 
                             title="Supprimer">
                         </p-button>
                     </div>

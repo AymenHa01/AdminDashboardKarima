@@ -369,7 +369,7 @@ export class EvenementListComponent implements OnInit {
 
   deleteMedia(media: any) {
     if (confirm('Are you sure you want to delete this image?')) {
-      this.mediaService.deleteMedia(media.id).subscribe({
+      this.mediaService.deleteMediaEvent(media.id).subscribe({
         next: () => {
           this.messageService.add({
             severity: 'success',

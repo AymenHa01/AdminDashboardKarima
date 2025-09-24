@@ -94,5 +94,39 @@ export class MediaService {
 
 
 
+
+  deleteMediaFormation(mediaId: string): Observable<void> {
+    const numericMediaId = parseInt(mediaId, 10);
+    if (isNaN(numericMediaId)) {
+      return throwError(() => new Error('Invalid media ID format'));
+    }
+    return this.http.delete<void>(`${this.apiUrl}/DeleteMediaFormation?mediaId=${numericMediaId}`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  deleteMediaEvent(mediaId: string): Observable<void> {
+    const numericMediaId = parseInt(mediaId, 10);
+    if (isNaN(numericMediaId)) {
+      return throwError(() => new Error('Invalid media ID format'));
+    }
+
+    return this.http.delete<void>(`${this.apiUrl}/DeleteMediaEvent?mediaId=${numericMediaId}`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  deleteMediaAtelier(mediaId: string): Observable<void> {
+    const numericMediaId = parseInt(mediaId, 10);
+    if (isNaN(numericMediaId)) {
+      return throwError(() => new Error('Invalid media ID format'));
+    }
+
+    return this.http.delete<void>(`${this.apiUrl}/DeleteMediaAtelier?mediaId=${numericMediaId}`, {
+      headers: this.getHeaders()
+    });
+  }
+
+
   
 }
