@@ -16,7 +16,6 @@
                 </div>
             </div>
         </header>
-
         <section class="form-section">
             <div class="form-card">
                 <header class="card-header">
@@ -73,6 +72,23 @@
                             <input id="image" 
                                 type="file" 
                                 (change)="onFileChange($event)" />
+                        </div>
+
+                        <div class="form-field status-field">
+                            <label for="active">
+                                <i class="pi pi-power-off"></i> Status
+                            </label>
+                            <div class="status-toggle">
+                                <p-inputSwitch 
+                                    id="active"
+                                    formControlName="active"
+                                    trueValue="true"
+                                    falseValue="false">
+                                </p-inputSwitch>
+                                <span class="status-label" [class.active]="sousAtelierForm.get('active')?.value">
+                                    {{sousAtelierForm.get('active')?.value ? 'Active' : 'Inactive'}}
+                                </span>
+                            </div>
                         </div>
                     </div>
 

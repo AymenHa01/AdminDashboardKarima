@@ -99,6 +99,20 @@
                     </div>
                 </div>
 
+                <!-- Active Status Field -->
+                <div class="form-group status-field">
+                    <label for="active">Status</label>
+                    <div class="status-toggle">
+                        <p-inputSwitch 
+                            id="active"
+                            [(ngModel)]="newSousAtelier.active">
+                        </p-inputSwitch>
+                        <span class="status-label" [class.active]="newSousAtelier.active">
+                            {{newSousAtelier.active ? 'Actif' : 'Inactif'}}
+                        </span>
+                    </div>
+                </div>
+
                 <!-- Submit Button -->
                 <div class="form-actions">
                     <p-button 
@@ -125,6 +139,7 @@
                             <th>Description</th>
                             <th>Titre</th>
                             <th>Prix</th>
+                            <th>Status</th>
                             <th>Atelier</th>
                             <th>Images</th>
                             <th>Actions</th>
@@ -211,6 +226,18 @@
                                 <ng-template #viewPrix>
                                     <span>{{sousAtelier.prix}} DT</span>
                                 </ng-template>
+                            </td>
+                            <td class="status-cell">
+                                <div class="status-toggle-container">
+                                    <p-inputSwitch 
+                                        [(ngModel)]="sousAtelier.active"
+                                        (onChange)="toggleSousAtelierStatus(sousAtelier)"
+                                        [disabled]="uploadingInlineImages[sousAtelier.id]">
+                                    </p-inputSwitch>
+                                    <span class="status-label" [class.active]="sousAtelier.active">
+                                        {{sousAtelier.active ? 'Actif' : 'Inactif'}}
+                                    </span>
+                                </div>
                             </td>
                             <td>{{sousAtelier.atelier.name}}</td>
                             <td>

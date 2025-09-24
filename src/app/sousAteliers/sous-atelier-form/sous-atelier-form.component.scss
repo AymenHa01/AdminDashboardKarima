@@ -196,6 +196,26 @@ button:hover {
             padding-top: 1rem;
             border-top: 1px solid #e9ecef;
         }
+
+        // Status field styling
+        .status-field {
+            .status-toggle {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 0.5rem 0;
+
+                .status-label {
+                    font-weight: 500;
+                    color: #dc3545;  // Red for inactive
+                    transition: color 0.3s ease;
+
+                    &.active {
+                        color: #28a745;  // Green for active
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -35,10 +35,9 @@ export class ArtisteService {
     });
   }
 
-  DeleteArtiste(body: any) {
-    return this.http.delete(this.apiUrl + "/DeletArtiste", {
+  DeleteArtiste(id: number) {
+    return this.http.delete(this.apiUrl + "/DeletArtiste/" + id, {
       headers: this.getHeaders(),
-      body
     });
   }
 

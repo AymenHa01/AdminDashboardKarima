@@ -28,6 +28,12 @@ export class EvenementService {
       observe: 'response'
     });
   }
+  EditEvenement(body: any) {
+    return this.http.post(this.apiUrl + "/EditEvenement", body, {
+      headers: this.getHeaders(),
+      observe: 'response'
+    });
+  }
 
   GetAllevents() {
     return this.http.get(this.api + "/GetAll", {

@@ -23,7 +23,8 @@ export class SousAtelierFormComponent implements OnInit {
       name: ['', [Validators.required]],
       description: ['', [Validators.required]],
       prix: ['', [Validators.required, Validators.min(0)]],
-      image: ['']
+      image: [''],
+      active: [true]
     });
   }
 
