@@ -22,6 +22,11 @@ export class FormationListComponent implements OnInit {
   url: string;
   imageDialog: boolean = false;
   selectedImage: string = '';
+  
+  // Inline image editing properties
+  editImageFile: { [key: number]: File } = {};
+  editImagePreview: string | null = null;
+  editImageUploadProgress: { [key: number]: number } = {};
 
   // Multiple images management
   mediaDialogVisible: boolean = false;
@@ -71,31 +76,19 @@ export class FormationListComponent implements OnInit {
 
   toggleEdit(formation: any) {
     if (this.editingId === formation.id) {
-      // Save changes
-      this.formationService.updateFormation(this.editedFormation).subscribe(
-        () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Formation mise à jour avec succès'
-          });
-          this.editingId = null;
-          this.editedFormation = null;
-          this.loadFormations();
-        },
-        error => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Erreur lors de la mise à jour de la formation'
-          });
-          console.error('Erreur lors de la mise à jour:', error);
-        }
-      );
+      // Check if there's a new image to upload first
+      if (this.editImageFile[formation.id]) {
+        this.uploadEditImageAndSave(formation);
+      } else {
+        // No new image, just save the formation changes
+        this.saveFormationChanges();
+      }
     } else {
       // Start editing
       this.editingId = formation.id;
       this.editedFormation = { ...formation };
+      this.editImagePreview = null;
+      this.editImageUploadProgress[formation.id] = 0;
     }
   }
 
@@ -104,8 +97,15 @@ export class FormationListComponent implements OnInit {
   }
 
   cancelEdit(formation: any) {
+    if (this.editingId) {
+      // Clean up image editing state
+      delete this.editImageFile[this.editingId];
+      delete this.editImageUploadProgress[this.editingId];
+    }
+    
     this.editingId = null;
     this.editedFormation = null;
+    this.editImagePreview = null;
   }
 
   DeleteFormation(id: number) {
@@ -447,6 +447,74 @@ export class FormationListComponent implements OnInit {
     if (fileInput) {
       fileInput.value = '';
     }
+  }
+
+  // New methods for inline image editing
+  onEditImageSelect(event: any, formation: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.editImageFile[formation.id] = file;
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.editImagePreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+      
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Image Selected',
+        detail: 'New image selected. Save to apply changes.'
+      });
+    }
+  }
+
+  uploadEditImageAndSave(formation: any) {
+    const file = this.editImageFile[formation.id];
+    if (!file) {
+      this.saveFormationChanges();
+      return;
+    }
+
+    const fileName = `formation_${formation.id}_${Date.now()}_${file.name}`;
+    this.editImageUploadProgress[formation.id] = 0;
+
+    this.blob.uploadImage(file, fileName, (progressEvent: ProgressEvent) => {
+      if (progressEvent.lengthComputable) {
+        this.editImageUploadProgress[formation.id] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+        
+        if (this.editImageUploadProgress[formation.id] === 100) {
+          // Update the edited formation with new image name
+          this.editedFormation.image = fileName;
+          
+          // Now save the formation with the new image
+          this.saveFormationChanges();
+        }
+      }
+    });
+  }
+
+  saveFormationChanges() {
+    this.formationService.updateFormation(this.editedFormation).subscribe(
+      () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Formation mise à jour avec succès'
+        });
+        this.cancelEdit(null);
+        this.loadFormations();
+      },
+      error => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Erreur lors de la mise à jour de la formation'
+        });
+        console.error('Erreur lors de la mise à jour:', error);
+      }
+    );
   }
 
   toggleActiveStatus(formation: any) {

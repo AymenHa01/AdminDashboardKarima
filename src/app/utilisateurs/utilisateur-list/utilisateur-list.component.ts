@@ -20,6 +20,11 @@ interface UserWithParticipations {
     sousAteliers: any[];
   };
   participationTypes?: string[];
+  adherents?: Array<{
+    id: number;
+    type: string;
+    idType: number;
+  }>;
   // Additional fields to help with search
   searchDetails?: {
     eventNames: string[];
@@ -313,5 +318,10 @@ export class UtilisateurListComponent implements OnInit {
     }
     
     return summary.length > 0 ? summary.join(', ') : 'No participations';
+  }
+
+  getSearchPlaceholder(): string {
+    const option = this.searchOptions.find(opt => opt.value === this.searchBy);
+    return `Search by ${option?.label || 'User'}`;
   }
 }

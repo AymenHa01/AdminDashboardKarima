@@ -158,18 +158,47 @@
                             <tr>
                                 <td class="image-cell">
                                     <div class="formation-image">
-                                        <img [src]="url + '/' + formation.image" 
-                                             [alt]="formation.name" 
-                                             (click)="showImage(formation.image)"/>
-                                        <div class="image-overlay">
-                                            <p-button 
-                                                icon="pi pi-camera" 
-                                                (click)="openImageEditDialog(formation)"
-                                                styleClass="p-button-rounded p-button-sm p-button-secondary"
-                                                pTooltip="Change Image"
-                                                tooltipPosition="top">
-                                            </p-button>
-                                        </div>
+                                        <ng-container *ngIf="!isEditing(formation)">
+                                            <img [src]="url + '/' + formation.image" 
+                                                 [alt]="formation.name" 
+                                                 (click)="showImage(formation.image)"/>
+                                            <div class="image-overlay">
+                                                <p-button 
+                                                    icon="pi pi-camera" 
+                                                    (click)="openImageEditDialog(formation)"
+                                                    styleClass="p-button-rounded p-button-sm p-button-secondary"
+                                                    pTooltip="Change Image"
+                                                    tooltipPosition="top">
+                                                </p-button>
+                                            </div>
+                                        </ng-container>
+                                        <ng-container *ngIf="isEditing(formation)">
+                                            <div class="edit-image-section">
+                                                <div class="current-image-preview">
+                                                    <img [src]="editImagePreview || (url + '/' + formation.image)" 
+                                                         [alt]="formation.name" 
+                                                         class="preview-img"/>
+                                                </div>
+                                                <div class="image-input-wrapper">
+                                                    <input 
+                                                        type="file" 
+                                                        #imageInput
+                                                        (change)="onEditImageSelect($event, formation)"
+                                                        accept="image/*"
+                                                        class="image-file-input"
+                                                        id="editImage_{{formation.id}}">
+                                                    <p-button 
+                                                        icon="pi pi-upload" 
+                                                        (click)="imageInput.click()"
+                                                        styleClass="p-button-sm p-button-outlined"
+                                                        pTooltip="Select New Image">
+                                                    </p-button>
+                                                </div>
+                                                <div *ngIf="editImageUploadProgress[formation.id] > 0" class="upload-progress-inline">
+                                                    <p-progressBar [value]="editImageUploadProgress[formation.id]" [showValue]="true"></p-progressBar>
+                                                </div>
+                                            </div>
+                                        </ng-container>
                                     </div>
                                 </td>
                                 <td class="id-cell">{{formation.id}}</td>

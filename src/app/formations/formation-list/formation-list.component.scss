@@ -367,14 +367,57 @@ $transition: all 0.3s ease;
         width: 24px !important;
         height: 24px !important;
         min-width: 24px !important;
+      }
+    }
+
+    // Inline image editing styles
+    .edit-image-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      width: 100%;
+      
+      .current-image-preview {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid $border-color;
         
-        &:hover {
-          background: white !important;
-          transform: scale(1.1);
+        .preview-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+      
+      .image-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        
+        .image-file-input {
+          display: none;
         }
         
-        .p-button-icon {
+        .p-button {
+          padding: 0.25rem 0.5rem !important;
           font-size: 0.75rem !important;
+          height: auto !important;
+          min-height: 32px !important;
+        }
+      }
+      
+      .upload-progress-inline {
+        width: 100%;
+        
+        .p-progressbar {
+          height: 8px !important;
+          
+          .p-progressbar-value {
+            background: linear-gradient(135deg, $success-color, #16a34a) !important;
+          }
         }
       }
     }
