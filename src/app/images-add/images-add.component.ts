@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MediaService } from '../services/media.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AtelierService } from '../services/atelier.service';
-import { BlobStorgeService } from '../../blob-storge.service';
+import { BlobStorageService } from '../services/blob-storage.service';
 
 @Component({
   selector: 'app-images-add',
@@ -21,7 +21,7 @@ export class ImagesADDComponent implements OnInit {
     public dialogRef: MatDialogRef<ImagesADDComponent>,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private sousAtelier: AtelierService,
-    private blob: BlobStorgeService,
+    private blob: BlobStorageService,
   ) {}
 
   ngOnInit(): void {

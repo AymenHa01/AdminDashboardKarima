@@ -4,10 +4,11 @@ import { EvenementService } from '../../services/evenement.service';
 import { MediaService } from '../../services/media.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ImagesADDComponent } from '../../images-add/images-add.component';
-import { BlobStorgeService } from '../../../blob-storge.service';
+import { BlobStorageService } from '../../services/blob-storage.service';
 import { MessageService } from 'primeng/api';
 import { ImagesModelsComponent } from '../../images-models/images-models.component';
 import { LOADIPHLPAPI } from 'dns';
+import { environment } from '../../../environments/environment.prod';
 
 @Component({
   selector: 'app-evenement-list',
@@ -36,7 +37,7 @@ export class EvenementListComponent implements OnInit {
   selectedFile: File | null = null;
 
   progress: number = 0;
-  url: string;
+  url=environment.blobUrl;
   imageDialog: boolean = false;
   selectedImage: string = '';
 
@@ -58,11 +59,11 @@ export class EvenementListComponent implements OnInit {
     private mediaService: MediaService,
     private router: Router,
     private dialog: MatDialog,
-    private blob: BlobStorgeService,
+    private blob: BlobStorageService,
     private messageService: MessageService
   ) {
     // Initialize blob storage URL from service configuration
-    this.url = this.blob.getBlobStorageUrl();
+    this.url =environment.blobUrl
   }
 
   ngOnInit(): void {

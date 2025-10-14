@@ -5,9 +5,10 @@ import { Formation } from '../../Models/formation.model';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { ImagesADDComponent } from '../../images-add/images-add.component';
-import { BlobStorgeService } from '../../../blob-storge.service';
+import { BlobStorageService } from '../../services/blob-storage.service';
 import { ImagesModelsComponent } from '../../images-models/images-models.component';
 import { MessageService } from 'primeng/api';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-formation-list',
@@ -19,7 +20,7 @@ export class FormationListComponent implements OnInit {
   file: any;
   editingId: number | null = null;
   editedFormation: any = null;
-  url: string;
+  url = environment.blobUrl;
   imageDialog: boolean = false;
   selectedImage: string = '';
   
@@ -63,11 +64,11 @@ export class FormationListComponent implements OnInit {
     private mediaService: MediaService,
     private router: Router,
     private dialog: MatDialog,
-    private blob: BlobStorgeService,
+    private blob: BlobStorageService,
     private messageService: MessageService
   ) {
     // Initialize blob storage URL from service configuration
-    this.url = this.blob.getBlobStorageUrl();
+    this.url = environment.blobUrl
   }
 
   ngOnInit(): void {

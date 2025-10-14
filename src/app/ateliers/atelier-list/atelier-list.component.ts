@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AtelierService } from '../../services/atelier.service';
-import { BlobStorgeService } from '../../../blob-storge.service';
+import { ImagesADDComponent } from '../../images-add/images-add.component';
+import { BlobStorageService } from '../../services/blob-storage.service';
 import { MessageService } from 'primeng/api';
 import { env } from 'process';
 import { environment } from '../../../environments/environment';
@@ -30,7 +31,7 @@ export class AtelierListComponent implements OnInit {
   showAddForm: boolean = false;
   constructor(
     private atelierService: AtelierService,
-    private blob: BlobStorgeService,
+    private blob: BlobStorageService,
     private messageService: MessageService,
     private router: Router
   ) {
@@ -142,7 +143,7 @@ export class AtelierListComponent implements OnInit {
   private uploadImageWithCallback(file: File, fileName: string, atelierId: string, atelierIndex: number) {
     const xhr = new XMLHttpRequest();
 
-    xhr.open('PUT', `https://${this.blob.acountName}.blob.core.windows.net/${this.blob.containerName}/${fileName}?${this.blob.sas}`, true);
+    xhr.open('PUT', `https://${environment.acountName}.blob.core.windows.net/${environment.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
     xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
 
     xhr.upload.onprogress = (event: ProgressEvent) => {

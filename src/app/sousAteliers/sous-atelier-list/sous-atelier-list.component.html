@@ -245,7 +245,7 @@
                                     <!-- Display existing images -->
                                     <div class="table-images-grid" *ngIf="sousAtelier.media && sousAtelier.media.length > 0">
                                         <div *ngFor="let image of sousAtelier.media.slice(0, 3)" class="table-image-item">
-                                            <img [src]="getImageUrl(image)" alt="Image" class="table-image-thumbnail">
+                                            <img [src]="url  + '/'   + image.path " alt="Image" class="table-image-thumbnail">
                                         </div>
                                         <div *ngIf="sousAtelier.media.length > 3" class="more-images-indicator">
                                             +{{ sousAtelier.media.length - 3 }}
@@ -436,7 +436,8 @@
             <h4>{{ sousAtelierImages.length }} image(s)</h4>
             <div class="simple-gallery-grid" *ngIf="sousAtelierImages.length > 0">
                 <div *ngFor="let image of sousAtelierImages" class="simple-gallery-item">
-                    <img [src]="getImageUrl(image)" alt="Image" class="simple-gallery-image">
+                    <img [src]="url  + '/'   + image.path" alt="Image" class="simple-gallery-image">
+                    
                     <div class="simple-image-actions">
                         <p-button 
                             icon="pi pi-trash" 

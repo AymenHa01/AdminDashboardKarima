@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AtelierService } from '../../services/atelier.service';
 import { MediaService } from '../../services/media.service';
-import { BlobStorgeService } from '../../../blob-storge.service';
+import { BlobStorageService } from '../../services/blob-storage.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ImagesADDComponent } from '../../images-add/images-add.component';
 import { SidebarService } from '../../shared/sidebar/sidebar.service';
@@ -26,7 +26,8 @@ export class SousAtelierListComponent implements OnInit, OnDestroy {
     image: null as string | null,
     active: true
   };
-
+accoubntName: string = environment.acountName;
+containerName: string = environment.containerName;
   // Image management properties
   selectedSousAtelier: any = null;
   sousAtelierImages: any[] = [];
@@ -69,7 +70,7 @@ export class SousAtelierListComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder , 
     private sousAtelier : AtelierService,
     private mediaService: MediaService,
-    private blobService: BlobStorgeService, 
+    private blobService: BlobStorageService, 
     private dialog: MatDialog,
     private sidebarService: SidebarService
   ) { }
@@ -341,7 +342,6 @@ uploadFormImage(sousAtelierId: number): void {
       this.uploadInlineImage(file, sousAtelierId);
     }
   }
-
   // Upload image for inline editing
   uploadInlineImage(file: File, sousAtelierId: number): void {
     this.uploadingInlineImages[sousAtelierId] = true;
@@ -351,7 +351,7 @@ uploadFormImage(sousAtelierId: number): void {
     
     // Custom XHR for better control
     const xhr = new XMLHttpRequest();
-    xhr.open('PUT', `https://${this.blobService.acountName}.blob.core.windows.net/${this.blobService.containerName}/${fileName}?${this.blobService.sas}`, true);
+    xhr.open('PUT', `https://${this.accoubntName}.blob.core.windows.net/${this.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
     xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
 
     xhr.upload.onprogress = (event: ProgressEvent) => {

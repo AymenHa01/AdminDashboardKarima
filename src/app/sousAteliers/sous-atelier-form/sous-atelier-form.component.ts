@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { BlobStorgeService } from '../../../blob-storge.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BlobStorageService } from '../../services/blob-storage.service';
 import { AtelierService } from '../../services/atelier.service';
 
 @Component({
@@ -16,7 +16,8 @@ export class SousAtelierFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private blob: BlobStorgeService,
+    private route: ActivatedRoute,
+    private blob: BlobStorageService,
     private sousAtelierService: AtelierService
   ) {
     this.sousAtelierForm = this.fb.group({

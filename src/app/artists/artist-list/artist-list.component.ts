@@ -3,9 +3,10 @@ import { Router } from '@angular/router';
 import { ArtisteService } from '../../services/artiste.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ImagesADDComponent } from '../../images-add/images-add.component';
-import { BlobStorgeService } from '../../../blob-storge.service';
+import { BlobStorageService } from '../../services/blob-storage.service';
 import { ImagesModelsComponent } from '../../images-models/images-models.component';
 import { MessageService } from 'primeng/api';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-artist-list',
@@ -57,11 +58,11 @@ export class ArtistListComponent implements OnInit {
     private artisteService: ArtisteService,
     private router: Router,
     private dialog: MatDialog,
-    private blob: BlobStorgeService,
+    private blob: BlobStorageService,
     private messageService: MessageService
   ) {
     // Initialize blob storage URL from service configuration
-    this.url = this.blob.getBlobStorageUrl();
+    this.url = environment.blobUrl
   }
 
   ngOnInit(): void {
