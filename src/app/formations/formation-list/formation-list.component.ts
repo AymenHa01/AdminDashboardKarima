@@ -16,7 +16,7 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./formation-list.component.scss']
 })
 export class FormationListComponent implements OnInit {
-  formations: Formation[] = [];
+  formations: any[] = [];
   file: any;
   editingId: number | null = null;
   editedFormation: any = null;
@@ -25,9 +25,7 @@ export class FormationListComponent implements OnInit {
   selectedImage: string = '';
   
   // Inline image editing properties
-  editImageFile: { [key: number]: File } = {};
-  editImagePreview: string | null = null;
-  editImageUploadProgress: { [key: number]: number } = {};
+  uploadingImages: { [key: string]: boolean } = {};
 
   // Multiple images management
   mediaDialogVisible: boolean = false;
@@ -35,12 +33,6 @@ export class FormationListComponent implements OnInit {
   formationMedias: any[] = [];
   selectedFiles: File[] = [];
   uploadProgress: { [key: string]: number } = {};
-
-  // Image editing
-  imageEditDialog: boolean = false;
-  selectedFormationForImageEdit: any = null;
-  newImageFile: File | null = null;
-  imageUploadProgress: number = 0;
   
   // Form visibility toggle
   showAddForm: boolean = false;
@@ -77,19 +69,22 @@ export class FormationListComponent implements OnInit {
 
   toggleEdit(formation: any) {
     if (this.editingId === formation.id) {
-      // Check if there's a new image to upload first
-      if (this.editImageFile[formation.id]) {
-        this.uploadEditImageAndSave(formation);
-      } else {
-        // No new image, just save the formation changes
-        this.saveFormationChanges();
+      // Check if image is still uploading
+      if (this.uploadingImages[formation.id]) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Warning',
+          detail: 'Please wait for image upload to complete'
+        });
+        return;
       }
+      
+      this.saveFormationChanges();
     } else {
       // Start editing
       this.editingId = formation.id;
       this.editedFormation = { ...formation };
-      this.editImagePreview = null;
-      this.editImageUploadProgress[formation.id] = 0;
+      this.uploadProgress[formation.id] = 0;
     }
   }
 
@@ -99,14 +94,12 @@ export class FormationListComponent implements OnInit {
 
   cancelEdit(formation: any) {
     if (this.editingId) {
-      // Clean up image editing state
-      delete this.editImageFile[this.editingId];
-      delete this.editImageUploadProgress[this.editingId];
+      // Reload formations to reset any changes
+      this.loadFormations();
     }
     
     this.editingId = null;
     this.editedFormation = null;
-    this.editImagePreview = null;
   }
 
   DeleteFormation(id: number) {
@@ -237,8 +230,125 @@ export class FormationListComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
-  onFileChange(event: any) {
-    this.file = event;
+  onFileChange(event: any, formationId?: string) {
+    const file = event.target.files[0];
+    if (file) {
+      const fileName = file.name;
+      
+      if (formationId) {
+        // Editing existing formation - upload immediately
+        this.uploadingImages[formationId] = true;
+        this.uploadProgress[formationId] = 0;
+        
+        // Find the formation being edited and update its image
+        const formationIndex = this.formations.findIndex(f => f.id.toString() === formationId.toString());
+        if (formationIndex !== -1) {
+          // Upload to blob storage with custom callback handling
+          this.uploadImageWithCallback(file, fileName, formationId, formationIndex);
+        }
+      } else {
+        // Creating new formation
+        this.newFormation.image = fileName;
+        this.file = file;
+        this.uploadImageForNewFormation(file, fileName);
+      }
+    }
+  }
+
+  private uploadImageWithCallback(file: File, fileName: string, formationId: string, formationIndex: number) {
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('PUT', `https://${environment.acountName}.blob.core.windows.net/${environment.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
+    xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
+
+    xhr.upload.onprogress = (event: ProgressEvent) => {
+      if (event.lengthComputable) {
+        this.uploadProgress[formationId] = Math.round((event.loaded / event.total) * 100);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 201 || xhr.status === 200) {
+        // Update the formation object with new image name
+        this.formations[formationIndex].image = fileName;
+        if (this.editedFormation && this.editedFormation.id === formationId) {
+          this.editedFormation.image = fileName;
+          console.log("Edited formation image updated:", this.editedFormation);
+          
+        }
+        this.uploadingImages[formationId] = false;
+        this.uploadProgress[formationId] = 100;
+        
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Image uploaded successfully'
+        });
+        
+        // Reset progress after a delay
+        setTimeout(() => {
+          this.uploadProgress[formationId] = 0;
+        }, 2000);
+      } else {
+        this.handleUploadError(formationId, xhr);
+      }
+    };
+
+    xhr.onerror = () => {
+      this.handleUploadError(formationId, xhr);
+    };
+
+    xhr.send(file);
+  }
+
+  private uploadImageForNewFormation(file: File, fileName: string) {
+    this.progress = 0;
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('PUT', `https://${environment.acountName}.blob.core.windows.net/${environment.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
+    xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
+
+    xhr.upload.onprogress = (event: ProgressEvent) => {
+      if (event.lengthComputable) {
+        this.progress = Math.round((event.loaded / event.total) * 100);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 201 || xhr.status === 200) {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Image uploaded successfully'
+        });
+      } else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to upload image'
+        });
+      }
+    };
+
+    xhr.onerror = () => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to upload image'
+      });
+    };
+
+    xhr.send(file);
+  }
+
+  private handleUploadError(formationId: string, xhr: XMLHttpRequest) {
+    this.uploadingImages[formationId] = false;
+    this.uploadProgress[formationId] = 0;
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: `Failed to upload image. Status: ${xhr.status}`
+    });
   }
 
   showImage(image: string) {
@@ -297,16 +407,15 @@ export class FormationListComponent implements OnInit {
     }
 
     this.selectedFiles.forEach((file, index) => {
-      const fileName = `formation_${this.selectedFormation.id}_${Date.now()}_${index}_${file.name}`;
-      this.uploadProgress[fileName] = 0;
+      this.uploadProgress[file.name] = 0;
 
-      this.blob.uploadImage(file, fileName, (progressEvent: ProgressEvent) => {
+      this.blob.uploadImage(file, file.name, (progressEvent: ProgressEvent) => {
         if (progressEvent.lengthComputable) {
-          this.uploadProgress[fileName] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-          
-          if (this.uploadProgress[fileName] === 100) {
-    
-            this.mediaService.addMediaFormation(fileName, this.selectedFormation.id).subscribe({
+          this.uploadProgress[file.name] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+
+          if (this.uploadProgress[file.name] === 100) {
+
+            this.mediaService.addMediaFormation(file.name, this.selectedFormation.id).subscribe({
               next: (response: any) => {
                 this.messageService.add({
                   severity: 'success',
@@ -316,7 +425,7 @@ export class FormationListComponent implements OnInit {
                 
                 // Reload medias after successful upload
                 this.loadFormationMedias(this.selectedFormation.id);
-                delete this.uploadProgress[fileName];
+                delete this.uploadProgress[file.name];
               },
               error: (error) => {
                 console.error('Error saving media:', error);
@@ -325,7 +434,7 @@ export class FormationListComponent implements OnInit {
                   summary: 'Error',
                   detail: `Failed to save image ${index + 1}`
                 });
-                delete this.uploadProgress[fileName];
+                delete this.uploadProgress[file.name];
               }
             });
           }
@@ -376,127 +485,26 @@ export class FormationListComponent implements OnInit {
   }
 
   // Image editing methods
-  openImageEditDialog(formation: any) {
-    this.selectedFormationForImageEdit = formation;
-    this.imageEditDialog = true;
-    this.newImageFile = null;
-    this.imageUploadProgress = 0;
-  }
-
-  onImageFileSelect(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.newImageFile = file;
-    }
-  }
-
-  updateFormationImage() {
-    if (!this.newImageFile || !this.selectedFormationForImageEdit) {
+  removeImage(formation: any) {
+    if (confirm('Are you sure you want to remove this image?')) {
+      formation.image = '';
       this.messageService.add({
-        severity: 'warn',
-        summary: 'Warning',
-        detail: 'Please select an image file'
+        severity: 'info',
+        summary: 'Info',
+        detail: 'Image will be removed when you save'
       });
-      return;
     }
-
-    const fileName = `formation_${this.selectedFormationForImageEdit.id}_${Date.now()}_${this.newImageFile.name}`;
-    
-    this.blob.uploadImage(this.newImageFile, fileName, (progressEvent: ProgressEvent) => {
-      if (progressEvent.lengthComputable) {
-        this.imageUploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-        
-        if (this.imageUploadProgress === 100) {
-          // Update formation with new image
-          const updatedFormation = { 
-            ...this.selectedFormationForImageEdit, 
-            image: fileName 
-          };
-          
-          this.formationService.updateFormation(updatedFormation).subscribe({
-            next: () => {
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Formation image updated successfully'
-              });
-              this.imageEditDialog = false;
-              this.loadFormations();
-              this.resetImageEditDialog();
-            },
-            error: (error) => {
-              console.error('Error updating formation image:', error);
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Failed to update formation image'
-              });
-            }
-          });
-        }
-      }
-    });
   }
 
-  resetImageEditDialog() {
-    this.selectedFormationForImageEdit = null;
-    this.newImageFile = null;
-    this.imageUploadProgress = 0;
-    
-    // Reset file input
-    const fileInput = document.getElementById('imageEditInput') as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = '';
-    }
+  onImageError(event: any) {
+    event.target.style.display = 'none';
   }
 
   // New methods for inline image editing
-  onEditImageSelect(event: any, formation: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.editImageFile[formation.id] = file;
-      
-      // Create preview
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.editImagePreview = e.target.result;
-      };
-      reader.readAsDataURL(file);
-      
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Image Selected',
-        detail: 'New image selected. Save to apply changes.'
-      });
-    }
-  }
-
-  uploadEditImageAndSave(formation: any) {
-    const file = this.editImageFile[formation.id];
-    if (!file) {
-      this.saveFormationChanges();
-      return;
-    }
-
-    const fileName = `formation_${formation.id}_${Date.now()}_${file.name}`;
-    this.editImageUploadProgress[formation.id] = 0;
-
-    this.blob.uploadImage(file, fileName, (progressEvent: ProgressEvent) => {
-      if (progressEvent.lengthComputable) {
-        this.editImageUploadProgress[formation.id] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-        
-        if (this.editImageUploadProgress[formation.id] === 100) {
-          // Update the edited formation with new image name
-          this.editedFormation.image = fileName;
-          
-          // Now save the formation with the new image
-          this.saveFormationChanges();
-        }
-      }
-    });
-  }
-
   saveFormationChanges() {
+
+    console.log("edited dddddddddddddddddd", this.editedFormation);
+    
     this.formationService.updateFormation(this.editedFormation).subscribe(
       () => {
         this.messageService.add({
@@ -518,29 +526,38 @@ export class FormationListComponent implements OnInit {
     );
   }
 
-  toggleActiveStatus(formation: any) {
-    const updatedFormation = { 
-      ...formation, 
-      active: !formation.active 
-    };
+  toggleFormationStatus(formation: any): void {
+
+    console.log('Formation before status change:', formation.active);
     
-    this.formationService.updateFormation(updatedFormation).subscribe({
-      next: () => {
+    if (formation.active) {
+      formation.active = true
+    }else{
+
+      formation.active = false
+    }
+    console.log('Formation after status change:', formation.active);
+    console.log('Formation:', formation);
+   
+    this.formationService.updateFormation(formation).subscribe(
+      () => {
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
-          detail: `Formation ${updatedFormation.active ? 'activated' : 'deactivated'} successfully`
+          detail: 'Formation mise à jour avec succès'
         });
+        this.cancelEdit(null);
         this.loadFormations();
       },
-      error: (error) => {
-        console.error('Error updating formation status:', error);
+      error => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Failed to update formation status'
+          detail: 'Erreur lors de la mise à jour de la formation'
         });
+        console.error('Erreur lors de la mise à jour:', error);
       }
-    });
+    );
+    }
   }
-}
+

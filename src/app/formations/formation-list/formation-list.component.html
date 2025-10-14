@@ -158,47 +158,86 @@
                             <tr>
                                 <td class="image-cell">
                                     <div class="formation-image">
-                                        <ng-container *ngIf="!isEditing(formation)">
-                                            <img [src]="url + '/' + formation.image" 
-                                                 [alt]="formation.name" 
-                                                 (click)="showImage(formation.image)"/>
-                                            <div class="image-overlay">
-                                                <p-button 
-                                                    icon="pi pi-camera" 
-                                                    (click)="openImageEditDialog(formation)"
-                                                    styleClass="p-button-rounded p-button-sm p-button-secondary"
-                                                    pTooltip="Change Image"
-                                                    tooltipPosition="top">
-                                                </p-button>
+                                        <!-- Display current image when not editing -->
+                                        <div *ngIf="!isEditing(formation)" class="image-display">
+                                            <img 
+                                                [src]="formation.image ? (url + '/' + formation.image) : ''" 
+                                                [alt]="formation.name" 
+                                                (click)="showImage(formation.image)"
+                                                (error)="onImageError($event)"
+                                                [style.display]="formation.image ? 'block' : 'none'"
+                                            />
+                                            <div *ngIf="!formation.image" class="placeholder-image">
+                                                <i class="pi pi-image"></i>
+                                                <span>No Image</span>
                                             </div>
-                                        </ng-container>
-                                        <ng-container *ngIf="isEditing(formation)">
-                                            <div class="edit-image-section">
-                                                <div class="current-image-preview">
-                                                    <img [src]="editImagePreview || (url + '/' + formation.image)" 
-                                                         [alt]="formation.name" 
-                                                         class="preview-img"/>
-                                                </div>
-                                                <div class="image-input-wrapper">
-                                                    <input 
-                                                        type="file" 
-                                                        #imageInput
-                                                        (change)="onEditImageSelect($event, formation)"
-                                                        accept="image/*"
-                                                        class="image-file-input"
-                                                        id="editImage_{{formation.id}}">
-                                                    <p-button 
-                                                        icon="pi pi-upload" 
-                                                        (click)="imageInput.click()"
-                                                        styleClass="p-button-sm p-button-outlined"
-                                                        pTooltip="Select New Image">
-                                                    </p-button>
-                                                </div>
-                                                <div *ngIf="editImageUploadProgress[formation.id] > 0" class="upload-progress-inline">
-                                                    <p-progressBar [value]="editImageUploadProgress[formation.id]" [showValue]="true"></p-progressBar>
+                                        </div>
+                                        
+                                        <!-- Image editing interface when in edit mode -->
+                                        <div *ngIf="isEditing(formation)" class="image-editor">
+                                            <!-- Current image preview (always show if exists) -->
+                                            <div class="current-image" *ngIf="formation.image" (click)="fileInput.click()">
+                                                <img 
+                                                    [src]="url + '/' + formation.image" 
+                                                    [alt]="formation.name" 
+                                                    class="preview-image"
+                                                    (error)="onImageError($event)"
+                                                />
+                                                <div class="image-overlay">
+                                                    <i class="pi pi-camera"></i>
+                                                    <span class="change-text">Click to change</span>
                                                 </div>
                                             </div>
-                                        </ng-container>
+                                            
+                                            <!-- No image placeholder (show when no image) -->
+                                            <div class="no-image" *ngIf="!formation.image" (click)="fileInput.click()">
+                                                <i class="pi pi-image"></i>
+                                                <span>Click to add image</span>
+                                            </div>
+                                            
+                                            <!-- File input (hidden but functional) -->
+                                            <input 
+                                                type="file" 
+                                                (change)="onFileChange($event, formation.id)" 
+                                                accept="image/*" 
+                                                class="file-input"
+                                                #fileInput
+                                            />
+                                            
+                                            <!-- Upload Progress (show during upload) -->
+                                            <div *ngIf="uploadingImages[formation.id] && uploadProgress[formation.id] !== undefined" class="upload-progress">
+                                                <p-progressBar 
+                                                    [value]="uploadProgress[formation.id]" 
+                                                    [showValue]="true"
+                                                    styleClass="upload-progress-bar">
+                                                </p-progressBar>
+                                                <small>Uploading: {{uploadProgress[formation.id]}}%</small>
+                                            </div>
+                                            
+                                            <!-- Action buttons for image editing -->
+                                            <div class="image-actions">
+                                                <button 
+                                                    type="button" 
+                                                    pButton 
+                                                    icon="pi pi-upload" 
+                                                    [label]="formation.image ? 'Change' : 'Add'"
+                                                    (click)="fileInput.click()"
+                                                    class="p-button-outlined p-button-sm upload-btn"
+                                                    [disabled]="uploadingImages[formation.id]">
+                                                </button>
+                                                
+                                                <button 
+                                                    type="button" 
+                                                    pButton 
+                                                    icon="pi pi-trash" 
+                                                    label="Remove"
+                                                    (click)="removeImage(formation)"
+                                                    class="p-button-outlined p-button-danger p-button-sm remove-btn"
+                                                    [disabled]="uploadingImages[formation.id] || !formation.image"
+                                                    *ngIf="formation.image">
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="id-cell">{{formation.id}}</td>
@@ -260,29 +299,19 @@
                                 </td>
                                 <td class="status-cell">
                                     <ng-container *ngIf="!isEditing(formation)">
-                                        <p-tag 
-                                            [value]="formation.active ? 'Active' : 'Inactive'" 
-                                            [severity]="formation.active ? 'success' : 'warning'"
-                                            (click)="toggleActiveStatus(formation)"
-                                            class="status-tag"
-                                            pTooltip="Click to toggle status">
-                                        </p-tag>
+                                        <p-inputSwitch 
+                                            [(ngModel)]="formation.active" 
+                                            (onChange)="toggleFormationStatus(formation)"
+                                            [pTooltip]="formation.active ? 'Active - Click to deactivate' : 'Inactive - Click to activate'"
+                                            tooltipPosition="top">
+                                        </p-inputSwitch>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(formation)">
-                                        <div class="status-edit-buttons">
-                                            <p-button 
-                                                [icon]="'pi pi-check'" 
-                                                (click)="editedFormation.active = true"
-                                                [styleClass]="editedFormation.active ? 'p-button-success p-button-sm' : 'p-button-outlined p-button-sm'"
-                                                pTooltip="Active">
-                                            </p-button>
-                                            <p-button 
-                                                [icon]="'pi pi-times'" 
-                                                (click)="editedFormation.active = false"
-                                                [styleClass]="!editedFormation.active ? 'p-button-warning p-button-sm' : 'p-button-outlined p-button-sm'"
-                                                pTooltip="Inactive">
-                                            </p-button>
-                                        </div>
+                                        <p-tag 
+                                            [value]="editedFormation.active ? 'Active' : 'Inactive'" 
+                                            [severity]="editedFormation.active ? 'success' : 'warning'"
+                                            class="status-tag">
+                                        </p-tag>
                                     </ng-container>
                                 </td>
                                 <td class="actions-cell">
@@ -343,67 +372,6 @@
     <img [src]="selectedImage" width="100%" *ngIf="selectedImage"/>
 </p-dialog>
 
-<!-- Image Edit Dialog -->
-<p-dialog header="Edit Formation Image" 
-    [(visible)]="imageEditDialog" 
-    [modal]="true" 
-    [style]="{width: '40vw', minWidth: '300px'}" 
-    [baseZIndex]="10000"
-    [closable]="true">
-    
-    <div class="image-edit-content" *ngIf="selectedFormationForImageEdit">
-        <div class="current-image-section">
-            <h4>Current Image</h4>
-            <div class="current-image">
-                <img [src]="url + '/' + selectedFormationForImageEdit.image" 
-                     [alt]="selectedFormationForImageEdit.name"
-                     style="width: 100%; max-width: 200px; height: auto; border-radius: 8px; border: 2px solid #e5e7eb;"/>
-            </div>
-        </div>
-        
-        <div class="new-image-section">
-            <h4>Select New Image</h4>
-            <div class="file-upload-section">
-                <input 
-                    id="imageEditInput" 
-                    type="file" 
-                    (change)="onImageFileSelect($event)" 
-                    accept="image/*" 
-                    style="margin-bottom: 1rem;"/>
-                
-                <div *ngIf="newImageFile" class="selected-file-info">
-                    <i class="pi pi-file"></i>
-                    <span>Selected: {{newImageFile.name}}</span>
-                </div>
-                
-                <div *ngIf="imageUploadProgress > 0 && imageUploadProgress < 100" class="upload-progress">
-                    <p-progressBar [value]="imageUploadProgress" [showValue]="true"></p-progressBar>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <ng-template pTemplate="footer">
-        <div class="dialog-footer">
-            <p-button 
-                label="Cancel" 
-                icon="pi pi-times" 
-                (click)="imageEditDialog = false; resetImageEditDialog()"
-                styleClass="p-button-text">
-            </p-button>
-            <p-button 
-                label="Update Image" 
-                icon="pi pi-check" 
-                (click)="updateFormationImage()"
-                styleClass="p-button-success"
-                [disabled]="!newImageFile || imageUploadProgress > 0">
-            </p-button>
-        </div>
-    </ng-template>
-</p-dialog>
-
-
-
 <p-dialog header="Manage Event Images" 
     [(visible)]="mediaDialogVisible" 
     [modal]="true" 
@@ -454,12 +422,13 @@
         </div>
 
         <!-- Existing Images List -->
-     <!-- <div class="media-list-section">
-            <h3>Existing Images for {{selectedEvenement?.name}}</h3>
+     <div class="media-list-section">
+            <h3>Existing Images for {{selectedFormation?.name}}</h3>
             <div class="media-grid">
-                <div *ngFor="let media of evenementMedias" class="media-item">
+                <div *ngFor="let media of selectedFormation?.media" class="media-item">
                     <div class="media-image">
                         <img [src]="url + '/' + media.path" 
+                        class="media-img"
                             alt="Event image" 
                             (click)="showImage(media.path)"/>
                     </div>
@@ -477,12 +446,12 @@
                     </div>
                 </div>
             </div>
-            
-            <div *ngIf="evenementMedias.length === 0" class="empty-media">
+
+            <div *ngIf="selectedFormation?.medias?.length === 0" class="empty-media">
                 <i class="pi pi-info-circle"></i>
                 <span>No images found for this event</span>
             </div>
         </div>
     </div>
-</p-dialog> -->
+</p-dialog> 
 

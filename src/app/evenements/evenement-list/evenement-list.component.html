@@ -199,13 +199,12 @@
                                 </td>
                                 <td class="status-cell">
                                     <ng-container *ngIf="!isEditing(evenement)">
-                                        <p-tag 
-                                            [value]="evenement.active ? '1' : '0'" 
-                                            [severity]="evenement.active ? 'success' : 'warning'"
-                                            (click)="toggleActiveStatus(evenement)"
-                                            class="status-tag"
-                                            pTooltip="Click to toggle status">
-                                        </p-tag>
+                                        <p-inputSwitch 
+                                            [(ngModel)]="evenement.active" 
+                                            (onChange)="toggleEvenementStatus(evenement)"
+                                            [pTooltip]="evenement.active ? 'Active - Click to deactivate' : 'Inactive - Click to activate'"
+                                            tooltipPosition="top">
+                                        </p-inputSwitch>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(evenement)">
                                         <div class="status-edit-buttons">
@@ -403,7 +402,7 @@
         <div class="media-list-section">
             <h3>Existing Images for {{selectedEvenement?.name}}</h3>
             <div class="media-grid">
-                <div *ngFor="let media of evenementMedias" class="media-item">
+                <div *ngFor="let media of selectedEvenement?.media" class="media-item">
                     <div class="media-image">
                         <img [src]="url + '/' + media.path" 
                             alt="Event image" 

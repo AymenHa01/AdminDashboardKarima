@@ -277,13 +277,12 @@
                                 </td>
                                 <td class="status-cell">
                                     <ng-container *ngIf="!editing">
-                                        <p-tag 
-                                            [value]="atelier.active ? 'Active' : 'Inactive'" 
-                                            [severity]="atelier.active ? 'success' : 'warning'"
-                                            (click)="toggleActiveStatus(atelier)"
-                                            class="status-tag"
-                                            pTooltip="Click to toggle status">
-                                        </p-tag>
+                                        <p-inputSwitch 
+                                            [(ngModel)]="atelier.active" 
+                                            (onChange)="toggleAtelierStatus(atelier)"
+                                            [pTooltip]="atelier.active ? 'Active - Click to deactivate' : 'Inactive - Click to activate'"
+                                            tooltipPosition="top">
+                                        </p-inputSwitch>
                                     </ng-container>
                                     <ng-container *ngIf="editing">
                                         <div class="status-edit-buttons">

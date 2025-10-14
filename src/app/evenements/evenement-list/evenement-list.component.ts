@@ -188,27 +188,48 @@ export class EvenementListComponent implements OnInit {
     this.file = null;
   }
 
-  toggleActiveStatus(evenement: any) {
-    const updatedEvenement = { ...evenement, active: !evenement.active };
+  toggleEvenementStatus(evenement: any): void {
+    const statusText = evenement.active ? 'activer' : 'désactiver';
     
-    this.evenementService.AddEvenemt(updatedEvenement).subscribe(
-      response => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: `Event ${updatedEvenement.active ? 'activated' : 'deactivated'} successfully`
-        });
-        this.loadEvenements();
-      },
-      error => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Error updating event status'
-        });
-        console.error('Error updating status:', error);
-      }
-    );
+    if (confirm(`Êtes-vous sûr de vouloir ${statusText} cet événement ?`)) {
+      let body: any = {
+        "id": evenement.id,
+        "name": evenement.name,
+        "description": evenement.description,
+        "lieu": evenement.lieu,
+        "debut": evenement.debut,
+        "fin": evenement.fin,
+        "prix": evenement.prix,
+        "image": evenement.image || '',
+        "active": evenement.active
+      };
+
+      this.evenementService.AddEvenemt(body).subscribe({
+        next: (data: any) => {
+          console.log('Status updated successfully:', data);
+          this.loadEvenements();
+          const message = evenement.active ? 'Événement activé avec succès!' : 'Événement désactivé avec succès!';
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: message
+          });
+        },
+        error: (error) => {
+          console.error('Error updating status:', error);
+          // Revert the toggle if there's an error
+          evenement.active = !evenement.active;
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Erreur lors de la modification du statut.'
+          });
+        }
+      });
+    } else {
+      // Revert the toggle if user cancels
+      evenement.active = !evenement.  active;
+    }
   }
 
   // UploadImages(file: any) {
@@ -281,6 +302,8 @@ export class EvenementListComponent implements OnInit {
   // Multiple Images Management Methods
   manageImages(evenement: any) {
     this.selectedEvenement = evenement;
+    console.log(this.selectedEvenement);
+    
     this.mediaDialogVisible = true;
      this.evenementMedias = evenement.media || [];
      console.log('Evenement medias:', this.evenementMedias);
@@ -452,10 +475,9 @@ export class EvenementListComponent implements OnInit {
       return;
     }
 
-    const fileName = `evenement_${this.selectedEvenementForImageEdit.id}_${Date.now()}_${this.newImageFile.name}`;
     this.imageUploadProgress = 0;
 
-    this.blob.uploadImage(this.newImageFile, fileName, (progressEvent: ProgressEvent) => {
+    this.blob.uploadImage(this.newImageFile, this.newImageFile.name, (progressEvent: ProgressEvent) => {
       if (progressEvent.lengthComputable) {
         this.imageUploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
         
@@ -463,7 +485,7 @@ export class EvenementListComponent implements OnInit {
           // Update the evenement with the new image
           const updatedEvenement = {
             ...this.selectedEvenementForImageEdit,
-            image: fileName
+            image: this.newImageFile?.name
           };
 
           this.evenementService.AddEvenemt(updatedEvenement).subscribe({

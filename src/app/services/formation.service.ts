@@ -10,6 +10,7 @@ import { environment } from '../../environments/environment';
 })
 export class FormationService {
   private apiUrl = `${environment.apiUrl}/Formation`; 
+  private adminUrl = `${environment.apiUrl}/Admin`; 
 
   constructor(
     private http: HttpClient,

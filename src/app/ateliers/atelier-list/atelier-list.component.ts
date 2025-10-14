@@ -315,30 +315,44 @@ export class AtelierListComponent implements OnInit {
     }
   }
 
-  // Toggle active status method
-  toggleActiveStatus(atelier: any) {
-    const updatedAtelier = { 
-      ...atelier, 
-      active: !atelier.active 
-    };
+  // Toggle atelier active status
+  toggleAtelierStatus(atelier: any): void {
+    const statusText = atelier.active ? 'activer' : 'désactiver';
     
-    this.atelierService.UpdateAtelier(updatedAtelier).subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: `Atelier ${updatedAtelier.active ? 'activated' : 'deactivated'} successfully`
-        });
-        this.GetAllData();
-      },
-      error: (error) => {
-        console.error('Error updating atelier status:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update atelier status'
-        });
-      }
-    });
+    if (confirm(`Êtes-vous sûr de vouloir ${statusText} cet atelier ?`)) {
+      let body = {
+        "id": atelier.id,
+        "name": atelier.name,
+        "description": atelier.description,
+        "image": atelier.image || '',
+        "active": atelier.active
+      };
+
+      this.atelierService.UpdateAtelier(body).subscribe({
+        next: (data: any) => {
+          console.log('Status updated successfully:', data);
+          this.GetAllData();
+          const message = atelier.active ? 'Atelier activé avec succès!' : 'Atelier désactivé avec succès!';
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: message
+          });
+        },
+        error: (error) => {
+          console.error('Error updating status:', error);
+          // Revert the toggle if there's an error
+          atelier.active = !atelier.active;
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Erreur lors de la modification du statut.'
+          });
+        }
+      });
+    } else {
+      // Revert the toggle if user cancels
+      atelier.active = !atelier.active;
+    }
   }
 }
