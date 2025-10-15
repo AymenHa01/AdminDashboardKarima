@@ -49,7 +49,7 @@ export class EvenementListComponent implements OnInit {
   uploadProgress: { [key: string]: number } = {};
 
   // Image edit functionality
-  imageEditDialog: boolean = false;
+imageEditDialog: boolean = false;
   selectedEvenementForImageEdit: any = null;
   newImageFile: File | null = null;
   imageUploadProgress: number = 0;
@@ -193,26 +193,24 @@ export class EvenementListComponent implements OnInit {
   }
 
   toggleEvenementStatus(evenement: any): void {
-    const statusText = evenement.active ? 'activer' : 'désactiver';
     
+    console.log(evenement.active);
    if (evenement.active) {
       evenement.active = true
     }else{
       evenement.active = false
     }
-    console.log(evenement);
-    
-
+    console.log(evenement.active);
       this.evenementService.EditEvenement(evenement).subscribe({
         next: (data: any) => {
           console.log('Status updated successfully:', data);
-          this.loadEvenements();
           const message = evenement.active ? 'Événement activé avec succès!' : 'Événement désactivé avec succès!';
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
             detail: message
           });
+          this.loadEvenements();
         },
         error: (error) => {
           console.error('Error updating status:', error);
@@ -389,7 +387,7 @@ export class EvenementListComponent implements OnInit {
 
   deleteMedia(media: any) {
     if (confirm('Are you sure you want to delete this image?')) {
-      this.mediaService.deleteMedia(media.id).subscribe({
+      this.mediaService.deleteMediaEvent(media.id).subscribe({
         next: () => {
           this.messageService.add({
             severity: 'success',

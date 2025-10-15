@@ -395,7 +395,6 @@ export class FormationListComponent implements OnInit {
     }
   }
 
-  // Multiple Images Management Methods for Formations
   manageImages(formation: any) {
     this.selectedFormation = formation;
     this.mediaDialogVisible = true;
@@ -412,19 +411,16 @@ export class FormationListComponent implements OnInit {
     const files = Array.from(event.target.files) as File[];
     
     if (files.length > 0) {
-      // Auto-upload files immediately
       files.forEach((file) => {
         this.uploadSingleImage(file);
       });
       
-      // Reset file input
       event.target.value = '';
     }
   }
 
   uploadSingleImage(file: File) {
     this.uploadProgress[file.name] = 0;
-
     this.blob.uploadImage(file, file.name, (progressEvent: ProgressEvent) => {
       if (progressEvent.lengthComputable) {
         this.uploadProgress[file.name] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
@@ -510,7 +506,7 @@ export class FormationListComponent implements OnInit {
 
   deleteMedia(media: any) {
     if (confirm('Are you sure you want to delete this image?')) {
-      this.mediaService.deleteMedia(media.id).subscribe({
+      this.mediaService.deleteMediaFormation(media.id).subscribe({
         next: () => {
           this.messageService.add({
             severity: 'success',
@@ -590,7 +586,6 @@ export class FormationListComponent implements OnInit {
 
   toggleFormationStatus(formation: any): void {
 
-    console.log('Formation before status change:', formation.active);
     
     if (formation.active) {
       formation.active = true
@@ -598,6 +593,7 @@ export class FormationListComponent implements OnInit {
 
       formation.active = false
     }
+    
     console.log('Formation after status change:', formation.active);
     console.log('Formation:', formation);
    

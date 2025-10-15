@@ -341,64 +341,56 @@ uploadFormImage(sousAtelierId: number): void {
       };
       reader.readAsDataURL(file);
       
-// this.blob.uploadImage(file, file.name, (progressEvent: ProgressEvent) => {
-//       if (progressEvent.lengthComputable) {
-//         this.inlineUploadProgress[sousAtelierId] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-//       }
-//     }
-// );
-
-
-
-
-
-//      this.uploadInlineImage(file, sousAtelierId);
+      // Upload image immediately
+      this.uploadInlineImage(file, sousAtelierId);
     }
   }
   // Upload image for inline editing
-  // uploadInlineImage(file: File, sousAtelierId: number): void {
-  //   this.uploadingInlineImages[sousAtelierId] = true;
-  //   this.inlineUploadProgress[sousAtelierId] = 0;
+  uploadInlineImage(file: File, sousAtelierId: number): void {
+    this.uploadingInlineImages[sousAtelierId] = true;
+    this.inlineUploadProgress[sousAtelierId] = 0;
     
-  //   const fileName = file.name;
+    const fileName = file.name;
     
-  //   // Custom XHR for better control
-  //   const xhr = new XMLHttpRequest();
-  //   xhr.open('PUT', `https://${environment.acountName}.blob.core.windows.net/${environment.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
-  //   xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
+    // Custom XHR for better control
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', `https://${environment.acountName}.blob.core.windows.net/${environment.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
+    xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
 
-  //   xhr.upload.onprogress = (event: ProgressEvent) => {
-  //     if (event.lengthComputable) {
-  //       this.inlineUploadProgress[sousAtelierId] = Math.round((event.loaded / event.total) * 100);
-  //     }
-  //   };
+    xhr.upload.onprogress = (event: ProgressEvent) => {
+      if (event.lengthComputable) {
+        this.inlineUploadProgress[sousAtelierId] = Math.round((event.loaded / event.total) * 100);
+      }
+    };
 
-  //   xhr.onload = () => {
-  //     if (xhr.status === 201 || xhr.status === 200) {
-  //       // Update the sous-atelier object with new image name
-  //       const sousAtelierIndex = this.sousAteliers.findIndex(sa => sa.id === sousAtelierId);
-  //       if (sousAtelierIndex !== -1) {
-  //         this.sousAteliers[sousAtelierIndex].image = fileName;
-  //       }
+    xhr.onload = () => {
+      if (xhr.status === 201 || xhr.status === 200) {
+        // Update the sous-atelier object with new image name
+        const sousAtelierIndex = this.sousAteliers.findIndex(sa => sa.id === sousAtelierId);
+        if (sousAtelierIndex !== -1) {
+          this.sousAteliers[sousAtelierIndex].image = fileName;
+        }
         
-  //       this.uploadingInlineImages[sousAtelierId] = false;
-  //       this.inlineUploadProgress[sousAtelierId] = 100;
+        this.uploadingInlineImages[sousAtelierId] = false;
+        this.inlineUploadProgress[sousAtelierId] = 100;
         
-  //       // Reset progress after delay
-  //       setTimeout(() => {
-  //         this.inlineUploadProgress[sousAtelierId] = 0;
-  //       }, 2000);
-  //     } else {
-  //       this.handleInlineUploadError(sousAtelierId, xhr);
-  //     }
-  //   };
+        console.log('Image uploaded successfully:', fileName);
+        
+        // Reset progress after delay
+        setTimeout(() => {
+          this.inlineUploadProgress[sousAtelierId] = 0;
+        }, 2000);
+      } else {
+        this.handleInlineUploadError(sousAtelierId, xhr);
+      }
+    };
 
-  //   xhr.onerror = () => {
-  //     this.handleInlineUploadError(sousAtelierId, xhr);
-  //   };
+    xhr.onerror = () => {
+      this.handleInlineUploadError(sousAtelierId, xhr);
+    };
 
-  //   xhr.send(file);
-  // }
+    xhr.send(file);
+  }
 
   private handleInlineUploadError(sousAtelierId: number, xhr: XMLHttpRequest): void {
     console.error('Error uploading inline image:', {
@@ -677,9 +669,9 @@ deleteImage(image: any): void {
 // Delete image from gallery
 deleteImageFromGallery(image: any): void {
   if (confirm('Êtes-vous sûr de vouloir supprimer cette image ?')) {
-    this.mediaService.deleteMedia(image.id.toString()).subscribe({
+    this.mediaService.deleteMediaAtelier(image).subscribe({
       next: () => {
-        // Refresh images list in gallery
+         this.GetSousAtelier()
         this.loadSousAtelierImages(this.selectedSousAtelier.id);
       },
       error: (error) => {
