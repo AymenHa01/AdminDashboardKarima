@@ -55,7 +55,7 @@ export class ArtisteService {
   }
 
   DeleteTableau(tableauId: number) {
-    return this.http.delete(this.tableau + `/DeleteTableau/${tableauId}`, {
+    return this.http.delete(this.tableau + `/deleteTableau/${tableauId}`, {
       headers: this.getHeaders()
     });
   }
