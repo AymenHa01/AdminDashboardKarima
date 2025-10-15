@@ -340,7 +340,25 @@ $transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  min-width: 120px;
+  min-width: 140px;
+
+  .add-media-inline {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+
+    .file-input {
+      display: none;
+    }
+  }
+
+  .inline-upload-progress {
+    margin-top: 0.5rem;
+    
+    ::ng-deep .p-progressbar {
+      height: 0.5rem;
+    }
+  }
 }
 
 .table-images-grid {
@@ -371,6 +389,33 @@ $transition: all 0.3s ease;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.table-video-thumbnail {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+
+  .table-video-element {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  .video-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    i {
+      font-size: 1rem;
+      color: white;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    }
+  }
 }
 
 .more-images-indicator {
@@ -411,6 +456,8 @@ $transition: all 0.3s ease;
     font-style: italic;
   }
 }
+
+// Empty State
 
 // Image Zoom Dialog Styles
 .image-zoom-container {
@@ -453,6 +500,13 @@ $transition: all 0.3s ease;
     max-height: 100%;
     object-fit: contain;
     border-radius: 8px;
+  }
+
+  .zoom-video {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+    background: #000;
   }
   
   .image-counter {

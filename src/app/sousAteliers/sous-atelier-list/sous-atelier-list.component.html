@@ -2,7 +2,8 @@
 
 <div class="admin-page" [class.sidebar-collapsed]="isSidebarCollapsed">
     <app-sidebar></app-sidebar>
-
+NG5002: Unexpected closing tag "div". It may happen when the tag has already been closed by another tag. For more info see https://www.w3.org/TR/html5/syntax.html#closing-elements-that-have-implied-end-tags
+    
     <p-card header="Sous-Ateliers" subheader="Liste des sous-ateliers"> 
 
         <!-- View Toggle Buttons -->
@@ -242,35 +243,60 @@
                             <td>{{sousAtelier.atelier.name}}</td>
                             <td>
                                 <div class="table-images-container">
-                                    <!-- Display existing images -->
-                                    <div class="table-images-grid" *ngIf="sousAtelier.media && sousAtelier.media.length > 0">
-                                        <div *ngFor="let image of sousAtelier.media.slice(0, 3)" class="table-image-item">
-                                            <img [src]="url  + '/'   + image.path " alt="Image" class="table-image-thumbnail">
-                                        </div>
-                                        <div *ngIf="sousAtelier.media.length > 3" class="more-images-indicator">
-                                            +{{ sousAtelier.media.length - 3 }}
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Image actions -->
-                                    <div class="table-image-actions">
-                                        <!-- <p-button 
+                                    <!-- Add Media Button -->
+                                    <div class="add-media-inline">
+                                        <input type="file" 
+                                               #mediaFileInput
+                                               (change)="uploadMediaInline($event, sousAtelier)" 
+                                               multiple 
+                                               accept="image/*,video/*" 
+                                               class="file-input"
+                                               [id]="'mediaInput' + sousAtelier.id">
+                                        <p-button 
                                             icon="pi pi-plus" 
                                             styleClass="p-button-success p-button-sm" 
-                                            (click)="openAddImageDialog(sousAtelier)" 
-                                            title="Ajouter Image">
-                                        </p-button> -->
-                                        <p-button 
-                                            icon="pi pi-eye" 
-                                            styleClass="p-button-secondary p-button-sm" 
-                                            (click)="openImageGallery(sousAtelier)" 
-                                            title="Voir toutes les images">
+                                            (click)="mediaFileInput.click()" 
+                                            title="Ajouter media"
+                                            pTooltip="Ajouter images/vidéos">
                                         </p-button>
                                     </div>
                                     
+                                    <!-- Display existing media -->
+                                    <div class="table-images-grid" *ngIf="sousAtelier.media && sousAtelier.media.length > 0">
+                                        <div *ngFor="let media of sousAtelier.media.slice(0, 4)" 
+                                             class="table-image-item"
+                                             (click)="isImage(media.path) ? showImageInZoom(media.path, sousAtelier) : showVideoInZoom(media.path, sousAtelier)">
+                                            <!-- Image thumbnail -->
+                                            <img *ngIf="isImage(media.path)"
+                                                 [src]="url + '/' + media.path" 
+                                                 alt="Sous-atelier media" 
+                                                 class="table-image-thumbnail">
+                                            
+                                            <!-- Video thumbnail -->
+                                            <div *ngIf="isVideo(media.path)" class="table-video-thumbnail">
+                                                <video class="table-video-element">
+                                                    <source [src]="url + '/' + media.path" [type]="getVideoMimeType(media.path)">
+                                                </video>
+                                                <div class="video-play-icon">
+                                                    <i class="pi pi-play"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="sousAtelier.media.length > 4" 
+                                             class="more-images-indicator"
+                                             (click)="expandMediaView(sousAtelier)"
+                                             pTooltip="Voir tous les media">
+                                            +{{ sousAtelier.media.length - 4 }}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Upload progress -->
+                                    <div *ngIf="uploadProgress[sousAtelier.id]" class="inline-upload-progress">
+                                        <p-progressBar [value]="uploadProgress[sousAtelier.id]" [showValue]="true"></p-progressBar>
+                                    </div>
+                                    
                                     <div *ngIf="!sousAtelier.media || sousAtelier.media.length === 0" class="no-table-images">
-                                        <span>Aucune image</span>
-                                       
+                                        <span>Aucun media</span>
                                     </div>
                                 </div>
                             </td>
@@ -319,137 +345,70 @@
 </div>
 <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
-<!-- Add Image Dialog -->
-<p-dialog header="Ajouter des Images" [(visible)]="showAddImageDialog" [modal]="true" [style]="{width: '60vw'}" [closable]="true" (onHide)="closeAddImageDialog()">
-    <div class="add-image-dialog-content">
-        <!-- Upload Section -->
-        <div class="upload-section">
-            <h4>Sélectionner des images à ajouter</h4>
-            <input type="file" #addImageFileInput (change)="onAddImageSelected($event)" multiple accept="image/*" class="file-input">
+<!-- Media Zoom Dialog -->
+<p-dialog [header]="isVideo(selectedImage) ? 'Video' : 'Image'" 
+    [(visible)]="showImageGallery" 
+    [modal]="true" 
+    [style]="{width: '90vw', height: '90vh'}" 
+    [baseZIndex]="10000"
+    [maximizable]="true"
+    [closable]="true"
+    (onHide)="closeImageGallery()">
+    
+    <div class="image-zoom-container" *ngIf="selectedImage">
+        <!-- Navigation arrows -->
+        <div class="image-nav-controls">
             <p-button 
-                label="Choisir des images" 
-                icon="pi pi-upload" 
-                (click)="addImageFileInput.click()" 
-                styleClass="p-button-success">
+                icon="pi pi-chevron-left" 
+                (click)="previousImage()"
+                [disabled]="currentImageIndex === 0"
+                styleClass="p-button-rounded p-button-text p-button-lg nav-btn-left"
+                pTooltip="Media précédent">
             </p-button>
             
-            <!-- Upload Progress -->
-            <div *ngIf="isUploading || uploadProgress > 0" class="upload-progress">
-                <p-progressBar [value]="uploadProgress" [showValue]="true"></p-progressBar>
-                <p *ngIf="uploadError" class="error-message">{{ uploadError }}</p>
-            </div>
-        </div>
-    </div>
-</p-dialog>
-
-<!-- Image Management Dialog -->
-<p-dialog header="Gestion des Images - Sous-Atelier" [(visible)]="showImageDialog" [modal]="true" [style]="{width: '80vw'}" [closable]="true" (onHide)="closeImageDialog()">
-    <div class="image-dialog-content">
-        <!-- Upload Section -->
-        <div class="upload-section">
-            <h4>Ajouter de nouvelles images</h4>
-            <input type="file" #fileInput (change)="onImageSelected($event)" multiple accept="image/*" class="file-input">
-            <p-button label="Choisir des images" icon="pi pi-upload" (click)="fileInput.click()" class="upload-btn"></p-button>
-            
-            <!-- Upload Progress -->
-            <div *ngIf="isUploading || uploadProgress > 0" class="upload-progress">
-                <p-progressBar [value]="uploadProgress" [showValue]="true"></p-progressBar>
-                <p *ngIf="uploadError" class="error-message">{{ uploadError }}</p>
-            </div>
-        </div>
-
-        <!-- Images List -->
-        <div class="images-list" *ngIf="sousAtelierImages.length > 0">
-            <div class="images-header">
-                <h4>Images existantes ({{ sousAtelierImages.length }})</h4>
-                <p-button 
-                    label="Télécharger toutes les images" 
-                    icon="pi pi-download" 
-                    (click)="downloadAllImages()" 
-                    styleClass="p-button-info p-button-sm"
-                    [disabled]="isDownloading">
-                </p-button>
-            </div>
-            
-            <!-- Download Progress -->
-            <div *ngIf="isDownloading || downloadProgress > 0" class="download-progress">
-                <p-progressBar [value]="downloadProgress" [showValue]="true"></p-progressBar>
-                <p class="download-status">
-                    <span *ngIf="isDownloading">Téléchargement en cours: {{ currentDownloadingImage }}</span>
-                    <span *ngIf="!isDownloading && downloadProgress > 0">Téléchargement terminé!</span>
-                    <br>
-                    <small>{{ downloadedCount }} / {{ totalDownloadCount }} images téléchargées</small>
-                </p>
-            </div>
-            
-            <!-- <div class="images-grid">
-                <div *ngFor="let image of sousAtelierImages" class="image-item">
-                    <img [src]="getImageUrl(image)" alt="Image" class="image-thumbnail">
-                    <div class="image-actions">
-                        <p-button 
-                            icon="pi pi-download" 
-                            styleClass="p-button-success p-button-sm" 
-                            (click)="downloadSingleImage(image)" 
-                            title="Télécharger" 
-                            [disabled]="isDownloading">
-                        </p-button>
-                        <p-button 
-                            icon="pi pi-trash" 
-                            styleClass="p-button-danger p-button-sm" 
-                            (click)="deleteImage(image.id)" 
-                            title="Supprimer" 
-                            [disabled]="isDownloading">
-                        </p-button>
-                    </div>
+            <div class="main-image-wrapper">
+                <!-- Image Display -->
+                <img *ngIf="isImage(selectedImage)" 
+                     [src]="selectedImage" 
+                     alt="Sous-atelier media"
+                     class="zoom-image"/>
+                
+                <!-- Video Display -->
+                <video *ngIf="isVideo(selectedImage)" 
+                       class="zoom-video"
+                       controls
+                       autoplay>
+                    <source [src]="selectedImage" [type]="getVideoMimeType(selectedImage)">
+                    Your browser does not support the video tag.
+                </video>
+                
+                <div class="image-counter">
+                    <span>{{ currentImageIndex + 1 }} / {{ totalImagesCount }}</span>
                 </div>
-            </div> -->
-        </div>
-
-        <div *ngIf="sousAtelierImages.length === 0 && !isUploading" class="no-images">
-            <p>Aucune image pour ce sous-atelier</p>
-        </div>
-    </div>
-</p-dialog>
-
-<!-- Image Gallery Dialog -->
-<p-dialog header="Images - Sous-Atelier" [(visible)]="showImageGallery" [modal]="true" [style]="{width: '90vw'}" [closable]="true" (onHide)="closeImageGallery()">
-    <div class="simple-gallery-content">
-        <!-- Add Media Button -->
-        <div class="gallery-add-section">
-            <input type="file" #simpleFileInput (change)="onSimpleImageSelected($event)" multiple accept="image/*" class="file-input">
-            <p-button 
-                label="Ajouter Media" 
-                icon="pi pi-plus" 
-                (click)="simpleFileInput.click()" 
-                styleClass="p-button-success">
-            </p-button>
-            
-            <!-- Upload Progress -->
-            <div *ngIf="isUploading || uploadProgress > 0" class="upload-progress">
-                <p-progressBar [value]="uploadProgress" [showValue]="true"></p-progressBar>
-                <p *ngIf="uploadError" class="error-message">{{ uploadError }}</p>
             </div>
+            
+            <p-button 
+                icon="pi pi-chevron-right" 
+                (click)="nextImage()"
+                [disabled]="currentImageIndex === totalImagesCount - 1"
+                styleClass="p-button-rounded p-button-text p-button-lg nav-btn-right"
+                pTooltip="Media suivant">
+            </p-button>
         </div>
         
-        <!-- Images Display -->
-        <div class="simple-images-section">
-            <h4>{{ sousAtelierImages.length }} image(s)</h4>
-            <div class="simple-gallery-grid" *ngIf="sousAtelierImages.length > 0">
-                <div *ngFor="let image of sousAtelierImages" class="simple-gallery-item">
-                    <img [src]="url  + '/'   + image.path" alt="Image" class="simple-gallery-image">
-                    
-                    <div class="simple-image-actions">
-                        <p-button 
-                            icon="pi pi-trash" 
-                            styleClass="p-button-danger p-button-sm" 
-                            (click)="deleteImageFromGallery(image.id)" 
-                            title="Supprimer">
-                        </p-button>
-                    </div>
-                </div>
-            </div>
-            <div *ngIf="sousAtelierImages.length === 0" class="empty-gallery">
-                <p>Commencez par ajouter des images avec le bouton ci-dessus</p>
+        <!-- Thumbnail strip -->
+        <div class="thumbnail-strip" *ngIf="selectedSousAtelier?.media && selectedSousAtelier.media.length > 1">
+            <div *ngFor="let media of selectedSousAtelier.media; let i = index" 
+                 class="thumbnail-item"
+                 [class.active]="i === currentImageIndex"
+                 (click)="goToImage(i)">
+                <img *ngIf="isImage(media.path)"
+                     [src]="url + '/' + media.path" 
+                     alt="Thumbnail"
+                     class="thumbnail-image">
+                <video *ngIf="isVideo(media.path)" class="thumbnail-video">
+                    <source [src]="url + '/' + media.path" [type]="getVideoMimeType(media.path)">
+                </video>
             </div>
         </div>
     </div>

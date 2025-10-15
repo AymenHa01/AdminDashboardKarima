@@ -317,35 +317,60 @@
                                 </td>
                                 <td class="media-cell">
                                     <div class="table-images-container">
-                                        <!-- Display existing images -->
-                                        <div class="table-images-grid" *ngIf="formation.media && formation.media.length > 0">
-                                            <div *ngFor="let image of formation.media.slice(0, 3)" 
-                                                 class="table-image-item"
-                                                 (click)="showImageInZoom(image.path)">
-                                                <img [src]="url + '/' + image.path" 
-                                                     alt="Formation media" 
-                                                     class="table-image-thumbnail">
-                                            </div>
-                                            <div *ngIf="formation.media.length > 3" 
-                                                 class="more-images-indicator"
-                                                 (click)="manageImages(formation)">
-                                                +{{ formation.media.length - 3 }}
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Image actions -->
-                                        <div class="table-image-actions">
+                                        <!-- Add Media Button -->
+                                        <div class="add-media-inline">
+                                            <input type="file" 
+                                                   #mediaFileInput
+                                                   (change)="uploadMediaInline($event, formation)" 
+                                                   multiple 
+                                                   accept="image/*,video/*" 
+                                                   class="file-input"
+                                                   [id]="'mediaInput' + formation.id">
                                             <p-button 
-                                                icon="pi pi-eye" 
-                                                styleClass="p-button-secondary p-button-sm" 
-                                                (click)="manageImages(formation)" 
-                                                title="Voir toutes les images"
-                                                [badge]="formation.media?.length > 0 ? formation.media.length.toString() : null">
+                                                icon="pi pi-plus" 
+                                                styleClass="p-button-success p-button-sm" 
+                                                (click)="mediaFileInput.click()" 
+                                                title="Ajouter media"
+                                                pTooltip="Ajouter images/vidéos">
                                             </p-button>
                                         </div>
                                         
+                                        <!-- Display existing media -->
+                                        <div class="table-images-grid" *ngIf="formation.media && formation.media.length > 0">
+                                            <div *ngFor="let media of formation.media.slice(0, 4)" 
+                                                 class="table-image-item"
+                                                 (click)="isImage(media.path) ? showImageInZoom(media.path, formation) : showVideoInZoom(media.path, formation)">
+                                                <!-- Image thumbnail -->
+                                                <img *ngIf="isImage(media.path)"
+                                                     [src]="url + '/' + media.path" 
+                                                     alt="Formation media" 
+                                                     class="table-image-thumbnail">
+                                                
+                                                <!-- Video thumbnail -->
+                                                <div *ngIf="isVideo(media.path)" class="table-video-thumbnail">
+                                                    <video class="table-video-element">
+                                                        <source [src]="url + '/' + media.path" [type]="getVideoMimeType(media.path)">
+                                                    </video>
+                                                    <div class="video-play-icon">
+                                                        <i class="pi pi-play"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="formation.media.length > 4" 
+                                                 class="more-images-indicator"
+                                                 (click)="expandMediaView(formation)"
+                                                 pTooltip="Voir tous les media">
+                                                +{{ formation.media.length - 4 }}
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Upload progress -->
+                                        <div *ngIf="uploadProgress[formation.id]" class="inline-upload-progress">
+                                            <p-progressBar [value]="uploadProgress[formation.id]" [showValue]="true"></p-progressBar>
+                                        </div>
+                                        
                                         <div *ngIf="!formation.media || formation.media.length === 0" class="no-table-images">
-                                            <span>Aucune image</span>
+                                            <span>Aucun media</span>
                                         </div>
                                     </div>
                                 </td>
@@ -365,13 +390,6 @@
                                                 pTooltip="Cancel">
                                             </p-button>
                                         </ng-container>
-                                        <p-button 
-                                            *ngIf="!isEditing(formation)" 
-                                            icon="pi pi-images" 
-                                            (click)="manageImages(formation)"
-                                            styleClass="p-button-rounded p-button-warning p-button-sm"
-                                            pTooltip="Manage Images">
-                                        </p-button>
                                         <p-button 
                                             *ngIf="!isEditing(formation)" 
                                             icon="pi pi-trash" 
@@ -403,73 +421,8 @@
 
 <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
-<p-dialog header="Images - Formation" 
-    [(visible)]="mediaDialogVisible" 
-    [modal]="true" 
-    [style]="{width: '90vw'}" 
-    [closable]="true"
-    (onHide)="closeMediaDialog()">
-    
-    <div class="simple-gallery-content">
-        <!-- Add Media Button -->
-        <div class="gallery-add-section">
-            <input type="file" #multipleFileInput (change)="onMultipleFilesChange($event)" multiple accept="image/*" class="file-input">
-            <p-button 
-                label="Ajouter Media" 
-                icon="pi pi-plus" 
-                (click)="multipleFileInput.click()" 
-                styleClass="p-button-success">
-            </p-button>
-            
-            <!-- Upload Progress -->
-            <div *ngIf="getUploadProgressKeys().length > 0" class="upload-progress-section">
-                <h4>Upload Progress</h4>
-                <div *ngFor="let fileName of getUploadProgressKeys()" class="progress-item">
-                    <span class="file-name">{{fileName}}</span>
-                    <p-progressBar [value]="uploadProgress[fileName]" 
-                        [showValue]="true">
-                    </p-progressBar>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Images Display -->
-        <div class="simple-images-section">
-            <h4>{{ selectedFormation?.media?.length || 0 }} image(s)</h4>
-            <div class="simple-gallery-grid" *ngIf="selectedFormation?.media && selectedFormation.media.length > 0">
-                <div *ngFor="let media of selectedFormation.media" class="simple-gallery-item">
-                    <img [src]="url + '/' + media.path" 
-                         alt="Formation image" 
-                         class="simple-gallery-image"
-                         (click)="showImageInZoom(media.path)">
-                    
-                    <div class="simple-image-actions">
-                        <p-button 
-                            icon="pi pi-eye" 
-                            styleClass="p-button-info p-button-sm" 
-                            (click)="showImageInZoom(media.path)" 
-                            pTooltip="Voir"
-                            title="Voir">
-                        </p-button>
-                        <p-button 
-                            icon="pi pi-trash" 
-                            styleClass="p-button-danger p-button-sm" 
-                            (click)="deleteMedia(media)" 
-                            pTooltip="Supprimer"
-                            title="Supprimer">
-                        </p-button>
-                    </div>
-                </div>
-            </div>
-            <div *ngIf="!selectedFormation?.media || selectedFormation.media.length === 0" class="empty-gallery">
-                <p>Commencez par ajouter des images avec le bouton ci-dessus</p>
-            </div>
-        </div>
-    </div>
-</p-dialog>
-
-<!-- Image Zoom Dialog -->
-<p-dialog header="Image" 
+<!-- Media Zoom Dialog -->
+<p-dialog [header]="isVideo(selectedImage) ? 'Video' : 'Image'" 
     [(visible)]="imageDialog" 
     [modal]="true" 
     [style]="{width: '90vw', height: '90vh'}" 
@@ -489,9 +442,20 @@
             </p-button>
             
             <div class="main-image-wrapper">
-                <img [src]="selectedImage" 
-                     alt="Formation image"
+                <!-- Image Display -->
+                <img *ngIf="isImage(selectedImage)" 
+                     [src]="selectedImage" 
+                     alt="Formation media"
                      class="zoom-image"/>
+                
+                <!-- Video Display -->
+                <video *ngIf="isVideo(selectedImage)" 
+                       class="zoom-video"
+                       controls
+                       autoplay>
+                    <source [src]="selectedImage" [type]="getVideoMimeType(selectedImage)">
+                    Your browser does not support the video tag.
+                </video>
                 
                 <div class="image-counter">
                     <span>{{ currentImageIndex + 1 }} / {{ totalImagesCount }}</span>

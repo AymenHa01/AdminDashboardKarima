@@ -358,22 +358,6 @@ export class FormationListComponent implements OnInit {
     this.imageDialog = true;
   }
 
-  showImageInZoom(imagePath: string) {
-    if (!this.selectedFormation || !this.selectedFormation.media) {
-      return;
-    }
-    
-    // Find the index of the clicked image
-    const index = this.selectedFormation.media.findIndex((m: any) => m.path === imagePath);
-    
-    if (index !== -1) {
-      this.currentImageIndex = index;
-      this.totalImagesCount = this.selectedFormation.media.length;
-      this.selectedImage = this.url + '/' + imagePath;
-      this.imageDialog = true;
-    }
-  }
-
   previousImage() {
     if (this.currentImageIndex > 0 && this.selectedFormation?.media) {
       this.currentImageIndex--;
@@ -616,6 +600,128 @@ export class FormationListComponent implements OnInit {
         console.error('Erreur lors de la mise à jour:', error);
       }
     );
+  }
+
+  // Helper methods for media type detection
+  isImage(path: string): boolean {
+    if (!path) return false;
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'];
+    const extension = path.toLowerCase().substring(path.lastIndexOf('.'));
+    return imageExtensions.includes(extension);
+  }
+
+  isVideo(path: string): boolean {
+    if (!path) return false;
+    const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
+    const extension = path.toLowerCase().substring(path.lastIndexOf('.'));
+    return videoExtensions.includes(extension);
+  }
+
+  getVideoMimeType(path: string): string {
+    if (!path) return '';
+    const extension = path.toLowerCase().substring(path.lastIndexOf('.'));
+    const mimeTypes: { [key: string]: string } = {
+      '.mp4': 'video/mp4',
+      '.webm': 'video/webm',
+      '.ogg': 'video/ogg',
+      '.mov': 'video/quicktime',
+      '.avi': 'video/x-msvideo',
+      '.mkv': 'video/x-matroska'
+    };
+    return mimeTypes[extension] || 'video/mp4';
+  }
+
+  showVideoInZoom(videoPath: string, formation?: any) {
+    if (formation) {
+      this.selectedFormation = formation;
+    }
+    this.selectedImage = this.url + '/' + videoPath;
+    this.imageDialog = true;
+    
+    // Find current video index
+    if (this.selectedFormation?.media) {
+      this.currentImageIndex = this.selectedFormation.media.findIndex((m: any) => m.path === videoPath);
+      this.totalImagesCount = this.selectedFormation.media.length;
     }
   }
+
+  // Inline media upload from table
+  uploadMediaInline(event: any, formation: any) {
+    const files = Array.from(event.target.files) as File[];
+    
+    if (files.length > 0) {
+      this.selectedFormation = formation;
+      
+      files.forEach((file) => {
+        this.uploadProgress[formation.id] = 0;
+        
+        this.blob.uploadImage(file, file.name, (progressEvent: ProgressEvent) => {
+          if (progressEvent.lengthComputable) {
+            this.uploadProgress[formation.id] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+
+            if (this.uploadProgress[formation.id] === 100) {
+              this.mediaService.addMediaFormation(file.name, formation.id).subscribe({
+                next: (response: any) => {
+                  this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Media uploaded successfully'
+                  });
+
+                  // Reload formation data to update media list
+                  this.loadFormations();
+                  
+                  setTimeout(() => {
+                    delete this.uploadProgress[formation.id];
+                  }, 1000);
+                },
+                error: (error) => {
+                  console.error('Error saving media:', error);
+                  this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to save media'
+                  });
+                  delete this.uploadProgress[formation.id];
+                }
+              });
+            }
+          }
+        });
+      });
+      
+      // Reset file input
+      event.target.value = '';
+    }
+  }
+
+  // Expand media view (show all media in zoom)
+  expandMediaView(formation: any) {
+    this.selectedFormation = formation;
+    if (formation.media && formation.media.length > 0) {
+      const firstMedia = formation.media[0];
+      if (this.isImage(firstMedia.path)) {
+        this.showImageInZoom(firstMedia.path, formation);
+      } else if (this.isVideo(firstMedia.path)) {
+        this.showVideoInZoom(firstMedia.path, formation);
+      }
+    }
+  }
+
+  // Update showImageInZoom to accept formation parameter
+  showImageInZoom(imagePath: string, formation?: any) {
+    if (formation) {
+      this.selectedFormation = formation;
+    }
+    
+    if (!this.selectedFormation?.media) return;
+    
+    this.selectedImage = this.url + '/' + imagePath;
+    this.imageDialog = true;
+    
+    // Find current image index
+    this.currentImageIndex = this.selectedFormation.media.findIndex((m: any) => m.path === imagePath);
+    this.totalImagesCount = this.selectedFormation.media.length;
+  }
+}
 

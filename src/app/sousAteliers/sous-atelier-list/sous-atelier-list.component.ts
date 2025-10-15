@@ -34,9 +34,14 @@ containerName: string = environment.containerName;
   showImageDialog = false;
   showImageGallery = false;
   showAddImageDialog = false;
-  uploadProgress = 0;
+  uploadProgress: { [key: number]: number } = {};
   uploadError = '';
   isUploading = false;
+  
+  // Zoom dialog properties
+  selectedImage: string = '';
+  currentImageIndex: number = 0;
+  totalImagesCount: number = 0;
   
   // Download properties
   isDownloading = false;
@@ -439,7 +444,6 @@ openAddImageDialog(sousAtelier: any): void {
 closeAddImageDialog(): void {
   this.showAddImageDialog = false;
   this.selectedSousAtelier = null;
-  this.uploadProgress = 0;
   this.uploadError = '';
   this.isUploading = false;
 }
@@ -448,7 +452,6 @@ closeImageDialog(): void {
   this.showImageDialog = false;
   this.selectedSousAtelier = null;
   this.sousAtelierImages = [];
-  this.uploadProgress = 0;
   this.uploadError = '';
   this.isUploading = false;
   
@@ -505,7 +508,6 @@ onSimpleImageSelected(event: any): void {
 
 uploadImage(file: File): void {
   this.isUploading = true;
-  this.uploadProgress = 0;
   this.uploadError = '';
 
   const fileName = file.name;
@@ -513,7 +515,7 @@ uploadImage(file: File): void {
   // Upload to blob storage using the BlobStorgeService
   // this.blobService.uploadImage(file, fileName, (progressEvent: ProgressEvent) => {
   //   if (progressEvent.lengthComputable) {
-  //     this.uploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+  //     // Progress tracking removed
   //   }
   // });
 
@@ -527,14 +529,13 @@ uploadImage(file: File): void {
   //       this.loadSousAtelierImages(this.selectedSousAtelier.id);
         
   //       setTimeout(() => {
-  //         this.uploadProgress = 0;
+  //         // Progress reset removed
   //       }, 2000);
   //     },
   //     error: (error) => {
   //       console.error('Error saving image to database:', error);
   //       this.uploadError = 'Erreur lors de la sauvegarde en base de données';
   //       this.isUploading = false;
-  //       this.uploadProgress = 0;
   //     }
   //   });
   // }, 1000); 
@@ -543,7 +544,8 @@ uploadImage(file: File): void {
 // Upload image from gallery
 uploadImageToGallery(file: File): void {
   this.isUploading = true;
-  this.uploadProgress = 0;
+  const sousAtelierId = this.selectedSousAtelier.id;
+  this.uploadProgress[sousAtelierId] = 0;
   this.uploadError = '';
 
   const fileName = file.name;
@@ -551,7 +553,7 @@ uploadImageToGallery(file: File): void {
   // Upload to blob storage using the BlobStorgeService
   this.blobService.uploadImage(file, fileName, (progressEvent: ProgressEvent) => {
     if (progressEvent.lengthComputable) {
-      this.uploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+      this.uploadProgress[sousAtelierId] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
     }
   });
 
@@ -564,14 +566,14 @@ uploadImageToGallery(file: File): void {
         this.loadSousAtelierImages(this.selectedSousAtelier.id);
         
         setTimeout(() => {
-          this.uploadProgress = 0;
+          this.uploadProgress[sousAtelierId] = 0;
         }, 2000);
       },
       error: (error) => {
         console.error('Error saving image to database:', error);
         this.uploadError = 'Erreur lors de la sauvegarde en base de données';
         this.isUploading = false;
-        this.uploadProgress = 0;
+        this.uploadProgress[sousAtelierId] = 0;
       }
     });
   }, 1000);
@@ -580,7 +582,8 @@ uploadImageToGallery(file: File): void {
 // Upload image for sous atelier (from add dialog)
 uploadImageForSousAtelier(file: File): void {
   this.isUploading = true;
-  this.uploadProgress = 0;
+  const sousAtelierId = this.selectedSousAtelier.id;
+  this.uploadProgress[sousAtelierId] = 0;
   this.uploadError = '';
 
   const fileName = file.name;
@@ -588,7 +591,7 @@ uploadImageForSousAtelier(file: File): void {
   // Upload to blob storage using the BlobStorgeService
   this.blobService.uploadImage(file, fileName, (progressEvent: ProgressEvent) => {
     if (progressEvent.lengthComputable) {
-      this.uploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+      this.uploadProgress[sousAtelierId] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
     }
   });
 
@@ -601,7 +604,7 @@ uploadImageForSousAtelier(file: File): void {
         this.GetSousAtelier();
         
         setTimeout(() => {
-          this.uploadProgress = 0;
+          this.uploadProgress[sousAtelierId] = 0;
           // Close dialog after successful upload
           this.closeAddImageDialog();
         }, 1000);
@@ -610,7 +613,7 @@ uploadImageForSousAtelier(file: File): void {
         console.error('Error saving image to database:', error);
         this.uploadError = 'Erreur lors de la sauvegarde en base de données';
         this.isUploading = false;
-        this.uploadProgress = 0;
+        this.uploadProgress[sousAtelierId] = 0;
       }
     });
   }, 1000);
@@ -619,12 +622,13 @@ uploadImageForSousAtelier(file: File): void {
 // Upload image from simple gallery
 uploadSimpleImage(file: File): void {
   this.isUploading = true;
-  this.uploadProgress = 0;
+  const sousAtelierId = this.selectedSousAtelier.id;
+  this.uploadProgress[sousAtelierId] = 0;
   this.uploadError = '';
   const fileName = file.name;
   this.blobService.uploadImage(file, fileName, (progressEvent: ProgressEvent) => {
     if (progressEvent.lengthComputable) {
-      this.uploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+      this.uploadProgress[sousAtelierId] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
     }
   });
 
@@ -638,14 +642,14 @@ uploadSimpleImage(file: File): void {
         this.GetSousAtelier();
         
         setTimeout(() => {
-          this.uploadProgress = 0;
+          this.uploadProgress[sousAtelierId] = 0;
         }, 1000);
       },
       error: (error) => {
         console.error('Error saving image to database:', error);
         this.uploadError = 'Erreur lors de la sauvegarde en base de données';
         this.isUploading = false;
-        this.uploadProgress = 0;
+        this.uploadProgress[sousAtelierId] = 0;
       }
     });
   }, 1000);
@@ -780,7 +784,7 @@ closeImageGallery(): void {
   
   // Reset upload and download state
   this.isUploading = false;
-  this.uploadProgress = 0;
+  this.uploadProgress = {};
   this.uploadError = '';
   this.isDownloading = false;
   this.downloadProgress = 0;
@@ -823,6 +827,170 @@ toggleSousAtelierStatus(sousAtelier: any): void {
   } else {
     // Revert the toggle if user cancels
     sousAtelier.active = !sousAtelier.active;
+  }
+}
+
+// Video support methods
+isImage(path: string): boolean {
+  if (!path) return false;
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'];
+  const extension = path.toLowerCase().substring(path.lastIndexOf('.'));
+  return imageExtensions.includes(extension);
+}
+
+isVideo(path: string): boolean {
+  if (!path) return false;
+  const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
+  const extension = path.toLowerCase().substring(path.lastIndexOf('.'));
+  return videoExtensions.includes(extension);
+}
+
+getVideoMimeType(path: string): string {
+  if (!path) return 'video/mp4';
+  const extension = path.toLowerCase().substring(path.lastIndexOf('.') + 1);
+  const mimeTypes: { [key: string]: string } = {
+    'mp4': 'video/mp4',
+    'webm': 'video/webm',
+    'ogg': 'video/ogg',
+    'mov': 'video/quicktime',
+    'avi': 'video/x-msvideo',
+    'mkv': 'video/x-matroska'
+  };
+  return mimeTypes[extension] || 'video/mp4';
+}
+
+// Inline media upload
+uploadMediaInline(event: any, sousAtelier: any): void {
+  const files = event.target.files;
+  if (!files || files.length === 0) return;
+
+  this.uploadProgress[sousAtelier.id] = 0;
+
+  Array.from(files).forEach((file: any, index: number) => {
+    const fileName = file.name;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', `https://${environment.acountName}.blob.core.windows.net/${environment.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
+    xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
+
+    xhr.upload.onprogress = (progressEvent: ProgressEvent) => {
+      if (progressEvent.lengthComputable) {
+        this.uploadProgress[sousAtelier.id] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 201 || xhr.status === 200) {
+        this.mediaService.addMedia(fileName, sousAtelier.id.toString()).subscribe({
+          next: (mediaResponse) => {
+            console.log('Media uploaded successfully');
+            this.GetSousAtelier();
+            
+            setTimeout(() => {
+              if (this.uploadProgress[sousAtelier.id]) {
+                this.uploadProgress[sousAtelier.id] = 0;
+              }
+            }, 2000);
+          },
+          error: (error: any) => {
+            console.error('Error saving media to database:', error);
+            alert('Erreur lors de la sauvegarde en base de données');
+            this.uploadProgress[sousAtelier.id] = 0;
+          }
+        });
+      } else {
+        console.error('Upload failed:', xhr.status, xhr.statusText);
+        alert('Erreur lors de l\'upload du média');
+        this.uploadProgress[sousAtelier.id] = 0;
+      }
+    };
+
+    xhr.onerror = () => {
+      console.error('Upload error');
+      alert('Erreur lors de l\'upload du média');
+      this.uploadProgress[sousAtelier.id] = 0;
+    };
+
+    xhr.send(file);
+  });
+
+  event.target.value = '';
+}
+
+// Expand media view
+expandMediaView(sousAtelier: any): void {
+  if (sousAtelier.media && sousAtelier.media.length > 0) {
+    const firstMedia = sousAtelier.media[0];
+    if (this.isImage(firstMedia.path)) {
+      this.showImageInZoom(firstMedia.path, sousAtelier);
+    } else if (this.isVideo(firstMedia.path)) {
+      this.showVideoInZoom(firstMedia.path, sousAtelier);
+    }
+  }
+}
+
+// Show image in zoom dialog
+showImageInZoom(imagePath: string, sousAtelier?: any): void {
+  if (sousAtelier) {
+    this.selectedSousAtelier = sousAtelier;
+    const mediaPath = `${this.url}/${imagePath}`;
+    const index = sousAtelier.media.findIndex((m: any) => m.path === imagePath);
+    
+    this.currentImageIndex = index !== -1 ? index : 0;
+    this.totalImagesCount = sousAtelier.media.length;
+    this.selectedImage = mediaPath;
+    this.showImageGallery = true;
+  } else {
+    this.selectedImage = `${this.url}/${imagePath}`;
+    this.currentImageIndex = 0;
+    this.totalImagesCount = 1;
+    this.showImageGallery = true;
+  }
+}
+
+// Show video in zoom dialog
+showVideoInZoom(videoPath: string, sousAtelier?: any): void {
+  if (sousAtelier) {
+    this.selectedSousAtelier = sousAtelier;
+    const mediaPath = `${this.url}/${videoPath}`;
+    const index = sousAtelier.media.findIndex((m: any) => m.path === videoPath);
+    
+    this.currentImageIndex = index !== -1 ? index : 0;
+    this.totalImagesCount = sousAtelier.media.length;
+    this.selectedImage = mediaPath;
+    this.showImageGallery = true;
+  } else {
+    this.selectedImage = `${this.url}/${videoPath}`;
+    this.currentImageIndex = 0;
+    this.totalImagesCount = 1;
+    this.showImageGallery = true;
+  }
+}
+
+// Navigate to previous image/video
+previousImage(): void {
+  if (this.selectedSousAtelier && this.currentImageIndex > 0) {
+    this.currentImageIndex--;
+    const media = this.selectedSousAtelier.media[this.currentImageIndex];
+    this.selectedImage = `${this.url}/${media.path}`;
+  }
+}
+
+// Navigate to next image/video
+nextImage(): void {
+  if (this.selectedSousAtelier && this.currentImageIndex < this.totalImagesCount - 1) {
+    this.currentImageIndex++;
+    const media = this.selectedSousAtelier.media[this.currentImageIndex];
+    this.selectedImage = `${this.url}/${media.path}`;
+  }
+}
+
+// Go to specific image/video
+goToImage(index: number): void {
+  if (this.selectedSousAtelier && index >= 0 && index < this.totalImagesCount) {
+    this.currentImageIndex = index;
+    const media = this.selectedSousAtelier.media[index];
+    this.selectedImage = `${this.url}/${media.path}`;
   }
 }
 

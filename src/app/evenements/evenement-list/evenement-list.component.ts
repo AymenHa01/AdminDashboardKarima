@@ -520,18 +520,6 @@ imageEditDialog: boolean = false;
     }
   }
 
-  // Image zoom with navigation
-  showImageInZoom(imagePath: string) {
-    if (!this.selectedEvenement?.media) return;
-    
-    this.selectedImage = this.url + '/' + imagePath;
-    this.imageDialog = true;
-    
-    // Find current image index
-    this.currentImageIndex = this.selectedEvenement.media.findIndex((m: any) => m.path === imagePath);
-    this.totalImagesCount = this.selectedEvenement.media.length;
-  }
-
   previousImage() {
     if (this.currentImageIndex > 0 && this.selectedEvenement?.media) {
       this.currentImageIndex--;
@@ -552,4 +540,127 @@ imageEditDialog: boolean = false;
       this.selectedImage = this.url + '/' + this.selectedEvenement.media[index].path;
     }
   }
+
+  // Helper methods for media type detection
+  isImage(path: string): boolean {
+    if (!path) return false;
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'];
+    const extension = path.toLowerCase().substring(path.lastIndexOf('.'));
+    return imageExtensions.includes(extension);
+  }
+
+  isVideo(path: string): boolean {
+    if (!path) return false;
+    const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
+    const extension = path.toLowerCase().substring(path.lastIndexOf('.'));
+    return videoExtensions.includes(extension);
+  }
+
+  getVideoMimeType(path: string): string {
+    if (!path) return '';
+    const extension = path.toLowerCase().substring(path.lastIndexOf('.'));
+    const mimeTypes: { [key: string]: string } = {
+      '.mp4': 'video/mp4',
+      '.webm': 'video/webm',
+      '.ogg': 'video/ogg',
+      '.mov': 'video/quicktime',
+      '.avi': 'video/x-msvideo',
+      '.mkv': 'video/x-matroska'
+    };
+    return mimeTypes[extension] || 'video/mp4';
+  }
+
+  // Inline media upload from table
+  uploadMediaInline(event: any, evenement: any) {
+    const files = Array.from(event.target.files) as File[];
+    
+    if (files.length > 0) {
+      this.selectedEvenement = evenement;
+      
+      files.forEach((file) => {
+        this.uploadProgress[evenement.id] = 0;
+        
+        this.blob.uploadImage(file, file.name, (progressEvent: ProgressEvent) => {
+          if (progressEvent.lengthComputable) {
+            this.uploadProgress[evenement.id] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+
+            if (this.uploadProgress[evenement.id] === 100) {
+              this.mediaService.addMediaToEvent(file.name, evenement.id).subscribe({
+                next: (response: any) => {
+                  this.messageService.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Media uploaded successfully'
+                  });
+
+                  // Reload evenement data to update media list
+                  this.loadEvenements();
+                  
+                  setTimeout(() => {
+                    delete this.uploadProgress[evenement.id];
+                  }, 1000);
+                },
+                error: (error: any) => {
+                  console.error('Error saving media:', error);
+                  this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to save media'
+                  });
+                  delete this.uploadProgress[evenement.id];
+                }
+              });
+            }
+          }
+        });
+      });
+      
+      // Reset file input
+      event.target.value = '';
+    }
+  }
+
+  // Expand media view (show all media in zoom)
+  expandMediaView(evenement: any) {
+    this.selectedEvenement = evenement;
+    if (evenement.media && evenement.media.length > 0) {
+      const firstMedia = evenement.media[0];
+      if (this.isImage(firstMedia.path)) {
+        this.showImageInZoom(firstMedia.path, evenement);
+      } else if (this.isVideo(firstMedia.path)) {
+        this.showVideoInZoom(firstMedia.path, evenement);
+      }
+    }
+  }
+
+  // Update showImageInZoom to accept evenement parameter
+  showImageInZoom(imagePath: string, evenement?: any) {
+    if (evenement) {
+      this.selectedEvenement = evenement;
+    }
+    
+    if (!this.selectedEvenement?.media) return;
+    
+    this.selectedImage = this.url + '/' + imagePath;
+    this.imageDialog = true;
+    
+    // Find current image index
+    this.currentImageIndex = this.selectedEvenement.media.findIndex((m: any) => m.path === imagePath);
+    this.totalImagesCount = this.selectedEvenement.media.length;
+  }
+
+  showVideoInZoom(videoPath: string, evenement?: any) {
+    if (evenement) {
+      this.selectedEvenement = evenement;
+    }
+    this.selectedImage = this.url + '/' + videoPath;
+    this.imageDialog = true;
+    
+    // Find current video index
+    if (this.selectedEvenement?.media) {
+      this.currentImageIndex = this.selectedEvenement.media.findIndex((m: any) => m.path === videoPath);
+      this.totalImagesCount = this.selectedEvenement.media.length;
+    }
+  }
 }
+
