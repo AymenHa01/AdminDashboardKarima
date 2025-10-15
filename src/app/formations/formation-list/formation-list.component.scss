@@ -254,6 +254,7 @@ $transition: all 0.3s ease;
       &.col-date { width: 90px; min-width: 90px; }
       &.col-number { width: 70px; min-width: 70px; }
       &.col-status { width: 80px; min-width: 80px; }
+      &.col-media { width: 140px; min-width: 140px; }
       &.col-actions { width: 140px; min-width: 140px; }
     }
     
@@ -481,6 +482,87 @@ $transition: all 0.3s ease;
   }
 }
 
+// Media Cell Styles
+.media-cell {
+  padding: 0.5rem !important;
+}
+
+.table-images-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 120px;
+}
+
+.table-images-grid {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.table-image-item {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1;
+  }
+}
+
+.table-image-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.more-images-indicator {
+  background: #6c757d;
+  color: white;
+  font-size: 0.7rem;
+  padding: 4px 6px;
+  border-radius: 4px;
+  text-align: center;
+  min-width: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  
+  &:hover {
+    background: #5a6268;
+    transform: scale(1.05);
+  }
+}
+
+.table-image-actions {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+  justify-content: center;
+}
+
+.no-table-images {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #6c757d;
+  padding: 0.5rem;
+  
+  span {
+    font-style: italic;
+  }
+}
+
 // Responsive Design
 @media (max-width: 1024px) {
   .main-content {
@@ -638,4 +720,227 @@ $transition: all 0.3s ease;
   gap: 0.75rem;
   justify-content: flex-end;
   align-items: center;
+}
+
+// Image Zoom Dialog with Navigation
+.image-zoom-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 1rem;
+  
+  .image-nav-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex: 1;
+    position: relative;
+    
+    .nav-btn-left,
+    .nav-btn-right {
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      
+      &:not([disabled]):hover {
+        background: rgba(255, 255, 255, 1);
+        transform: scale(1.1);
+      }
+      
+      &[disabled] {
+        opacity: 0.3;
+      }
+    }
+    
+    .main-image-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      max-height: 70vh;
+      
+      .zoom-image {
+        max-width: 100%;
+        max-height: 70vh;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+      
+      .image-counter {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        backdrop-filter: blur(10px);
+      }
+    }
+  }
+  
+  .thumbnail-strip {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 1rem 0;
+    justify-content: center;
+    
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: $background-light;
+      border-radius: 3px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: $border-color;
+      border-radius: 3px;
+      
+      &:hover {
+        background: $text-muted;
+      }
+    }
+    
+    .thumbnail-item {
+      flex-shrink: 0;
+      width: 80px;
+      height: 80px;
+      cursor: pointer;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 3px solid transparent;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: scale(1.05);
+        border-color: $primary-color;
+      }
+      
+      &.active {
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+      }
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+}
+
+// Gallery Grid Styles
+.simple-gallery-content {
+  .gallery-add-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: $background-light;
+    border-radius: $border-radius;
+    
+    .file-input {
+      display: none;
+    }
+    
+    .upload-progress-section {
+      margin-top: 1rem;
+      
+      h4 {
+        margin-bottom: 0.75rem;
+        color: $text-primary;
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+      
+      .progress-item {
+        margin-bottom: 0.75rem;
+        
+        .file-name {
+          display: block;
+          margin-bottom: 0.25rem;
+          font-size: 0.85rem;
+          color: $text-secondary;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+  
+  .simple-images-section {
+    h4 {
+      margin-bottom: 1rem;
+      color: $text-primary;
+      font-weight: 600;
+    }
+    
+    .simple-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+      
+      .simple-gallery-item {
+        position: relative;
+        border-radius: $border-radius;
+        overflow: hidden;
+        background: white;
+        @include card-shadow;
+        transition: $transition;
+        
+        &:hover {
+          @include hover-shadow;
+          transform: translateY(-4px);
+          
+          .simple-image-actions {
+            opacity: 1;
+          }
+        }
+        
+        .simple-gallery-image {
+          width: 100%;
+          height: 200px;
+          object-fit: cover;
+          cursor: pointer;
+          transition: $transition;
+          
+          &:hover {
+            transform: scale(1.05);
+          }
+        }
+        
+        .simple-image-actions {
+          position: absolute;
+          top: 0.5rem;
+          right: 0.5rem;
+          display: flex;
+          gap: 0.5rem;
+          opacity: 0;
+          transition: $transition;
+          
+          ::ng-deep .p-button {
+            width: 2rem;
+            height: 2rem;
+            
+            .pi {
+              font-size: 0.9rem;
+            }
+          }
+        }
+      }
+    }
+    
+    .empty-gallery {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: $text-muted;
+      font-size: 1rem;
+    }
+  }
 }

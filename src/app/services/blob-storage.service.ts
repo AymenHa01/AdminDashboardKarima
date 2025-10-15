@@ -15,9 +15,9 @@ export class BlobStorageService {
 
   uploadImage(file: File, fileName: string, onProgress?: (event: ProgressEvent) => void): void {
     const xhr = new XMLHttpRequest();
-    const formData = new FormData();
-    
-    formData.append('file', file, fileName);
+
+    xhr.open('PUT', `https://${environment.acountName}.blob.core.windows.net/${environment.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
+    xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
 
     xhr.upload.addEventListener('progress', (event: ProgressEvent) => {
       if (onProgress) {
@@ -37,8 +37,7 @@ export class BlobStorageService {
       console.error('Upload error');
     }, false);
 
-    xhr.open('POST', `${this.blobStorageUrl}/${fileName}`, true);
-    xhr.send(formData);
+    xhr.send(file);
   }
 
   deleteImage(fileName: string): Promise<void> {
@@ -46,7 +45,7 @@ export class BlobStorageService {
       const xhr = new XMLHttpRequest();
       
       xhr.addEventListener('load', () => {
-        if (xhr.status === 200 || xhr.status === 204) {
+        if (xhr.status === 200 || xhr.status === 202 || xhr.status === 204) {
           console.log('Image deleted successfully');
           resolve();
         } else {
@@ -60,7 +59,7 @@ export class BlobStorageService {
         reject(new Error('Delete error'));
       }, false);
 
-      xhr.open('DELETE', `${this.blobStorageUrl}/${fileName}`, true);
+      xhr.open('DELETE', `https://${environment.acountName}.blob.core.windows.net/${environment.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
       xhr.send();
     });
   }

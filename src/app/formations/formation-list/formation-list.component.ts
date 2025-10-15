@@ -23,6 +23,8 @@ export class FormationListComponent implements OnInit {
   url = environment.blobUrl;
   imageDialog: boolean = false;
   selectedImage: string = '';
+  currentImageIndex: number = 0;
+  totalImagesCount: number = 0;
   
   // Inline image editing properties
   uploadingImages: { [key: string]: boolean } = {};
@@ -356,43 +358,103 @@ export class FormationListComponent implements OnInit {
     this.imageDialog = true;
   }
 
+  showImageInZoom(imagePath: string) {
+    if (!this.selectedFormation || !this.selectedFormation.media) {
+      return;
+    }
+    
+    // Find the index of the clicked image
+    const index = this.selectedFormation.media.findIndex((m: any) => m.path === imagePath);
+    
+    if (index !== -1) {
+      this.currentImageIndex = index;
+      this.totalImagesCount = this.selectedFormation.media.length;
+      this.selectedImage = this.url + '/' + imagePath;
+      this.imageDialog = true;
+    }
+  }
+
+  previousImage() {
+    if (this.currentImageIndex > 0 && this.selectedFormation?.media) {
+      this.currentImageIndex--;
+      this.selectedImage = this.url + '/' + this.selectedFormation.media[this.currentImageIndex].path;
+    }
+  }
+
+  nextImage() {
+    if (this.currentImageIndex < this.totalImagesCount - 1 && this.selectedFormation?.media) {
+      this.currentImageIndex++;
+      this.selectedImage = this.url + '/' + this.selectedFormation.media[this.currentImageIndex].path;
+    }
+  }
+
+  goToImage(index: number) {
+    if (this.selectedFormation?.media && index >= 0 && index < this.totalImagesCount) {
+      this.currentImageIndex = index;
+      this.selectedImage = this.url + '/' + this.selectedFormation.media[index].path;
+    }
+  }
+
   // Multiple Images Management Methods for Formations
   manageImages(formation: any) {
     this.selectedFormation = formation;
     this.mediaDialogVisible = true;
-    // this.loadFormationMedias(formation.id);
     this.resetMultipleImagesForm();
   }
 
-  loadFormationMedias(formationId: number) {
-    this.mediaService.getMediaByTypeAndId('FORMATION', formationId.toString()).subscribe({
-      next: (data: any) => {
-        this.formationMedias = data || [];
-        console.log('Formation medias loaded:', this.formationMedias);
-      },
-      error: (error) => {
-        console.error('Error loading formation medias:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load images'
-        });
-        this.formationMedias = [];
-      }
-    });
+  closeMediaDialog() {
+    this.mediaDialogVisible = false;
+    this.selectedFormation = null;
+    this.resetMultipleImagesForm();
   }
 
   onMultipleFilesChange(event: any) {
     const files = Array.from(event.target.files) as File[];
-    this.selectedFiles = files;
     
     if (files.length > 0) {
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Files Selected',
-        detail: `Selected ${files.length} file(s)`
+      // Auto-upload files immediately
+      files.forEach((file) => {
+        this.uploadSingleImage(file);
       });
+      
+      // Reset file input
+      event.target.value = '';
     }
+  }
+
+  uploadSingleImage(file: File) {
+    this.uploadProgress[file.name] = 0;
+
+    this.blob.uploadImage(file, file.name, (progressEvent: ProgressEvent) => {
+      if (progressEvent.lengthComputable) {
+        this.uploadProgress[file.name] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+
+        if (this.uploadProgress[file.name] === 100) {
+          this.mediaService.addMediaFormation(file.name, this.selectedFormation.id).subscribe({
+            next: (response: any) => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Image uploaded successfully'
+              });
+
+              // Reload formation data to update media list
+              this.loadFormations();
+              delete this.uploadProgress[file.name];
+            },
+            error: (error) => {
+              console.error('Error saving image:', error);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to save image'
+              });
+              delete this.uploadProgress[file.name];
+            }
+          });
+        }
+      }
+    });
   }
  
 
@@ -423,8 +485,8 @@ export class FormationListComponent implements OnInit {
                   detail: `Image ${index + 1} uploaded successfully`
                 });
                 
-                // Reload medias after successful upload
-                this.loadFormationMedias(this.selectedFormation.id);
+                // Reload formations to update media list
+                this.loadFormations();
                 delete this.uploadProgress[file.name];
               },
               error: (error) => {
@@ -455,7 +517,7 @@ export class FormationListComponent implements OnInit {
             summary: 'Success',
             detail: 'Image deleted successfully'
           });
-          this.loadFormationMedias(this.selectedFormation.id);
+          this.loadFormations();
         },
         error: (error) => {
           console.error('Error deleting media:', error);

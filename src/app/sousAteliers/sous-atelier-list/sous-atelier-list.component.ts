@@ -72,8 +72,11 @@ containerName: string = environment.containerName;
     private mediaService: MediaService,
     private blobService: BlobStorageService, 
     private dialog: MatDialog,
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService , 
   ) { }
+
+
+  
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id');
     let body ={
@@ -338,54 +341,64 @@ uploadFormImage(sousAtelierId: number): void {
       };
       reader.readAsDataURL(file);
       
-      // Upload image immediately
-      this.uploadInlineImage(file, sousAtelierId);
+// this.blob.uploadImage(file, file.name, (progressEvent: ProgressEvent) => {
+//       if (progressEvent.lengthComputable) {
+//         this.inlineUploadProgress[sousAtelierId] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+//       }
+//     }
+// );
+
+
+
+
+
+//      this.uploadInlineImage(file, sousAtelierId);
     }
   }
   // Upload image for inline editing
-  uploadInlineImage(file: File, sousAtelierId: number): void {
-    this.uploadingInlineImages[sousAtelierId] = true;
-    this.inlineUploadProgress[sousAtelierId] = 0;
+  // uploadInlineImage(file: File, sousAtelierId: number): void {
+  //   this.uploadingInlineImages[sousAtelierId] = true;
+  //   this.inlineUploadProgress[sousAtelierId] = 0;
     
-    const fileName = file.name;
+  //   const fileName = file.name;
     
-    // Custom XHR for better control
-    const xhr = new XMLHttpRequest();
-    xhr.open('PUT', `https://${this.accoubntName}.blob.core.windows.net/${this.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
-    xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
+  //   // Custom XHR for better control
+  //   const xhr = new XMLHttpRequest();
+  //   xhr.open('PUT', `https://${environment.acountName}.blob.core.windows.net/${environment.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
+  //   xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
 
-    xhr.upload.onprogress = (event: ProgressEvent) => {
-      if (event.lengthComputable) {
-        this.inlineUploadProgress[sousAtelierId] = Math.round((event.loaded / event.total) * 100);
-      }
-    };
+  //   xhr.upload.onprogress = (event: ProgressEvent) => {
+  //     if (event.lengthComputable) {
+  //       this.inlineUploadProgress[sousAtelierId] = Math.round((event.loaded / event.total) * 100);
+  //     }
+  //   };
 
-    xhr.onload = () => {
-      if (xhr.status === 201 || xhr.status === 200) {
-        // Update the sous-atelier object with new image name
-        const sousAtelierIndex = this.sousAteliers.findIndex(sa => sa.id === sousAtelierId);
-        if (sousAtelierIndex !== -1) {
-          this.sousAteliers[sousAtelierIndex].image = fileName;
-        }
+  //   xhr.onload = () => {
+  //     if (xhr.status === 201 || xhr.status === 200) {
+  //       // Update the sous-atelier object with new image name
+  //       const sousAtelierIndex = this.sousAteliers.findIndex(sa => sa.id === sousAtelierId);
+  //       if (sousAtelierIndex !== -1) {
+  //         this.sousAteliers[sousAtelierIndex].image = fileName;
+  //       }
         
-        this.uploadingInlineImages[sousAtelierId] = false;
-        this.inlineUploadProgress[sousAtelierId] = 100;
+  //       this.uploadingInlineImages[sousAtelierId] = false;
+  //       this.inlineUploadProgress[sousAtelierId] = 100;
         
-        // Reset progress after delay
-        setTimeout(() => {
-          this.inlineUploadProgress[sousAtelierId] = 0;
-        }, 2000);
-      } else {
-        this.handleInlineUploadError(sousAtelierId, xhr);
-      }
-    };
+  //       // Reset progress after delay
+  //       setTimeout(() => {
+  //         this.inlineUploadProgress[sousAtelierId] = 0;
+  //       }, 2000);
+  //     } else {
+  //       this.handleInlineUploadError(sousAtelierId, xhr);
+  //     }
+  //   };
 
-    xhr.onerror = () => {
-      this.handleInlineUploadError(sousAtelierId, xhr);
-    };
+  //   xhr.onerror = () => {
+  //     this.handleInlineUploadError(sousAtelierId, xhr);
+  //   };
 
-    xhr.send(file);
-  }
+  //   xhr.send(file);
+  // }
 
   private handleInlineUploadError(sousAtelierId: number, xhr: XMLHttpRequest): void {
     console.error('Error uploading inline image:', {
@@ -506,33 +519,33 @@ uploadImage(file: File): void {
   const fileName = file.name;
 
   // Upload to blob storage using the BlobStorgeService
-  this.blobService.uploadImage(file, fileName, (progressEvent: ProgressEvent) => {
-    if (progressEvent.lengthComputable) {
-      this.uploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-    }
-  });
+  // this.blobService.uploadImage(file, fileName, (progressEvent: ProgressEvent) => {
+  //   if (progressEvent.lengthComputable) {
+  //     this.uploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+  //   }
+  // });
 
 
-  setTimeout(() => {
-    this.mediaService.addMedia(fileName,  this.selectedSousAtelier.id.toString()).subscribe({
-      next: (mediaResponse) => {
-        this.isUploading = false;
+  // setTimeout(() => {
+  //   this.mediaService.addMedia(fileName,  this.selectedSousAtelier.id.toString()).subscribe({
+  //     next: (mediaResponse) => {
+  //       this.isUploading = false;
         
-        // Refresh images list
-        this.loadSousAtelierImages(this.selectedSousAtelier.id);
+  //       // Refresh images list
+  //       this.loadSousAtelierImages(this.selectedSousAtelier.id);
         
-        setTimeout(() => {
-          this.uploadProgress = 0;
-        }, 2000);
-      },
-      error: (error) => {
-        console.error('Error saving image to database:', error);
-        this.uploadError = 'Erreur lors de la sauvegarde en base de données';
-        this.isUploading = false;
-        this.uploadProgress = 0;
-      }
-    });
-  }, 1000); 
+  //       setTimeout(() => {
+  //         this.uploadProgress = 0;
+  //       }, 2000);
+  //     },
+  //     error: (error) => {
+  //       console.error('Error saving image to database:', error);
+  //       this.uploadError = 'Erreur lors de la sauvegarde en base de données';
+  //       this.isUploading = false;
+  //       this.uploadProgress = 0;
+  //     }
+  //   });
+  // }, 1000); 
 }
 
 // Upload image from gallery
@@ -616,10 +629,7 @@ uploadSimpleImage(file: File): void {
   this.isUploading = true;
   this.uploadProgress = 0;
   this.uploadError = '';
-
   const fileName = file.name;
-
-  // Upload to blob storage using the BlobStorgeService
   this.blobService.uploadImage(file, fileName, (progressEvent: ProgressEvent) => {
     if (progressEvent.lengthComputable) {
       this.uploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);

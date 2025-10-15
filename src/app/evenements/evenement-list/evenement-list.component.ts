@@ -53,6 +53,10 @@ export class EvenementListComponent implements OnInit {
   selectedEvenementForImageEdit: any = null;
   newImageFile: File | null = null;
   imageUploadProgress: number = 0;
+
+  // Image zoom functionality
+  currentImageIndex: number = 0;
+  totalImagesCount: number = 0;
   
   constructor(
     private evenementService: EvenementService,
@@ -191,20 +195,15 @@ export class EvenementListComponent implements OnInit {
   toggleEvenementStatus(evenement: any): void {
     const statusText = evenement.active ? 'activer' : 'désactiver';
     
-    if (confirm(`Êtes-vous sûr de vouloir ${statusText} cet événement ?`)) {
-      let body: any = {
-        "id": evenement.id,
-        "name": evenement.name,
-        "description": evenement.description,
-        "lieu": evenement.lieu,
-        "debut": evenement.debut,
-        "fin": evenement.fin,
-        "prix": evenement.prix,
-        "image": evenement.image || '',
-        "active": evenement.active
-      };
+   if (evenement.active) {
+      evenement.active = true
+    }else{
+      evenement.active = false
+    }
+    console.log(evenement);
+    
 
-      this.evenementService.AddEvenemt(body).subscribe({
+      this.evenementService.EditEvenement(evenement).subscribe({
         next: (data: any) => {
           console.log('Status updated successfully:', data);
           this.loadEvenements();
@@ -226,10 +225,7 @@ export class EvenementListComponent implements OnInit {
           });
         }
       });
-    } else {
-      // Revert the toggle if user cancels
-      evenement.active = !evenement.  active;
-    }
+    
   }
 
   // UploadImages(file: any) {
@@ -523,6 +519,39 @@ export class EvenementListComponent implements OnInit {
     const fileInput = document.getElementById('imageEditInput') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = '';
+    }
+  }
+
+  // Image zoom with navigation
+  showImageInZoom(imagePath: string) {
+    if (!this.selectedEvenement?.media) return;
+    
+    this.selectedImage = this.url + '/' + imagePath;
+    this.imageDialog = true;
+    
+    // Find current image index
+    this.currentImageIndex = this.selectedEvenement.media.findIndex((m: any) => m.path === imagePath);
+    this.totalImagesCount = this.selectedEvenement.media.length;
+  }
+
+  previousImage() {
+    if (this.currentImageIndex > 0 && this.selectedEvenement?.media) {
+      this.currentImageIndex--;
+      this.selectedImage = this.url + '/' + this.selectedEvenement.media[this.currentImageIndex].path;
+    }
+  }
+
+  nextImage() {
+    if (this.currentImageIndex < this.totalImagesCount - 1 && this.selectedEvenement?.media) {
+      this.currentImageIndex++;
+      this.selectedImage = this.url + '/' + this.selectedEvenement.media[this.currentImageIndex].path;
+    }
+  }
+
+  goToImage(index: number) {
+    if (this.selectedEvenement?.media && index >= 0 && index < this.totalImagesCount) {
+      this.currentImageIndex = index;
+      this.selectedImage = this.url + '/' + this.selectedEvenement.media[index].path;
     }
   }
 }
