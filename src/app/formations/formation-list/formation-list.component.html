@@ -338,23 +338,32 @@
                                         <!-- Display existing media -->
                                         <div class="table-images-grid" *ngIf="formation.media && formation.media.length > 0">
                                             <div *ngFor="let media of formation.media.slice(0, 4)" 
-                                                 class="table-image-item"
-                                                 (click)="isImage(media.path) ? showImageInZoom(media.path, formation) : showVideoInZoom(media.path, formation)">
-                                                <!-- Image thumbnail -->
-                                                <img *ngIf="isImage(media.path)"
-                                                     [src]="url + '/' + media.path" 
-                                                     alt="Formation media" 
-                                                     class="table-image-thumbnail">
-                                                
-                                                <!-- Video thumbnail -->
-                                                <div *ngIf="isVideo(media.path)" class="table-video-thumbnail">
-                                                    <video class="table-video-element">
-                                                        <source [src]="url + '/' + media.path" [type]="getVideoMimeType(media.path)">
-                                                    </video>
-                                                    <div class="video-play-icon">
-                                                        <i class="pi pi-play"></i>
+                                                 class="table-image-item">
+                                                <div class="media-content"
+                                                     (click)="isImage(media.path) ? showImageInZoom(media.path, formation) : showVideoInZoom(media.path, formation)">
+                                                    <!-- Image thumbnail -->
+                                                    <img *ngIf="isImage(media.path)"
+                                                         [src]="url + '/' + media.path" 
+                                                         alt="Formation media" 
+                                                         class="table-image-thumbnail">
+                                                    
+                                                    <!-- Video thumbnail -->
+                                                    <div *ngIf="isVideo(media.path)" class="table-video-thumbnail">
+                                                        <video class="table-video-element">
+                                                            <source [src]="url + '/' + media.path" [type]="getVideoMimeType(media.path)">
+                                                        </video>
+                                                        <div class="video-play-icon">
+                                                            <i class="pi pi-play"></i>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                <!-- Delete button -->
+                                                <button class="delete-media-btn" 
+                                                        (click)="deleteMedia(media); $event.stopPropagation()"
+                                                        pTooltip="Supprimer"
+                                                        tooltipPosition="top">
+                                                    <i class="pi pi-times"></i>
+                                                </button>
                                             </div>
                                             <div *ngIf="formation.media.length > 4" 
                                                  class="more-images-indicator"
