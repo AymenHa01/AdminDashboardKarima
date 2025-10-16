@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { SidebarService } from './sidebar.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,7 +14,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
   isMobile: boolean = false;
   private subscription: Subscription = new Subscription();
 
-  constructor(private sidebarService: SidebarService) {
+  constructor(
+    private sidebarService: SidebarService,
+    private authService: AuthService,
+    private router: Router
+  ) {
     this.checkMobile();
   }
 
@@ -50,5 +56,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   private checkMobile(): void {
     this.isMobile = window.innerWidth <= 768;
+  }
+
+  logout(): void {
+    // Clear authentication token
+    this.authService.logout();
+    // Navigate to login page
+    this.router.navigate(['/login']);
   }
 }

@@ -59,4 +59,10 @@ export class ArtisteService {
       headers: this.getHeaders()
     });
   }
+  
+  EditTableau(tableau: any) {
+    return this.http.put(this.tableau + `/EditTableau`, tableau, {
+      headers: this.getHeaders()
+    });
+  }
 }

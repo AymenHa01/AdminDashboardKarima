@@ -340,57 +340,131 @@
     <div class="tableau-management">
         <!-- Add New Tableau Form -->
         <div class="tableau-form-section">
-            <h3>Add New Tableau</h3>
-            <form (ngSubmit)="addTableau()" #tableauForm="ngForm" class="tableau-form">
-                <div class="form-grid">
-                    <div class="form-field">
-                        <label for="titre">
-                            <i class="pi pi-tag"></i> Title
-                        </label>
-                        <input id="titre" type="text" pInputText 
-                            [(ngModel)]="newTableau.titre" 
-                            name="titre" required 
-                            placeholder="Enter tableau title" />
-                    </div>
-                    <div class="form-field">
-                        <label for="description">
-                            <i class="pi pi-file-o"></i> Description
-                        </label>
-                        <textarea id="description" pInputTextarea 
-                            [(ngModel)]="newTableau.Description" 
-                            name="description" required 
-                            placeholder="Enter tableau description"
-                            rows="3">
-                        </textarea>
-                    </div>
-                    <div class="form-field">
-                        <label for="tableauImage">
-                            <i class="pi pi-image"></i> Image
-                        </label>
-                        <input id="tableauImage" type="file" 
-                            (change)="onTableauFileChange($event)" 
-                            accept="image/*" />
-                        <!-- Progress bar for image upload -->
-                        <div *ngIf="progress > 0 && progress < 100" class="progress-container">
-                            <p-progressBar [value]="progress" 
-                                [showValue]="true" 
-                                styleClass="upload-progress">
-                            </p-progressBar>
-                            <small>Uploading image to blob storage...</small>
+            <div class="form-card">
+                <header class="form-header">
+                    <h3><i class="pi pi-plus-circle"></i> Add New Tableau</h3>
+                    <p class="form-subtitle">Create a new artwork for {{selectedArtist?.nom}} {{selectedArtist?.prenom}}</p>
+                </header>
+                
+                <form (ngSubmit)="addTableau()" #tableauForm="ngForm" class="tableau-form">
+                    <div class="form-content">
+                        <!-- Basic Information Section -->
+                        <div class="form-section">
+                            <h4 class="section-title">
+                                <i class="pi pi-info-circle"></i> Basic Information
+                            </h4>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="titre" class="required-field">
+                                        <i class="pi pi-tag"></i> Title
+                                    </label>
+                                    <input id="titre" type="text" pInputText 
+                                        [(ngModel)]="newTableau.titre" 
+                                        name="titre" required 
+                                        placeholder="Enter tableau title"
+                                        class="form-input" />
+                                </div>
+                                <div class="form-field">
+                                    <label for="prix" class="required-field">
+                                        <i class="pi pi-dollar"></i> Prix (DT)
+                                    </label>
+                                    <p-inputNumber 
+                                        id="prix"
+                                        [(ngModel)]="newTableau.prix" 
+                                        name="prix" 
+                                        required
+                                        mode="decimal" 
+                                        [minFractionDigits]="2"
+                                        [maxFractionDigits]="2"
+                                        suffix=" DT"
+                                        placeholder="0.00"
+                                        class="form-input">
+                                    </p-inputNumber>
+                                </div>
+                            </div>
+                            <div class="form-field full-width">
+                                <label for="description" class="required-field">
+                                    <i class="pi pi-align-left"></i> Description
+                                </label>
+                                <textarea id="description" pInputTextarea 
+                                    [(ngModel)]="newTableau.Description" 
+                                    name="description" required 
+                                    placeholder="Enter detailed description of the tableau"
+                                    rows="4"
+                                    class="form-textarea">
+                                </textarea>
+                            </div>
                         </div>
-                        <div *ngIf="tableauFile" class="file-info">
-                            <small><i class="pi pi-file"></i> Selected: {{tableauFile.name}}</small>
+
+                        <!-- Image Upload Section -->
+                        <div class="form-section">
+                            <h4 class="section-title">
+                                <i class="pi pi-image"></i> Tableau Image
+                            </h4>
+                            <div class="image-upload-area">
+                                <div class="file-upload-wrapper">
+                                    <input id="tableauImage" type="file" 
+                                        (change)="onTableauFileChange($event)" 
+                                        accept="image/*" 
+                                        class="file-input" />
+                                    <label for="tableauImage" class="file-upload-label">
+                                        <div class="upload-content">
+                                            <i class="pi pi-cloud-upload upload-icon"></i>
+                                            <span class="upload-text">Click to select image</span>
+                                            <small class="upload-hint">PNG, JPG, JPEG up to 5MB</small>
+                                        </div>
+                                    </label>
+                                </div>
+                                
+                                <!-- Selected file info -->
+                                <div *ngIf="tableauFile" class="selected-file">
+                                    <div class="file-preview">
+                                        <i class="pi pi-file-image file-icon"></i>
+                                        <div class="file-details">
+                                            <span class="file-name">{{tableauFile.name}}</span>
+                                            <small class="file-size">{{(tableauFile.size / 1024 / 1024).toFixed(2)}} MB</small>
+                                        </div>
+                                        <button type="button" class="remove-file-btn" (click)="removeTableauFile()">
+                                            <i class="pi pi-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Upload progress -->
+                                <div *ngIf="progress > 0 && progress < 100" class="upload-progress-section">
+                                    <div class="progress-info">
+                                        <span class="progress-label">Uploading to cloud storage...</span>
+                                        <span class="progress-percentage">{{progress}}%</span>
+                                    </div>
+                                    <p-progressBar [value]="progress" 
+                                        [showValue]="false" 
+                                        styleClass="custom-progress">
+                                    </p-progressBar>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-actions">
-                    <p-button label="Add Tableau" icon="pi pi-plus" 
-                        type="submit" 
-                        styleClass="p-button-success"
-                        [disabled]="!tableauForm.valid">
-                    </p-button>
-                </div>
-            </form>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <p-button 
+                            label="Cancel" 
+                            icon="pi pi-times" 
+                            type="button"
+                            (click)="resetTableauForm()"
+                            styleClass="p-button-outlined p-button-secondary">
+                        </p-button>
+                        <p-button 
+                            label="Add Tableau" 
+                            icon="pi pi-plus" 
+                            type="submit" 
+                            styleClass="p-button-success"
+                            [disabled]="!tableauForm.valid || (progress > 0 && progress < 100)"
+                            [loading]="progress > 0 && progress < 100">
+                        </p-button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <!-- Existing Tableaux List -->
@@ -408,6 +482,7 @@
                         <th>Image</th>
                         <th>Title</th>
                         <th>Description</th>
+                        <th>Prix</th>
                         <th>Actions</th>
                     </tr>
                 </ng-template>
@@ -421,20 +496,60 @@
                                 *ngIf="tableau.image"/>
                             <span *ngIf="!tableau.image" class="no-image">No Image</span>
                         </td>
-                        <td>{{tableau.titre}}</td>
-                        <td>{{tableau.Description}}</td>
                         <td>
-                            <p-button icon="pi pi-trash" 
-                                (click)="deleteTableau(tableau.id)"
-                                styleClass="p-button-rounded p-button-danger p-button-sm"
-                                pTooltip="Delete Tableau">
-                            </p-button>
+                            <ng-container *ngIf="!isEditingTableau(tableau)">
+                                <span>{{tableau.titre}}</span>
+                            </ng-container>
+                            <ng-container *ngIf="isEditingTableau(tableau)">
+                                <input pInputText type="text" [(ngModel)]="editedTableau.titre" class="edit-input">
+                            </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngIf="!isEditingTableau(tableau)">
+                                <span [title]="tableau.description">{{tableau.description | slice:0:30}}{{tableau.description?.length > 30 ? '...' : ''}}</span>
+                            </ng-container>
+                            <ng-container *ngIf="isEditingTableau(tableau)">
+                                <input pInputText type="text" [(ngModel)]="editedTableau.Description" class="edit-input">
+                            </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngIf="!isEditingTableau(tableau)">
+                                <span>{{tableau.prix}} DT</span>
+                            </ng-container>
+                            <ng-container *ngIf="isEditingTableau(tableau)">
+                                <input pInputText type="number" [(ngModel)]="editedTableau.prix" class="edit-input" min="0" step="0.01">
+                            </ng-container>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <p-button 
+                                    [icon]="isEditingTableau(tableau) ? 'pi pi-check' : 'pi pi-pencil'" 
+                                    (click)="toggleTableauEdit(tableau)"
+                                    [styleClass]="isEditingTableau(tableau) ? 'p-button-rounded p-button-success p-button-sm' : 'p-button-rounded p-button-info p-button-sm'"
+                                    [pTooltip]="isEditingTableau(tableau) ? 'Save' : 'Edit'">
+                                </p-button>
+                                <ng-container *ngIf="isEditingTableau(tableau)">
+                                    <p-button 
+                                        icon="pi pi-times" 
+                                        (click)="cancelTableauEdit()"
+                                        styleClass="p-button-rounded p-button-secondary p-button-sm"
+                                        pTooltip="Cancel">
+                                    </p-button>
+                                </ng-container>
+                                <p-button 
+                                    *ngIf="!isEditingTableau(tableau)"
+                                    icon="pi pi-trash" 
+                                    (click)="deleteTableau(tableau.id)"
+                                    styleClass="p-button-rounded p-button-danger p-button-sm"
+                                    pTooltip="Delete Tableau">
+                                </p-button>
+                            </div>
                         </td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td colspan="5" class="empty-message">
+                        <td colspan="6" class="empty-message">
                             <i class="pi pi-info-circle"></i>
                             <span>No tableaux found for this artist</span>
                         </td>

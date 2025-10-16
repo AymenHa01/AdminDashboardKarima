@@ -49,10 +49,15 @@ export class ArtistListComponent implements OnInit {
   newTableau: any = {
     titre: '',
     Description: '',
+    prix: null,
     image: '',
     artiste: null
   };
   tableauFile: any;
+  
+  // Edit tableau properties
+  editingTableauId: number | null = null;
+  editedTableau: any = null;
 
   constructor(
     private artisteService: ArtisteService,
@@ -380,11 +385,11 @@ export class ArtistListComponent implements OnInit {
   }
 
   addTableau() {
-    if (!this.newTableau.titre || !this.newTableau.Description) {
+    if (!this.newTableau.titre || !this.newTableau.Description || this.newTableau.prix === null || this.newTableau.prix === undefined) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Warning',
-        detail: 'Please fill in all required fields'
+        detail: 'Please fill in all required fields including prix'
       });
       return;
     }
@@ -412,6 +417,8 @@ export class ArtistListComponent implements OnInit {
   }
 
   private submitTableau() {
+    console.log(this.newTableau);
+    
     this.artisteService.AddTableau(this.newTableau).subscribe({
       next: (response: any) => {
         this.messageService.add({
@@ -470,23 +477,37 @@ export class ArtistListComponent implements OnInit {
   onTableauFileChange(event: any) {
     const file = event.target.files[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Invalid File',
+          detail: 'Please select a valid image file'
+        });
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (file.size > maxSize) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'File Too Large',
+          detail: 'Please select an image smaller than 5MB'
+        });
+        return;
+      }
+      
       this.tableauFile = file;
-      // Show file selected message
       this.messageService.add({
-        severity: 'info',
+        severity: 'success',
         summary: 'File Selected',
         detail: `Selected: ${file.name}`
       });
     }
   }
-
-  private resetTableauForm() {
-    this.newTableau = {
-      titre: '',
-      Description: '',
-      image: '',
-      artiste: null
-    };
+  
+  removeTableauFile() {
     this.tableauFile = null;
     this.progress = 0;
     
@@ -495,5 +516,78 @@ export class ArtistListComponent implements OnInit {
     if (fileInput) {
       fileInput.value = '';
     }
+    
+    this.messageService.add({
+      severity: 'info',
+      summary: 'File Removed',
+      detail: 'Image file has been removed'
+    });
+  }
+
+  resetTableauForm() {
+    this.newTableau = {
+      titre: '',
+      Description: '',
+      prix: null,
+      image: '',
+      artiste: null
+    };
+    this.tableauFile = null;
+    this.progress = 0;
+    this.editingTableauId = null;
+    this.editedTableau = null;
+    
+    // Reset file input
+    const fileInput = document.getElementById('tableauImage') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+    
+    // Show reset confirmation
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Form Reset',
+      detail: 'Tableau form has been reset'
+    });
+  }
+  
+  // Edit tableau methods
+  toggleTableauEdit(tableau: any) {
+    if (this.editingTableauId === tableau.id) {
+      // Save changes
+      this.artisteService.EditTableau(this.editedTableau).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Tableau updated successfully'
+          });
+          this.editingTableauId = null;
+          this.editedTableau = null;
+          this.loadArtistTableaux(this.selectedArtist.id);
+        },
+        error: (error: any) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update tableau'
+          });
+          console.error('Error updating tableau:', error);
+        }
+      });
+    } else {
+      // Start editing
+      this.editingTableauId = tableau.id;
+      this.editedTableau = { ...tableau };
+    }
+  }
+  
+  isEditingTableau(tableau: any): boolean {
+    return this.editingTableauId === tableau.id;
+  }
+  
+  cancelTableauEdit() {
+    this.editingTableauId = null;
+    this.editedTableau = null;
   }
 }
