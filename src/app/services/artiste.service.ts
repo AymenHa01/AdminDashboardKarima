@@ -61,7 +61,7 @@ export class ArtisteService {
   }
   
   EditTableau(tableau: any) {
-    return this.http.put(this.tableau + `/EditTableau`, tableau, {
+    return this.http.post(this.tableau + `/AddTableau`, tableau, {
       headers: this.getHeaders()
     });
   }

@@ -48,7 +48,7 @@ export class ArtistListComponent implements OnInit {
   artistTableaux: any[] = [];
   newTableau: any = {
     titre: '',
-    Description: '',
+    description: '',
     prix: null,
     image: '',
     artiste: null
@@ -58,6 +58,7 @@ export class ArtistListComponent implements OnInit {
   // Edit tableau properties
   editingTableauId: number | null = null;
   editedTableau: any = null;
+  editImageMode: boolean = false;
 
   constructor(
     private artisteService: ArtisteService,
@@ -385,7 +386,9 @@ export class ArtistListComponent implements OnInit {
   }
 
   addTableau() {
-    if (!this.newTableau.titre || !this.newTableau.Description || this.newTableau.prix === null || this.newTableau.prix === undefined) {
+    console.log(this.newTableau);
+    
+    if (!this.newTableau.titre || !this.newTableau.description || this.newTableau.prix === null || this.newTableau.prix === undefined) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Warning',
@@ -401,9 +404,10 @@ export class ArtistListComponent implements OnInit {
 
     // If there's a file, upload it first (similar to atelier pattern)
     if (this.tableauFile) {
-      this.newTableau.image = this.tableauFile.name;
+      const filename = this.tableauFile.uniqueName || this.tableauFile.name;
+      this.newTableau.image = filename;
       
-      this.blob.uploadImage(this.tableauFile, this.tableauFile.name, (progressEvent: ProgressEvent) => {
+      this.blob.uploadImage(this.tableauFile, filename, (progressEvent: ProgressEvent) => {
         if (progressEvent.lengthComputable) {
           this.progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
           if (this.progress === 100) {
@@ -498,7 +502,20 @@ export class ArtistListComponent implements OnInit {
         return;
       }
       
+      // Store the file for either new tableau or editing
       this.tableauFile = file;
+      
+      // Generate a unique filename for image upload
+      if (this.editingTableauId !== null && this.editedTableau) {
+        // For editing mode, use tableau ID in filename
+        const uniqueName = `tableau_${this.editedTableau.id}_${Date.now()}_${file.name}`;
+        this.tableauFile.uniqueName = uniqueName;
+      } else {
+        // For new tableau, use timestamp in filename
+        const uniqueName = `tableau_new_${Date.now()}_${file.name}`;
+        this.tableauFile.uniqueName = uniqueName;
+      }
+      
       this.messageService.add({
         severity: 'success',
         summary: 'File Selected',
@@ -527,7 +544,7 @@ export class ArtistListComponent implements OnInit {
   resetTableauForm() {
     this.newTableau = {
       titre: '',
-      Description: '',
+      description: '', // Using lowercase to match backend model
       prix: null,
       image: '',
       artiste: null
@@ -543,6 +560,11 @@ export class ArtistListComponent implements OnInit {
       fileInput.value = '';
     }
     
+    const editFileInput = document.getElementById('tableauEditImage') as HTMLInputElement;
+    if (editFileInput) {
+      editFileInput.value = '';
+    }
+    
     // Show reset confirmation
     this.messageService.add({
       severity: 'info',
@@ -554,32 +576,72 @@ export class ArtistListComponent implements OnInit {
   // Edit tableau methods
   toggleTableauEdit(tableau: any) {
     if (this.editingTableauId === tableau.id) {
-      // Save changes
-      this.artisteService.EditTableau(this.editedTableau).subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Tableau updated successfully'
-          });
-          this.editingTableauId = null;
-          this.editedTableau = null;
-          this.loadArtistTableaux(this.selectedArtist.id);
-        },
-        error: (error: any) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to update tableau'
-          });
-          console.error('Error updating tableau:', error);
-        }
-      });
+      // Check if there's a new image file to upload
+      if (this.tableauFile) {
+        // First upload the image
+        const filename = this.tableauFile.uniqueName || this.tableauFile.name;
+        this.editedTableau.image = filename;
+        
+        this.blob.uploadImage(this.tableauFile, filename, (progressEvent: ProgressEvent) => {
+          if (progressEvent.lengthComputable) {
+            this.progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+            if (this.progress === 100) {
+              // After image upload is complete, save the tableau data
+              this.saveTableauChanges();
+            }
+          }
+        });
+      } else {
+        // No new image, just save the changes
+        this.saveTableauChanges();
+      }
     } else {
       // Start editing
       this.editingTableauId = tableau.id;
       this.editedTableau = { ...tableau };
+      // Make sure description field uses lowercase name to match backend model
+      if (this.editedTableau.Description && !this.editedTableau.description) {
+        this.editedTableau.description = this.editedTableau.Description;
+        delete this.editedTableau.Description;
+      }
+      // Reset any previously selected image
+      this.tableauFile = null;
+      this.progress = 0;
+      
+      // Reset file input for edit
+      const fileInput = document.getElementById('tableauEditImage') as HTMLInputElement;
+      if (fileInput) {
+        fileInput.value = '';
+      }
     }
+  }
+  
+  // Save tableau changes to API
+  private saveTableauChanges() {
+    console.log(this.editedTableau);
+    
+    this.artisteService.EditTableau(this.editedTableau).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Tableau updated successfully'
+        });
+        this.editingTableauId = null;
+        this.editedTableau = null;
+        this.tableauFile = null;
+        this.progress = 0;
+        this.loadArtistTableaux(this.selectedArtist.id);
+      },
+      error: (error: any) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to update tableau'
+        });
+        console.error('Error updating tableau:', error);
+      }
+    });
   }
   
   isEditingTableau(tableau: any): boolean {

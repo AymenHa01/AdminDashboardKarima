@@ -387,7 +387,7 @@
                                     <i class="pi pi-align-left"></i> Description
                                 </label>
                                 <textarea id="description" pInputTextarea 
-                                    [(ngModel)]="newTableau.Description" 
+                                    [(ngModel)]="newTableau.description" 
                                     name="description" required 
                                     placeholder="Enter detailed description of the tableau"
                                     rows="4"
@@ -490,11 +490,40 @@
                     <tr>
                         <td>{{tableau.id}}</td>
                         <td>
-                            <img [src]="url + '/' + tableau.image" 
-                                alt="Tableau image" 
-                                style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"
-                                *ngIf="tableau.image"/>
-                            <span *ngIf="!tableau.image" class="no-image">No Image</span>
+                            <!-- Normal image display when not editing -->
+                            <div *ngIf="!isEditingTableau(tableau)" class="tableau-image">
+                                <img [src]="url + '/' + tableau.image" 
+                                    alt="Tableau image" 
+                                    style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"
+                                    *ngIf="tableau.image"/>
+                                <span *ngIf="!tableau.image" class="no-image">No Image</span>
+                            </div>
+                            
+                            <!-- Image upload control when editing -->
+                            <div *ngIf="isEditingTableau(tableau)" class="tableau-image-edit">
+                                <div class="current-image" *ngIf="tableau.image && !tableauFile">
+                                    <img [src]="url + '/' + tableau.image" 
+                                        alt="Current image"
+                                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-bottom: 5px;"/>
+                                </div>
+                                
+                                <div class="file-upload-compact">
+                                    <input 
+                                        id="tableauEditImage" 
+                                        type="file" 
+                                        (change)="onTableauFileChange($event)" 
+                                        accept="image/*"
+                                        style="display: none;" />
+                                    <label for="tableauEditImage" class="file-upload-btn">
+                                        <i class="pi pi-camera"></i>
+                                        <span>Change</span>
+                                    </label>
+                                </div>
+                                
+                                <div *ngIf="tableauFile" class="selected-file-info">
+                                    <small>New: {{tableauFile.name | slice:0:10}}...</small>
+                                </div>
+                            </div>
                         </td>
                         <td>
                             <ng-container *ngIf="!isEditingTableau(tableau)">
@@ -509,7 +538,7 @@
                                 <span [title]="tableau.description">{{tableau.description | slice:0:30}}{{tableau.description?.length > 30 ? '...' : ''}}</span>
                             </ng-container>
                             <ng-container *ngIf="isEditingTableau(tableau)">
-                                <input pInputText type="text" [(ngModel)]="editedTableau.Description" class="edit-input">
+                                <input pInputText type="text" [(ngModel)]="editedTableau.description" class="edit-input">
                             </ng-container>
                         </td>
                         <td>
