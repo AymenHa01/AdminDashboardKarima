@@ -133,13 +133,68 @@
                             <tr>
                                 <td class="image-cell">
                                     <div class="artist-image">
-                                        <img [src]="url + '/' + artist.image" [alt]="artist.nom + ' ' + artist.prenom"
-                                            (click)="showImage(artist.image)" />
-                                        <div class="image-overlay">
-                                            <p-button icon="pi pi-camera" (click)="openImageEditDialog(artist)"
-                                                styleClass="p-button-rounded p-button-sm p-button-secondary"
-                                                pTooltip="Change Image" tooltipPosition="top">
-                                            </p-button>
+                                        <!-- Display current image when not editing -->
+                                        <div *ngIf="!isEditing(artist)" class="image-display">
+                                            <img [src]="artist.image ? (url + '/' + artist.image) : ''"
+                                                [alt]="artist.nom + ' ' + artist.prenom"
+                                                (click)="showImage(artist.image)" (error)="onImageError($event)"
+                                                [style.display]="artist.image ? 'block' : 'none'" />
+                                            <div *ngIf="!artist.image" class="placeholder-image">
+                                                <i class="pi pi-image"></i>
+                                                <span>No Image</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Image editing interface when in edit mode -->
+                                        <div *ngIf="isEditing(artist)" class="image-editor">
+                                            <!-- Current image preview -->
+                                            <div class="current-image" *ngIf="editedArtist.image"
+                                                (click)="fileInput.click()">
+                                                <img [src]="url + '/' + editedArtist.image"
+                                                    [alt]="artist.nom + ' ' + artist.prenom" class="preview-image"
+                                                    (error)="onImageError($event)" />
+                                                <div class="image-overlay">
+                                                    <i class="pi pi-camera"></i>
+                                                    <span class="change-text">Click to change</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- No image placeholder -->
+                                            <div class="no-image" *ngIf="!editedArtist.image"
+                                                (click)="fileInput.click()">
+                                                <i class="pi pi-image"></i>
+                                                <span>Click to add image</span>
+                                            </div>
+
+                                            <!-- File input (hidden but functional) -->
+                                            <input type="file" (change)="onFileChange($event, artist.id)"
+                                                accept="image/*" class="file-input" #fileInput style="display: none;" />
+
+                                            <!-- Upload Progress -->
+                                            <div *ngIf="uploadingImages[artist.id] && uploadProgressTrack[artist.id] !== undefined"
+                                                class="upload-progress">
+                                                <p-progressBar [value]="uploadProgressTrack[artist.id]"
+                                                    [showValue]="true" styleClass="upload-progress-bar">
+                                                </p-progressBar>
+                                                <small>Uploading: {{uploadProgressTrack[artist.id]}}%</small>
+                                            </div>
+
+                                            <!-- Action buttons -->
+                                            <div class="image-actions">
+                                                <button type="button" pButton icon="pi pi-upload"
+                                                    [label]="editedArtist.image ? 'Change' : 'Add'"
+                                                    (click)="fileInput.click()"
+                                                    class="p-button-outlined p-button-sm upload-btn"
+                                                    [disabled]="uploadingImages[artist.id]">
+                                                </button>
+
+                                                <button type="button" pButton icon="pi pi-trash" label="Remove"
+                                                    (click)="removeImage(artist)"
+                                                    class="p-button-outlined p-button-danger p-button-sm remove-btn"
+                                                    [disabled]="uploadingImages[artist.id] || !editedArtist.image"
+                                                    *ngIf="editedArtist.image">
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
@@ -275,55 +330,6 @@
     <img [src]="selectedImage" width="100%" *ngIf="selectedImage" />
 </p-dialog>
 
-<p-dialog header="Edit Artist Image" [(visible)]="imageEditDialog" [modal]="true"
-    [style]="{width: '40vw', minWidth: '300px'}" [baseZIndex]="10000" [closable]="true">
-
-    <div class="image-edit-content" *ngIf="selectedArtistForImageEdit">
-        <div class="current-image-section">
-            <h4>Current Image</h4>
-            <div class="current-image">
-                <img [src]="url + '/' + selectedArtistForImageEdit.image"
-                    [alt]="selectedArtistForImageEdit.nom + ' ' + selectedArtistForImageEdit.prenom"
-                    style="width: 100%; max-width: 200px; height: auto; border-radius: 8px; border: 2px solid #e5e7eb;" />
-            </div>
-        </div>
-
-        <div class="new-image-section">
-            <h4>Select New Image</h4>
-            <div class="file-upload-section">
-                <div class="file-input-wrapper">
-                    <input id="imageEditInput" type="file" (change)="onImageFileSelect($event)" accept="image/*"
-                        class="file-input" />
-                    <label for="imageEditInput" class="file-input-label">
-                        <i class="pi pi-upload"></i>
-                        Choose Image File
-                    </label>
-                </div>
-
-                <div *ngIf="newImageFile" class="selected-file-info">
-                    <i class="pi pi-file"></i>
-                    <span>Selected: {{newImageFile.name}}</span>
-                </div>
-
-                <div *ngIf="imageUploadProgress > 0 && imageUploadProgress < 100" class="upload-progress">
-                    <p-progressBar [value]="imageUploadProgress" [showValue]="true"></p-progressBar>
-                    <small>Uploading image...</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <ng-template pTemplate="footer">
-        <div class="dialog-footer">
-            <p-button label="Cancel" icon="pi pi-times" (click)="imageEditDialog = false; resetImageEditDialog()"
-                styleClass="p-button-text">
-            </p-button>
-            <p-button label="Update Image" icon="pi pi-check" (click)="updateArtistImage()"
-                styleClass="p-button-success" [disabled]="!newImageFile || imageUploadProgress > 0">
-            </p-button>
-        </div>
-    </ng-template>
-</p-dialog>
 <p-dialog header="Manage Tableaux" [(visible)]="tableauDialogVisible" [modal]="true"
     [style]="{width: '90vw', maxWidth: '1200px'}" [closable]="true" [maximizable]="true">
 

@@ -43,6 +43,10 @@ export class ArtistListComponent implements OnInit {
   newImageFile: File | null = null;
   imageUploadProgress: number = 0;
 
+  // Inline upload tracking
+  uploadingImages: { [key: string]: boolean } = {};
+  uploadProgressTrack: { [key: string]: number } = {};
+
   // Tableau management properties
   tableauDialogVisible: boolean = false;
   selectedArtist: any = null;
@@ -113,6 +117,11 @@ export class ArtistListComponent implements OnInit {
   cancelEdit(artist: any) {
     this.editingId = null;
     this.editedArtist = null;
+    // Clean up upload states
+    if (artist.id) {
+      delete this.uploadingImages[artist.id];
+      delete this.uploadProgressTrack[artist.id];
+    }
   }
 
   DeleteArtist(id: number) {
@@ -221,8 +230,101 @@ export class ArtistListComponent implements OnInit {
     }
   }
 
-  onFileChange(event: any) {
-    this.file = event;
+  onFileChange(event: any, artistId?: number) {
+    const file = event.target.files[0];
+    if (file) {
+      const fileName = file.name;
+
+      if (artistId) {
+        // Editing existing artist
+        this.uploadingImages[artistId] = true;
+        this.uploadProgressTrack[artistId] = 0;
+
+        // Find the artist being edited and update its image
+        const index = this.artists.findIndex(a => a.id === artistId);
+        if (index !== -1) {
+          this.uploadImageWithArtistCallback(file, fileName, artistId, index);
+        }
+      } else {
+        // Creating new artist
+        this.newArtist.image = fileName;
+        this.file = event;
+        this.blob.uploadImage(file, fileName, (progressEvent: ProgressEvent) => {
+          if (progressEvent.lengthComputable) {
+            this.progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+          }
+        })
+      }
+    }
+  }
+
+  private uploadImageWithArtistCallback(file: File, fileName: string, artistId: number, index: number) {
+    const xhr = new XMLHttpRequest();
+    // Use environment variables for blob storage config
+    xhr.open('PUT', `https://${environment.acountName}.blob.core.windows.net/${environment.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
+    xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
+
+    xhr.upload.onprogress = (event: ProgressEvent) => {
+      if (event.lengthComputable) {
+        this.uploadProgressTrack[artistId] = Math.round((event.loaded / event.total) * 100);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 201 || xhr.status === 200) {
+        // Update the artist object with new image name
+        this.artists[index].image = fileName;
+        if (this.editedArtist && this.editedArtist.id === artistId) {
+          this.editedArtist.image = fileName;
+        }
+        this.uploadingImages[artistId] = false;
+        this.uploadProgressTrack[artistId] = 100;
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Image uploaded successfully'
+        });
+
+        setTimeout(() => {
+          this.uploadProgressTrack[artistId] = 0;
+        }, 2000);
+      } else {
+        this.handleUploadError(artistId, xhr);
+      }
+    };
+
+    xhr.onerror = () => {
+      this.handleUploadError(artistId, xhr);
+    };
+
+    xhr.send(file);
+  }
+
+  private handleUploadError(artistId: number, xhr: XMLHttpRequest) {
+    console.error('Error uploading image:', xhr);
+    this.uploadingImages[artistId] = false;
+    this.uploadProgressTrack[artistId] = 0;
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to upload image'
+    });
+  }
+
+  removeImage(artist: any) {
+    if (confirm('Are you sure you want to remove this image?')) {
+      if (this.isEditing(artist)) {
+        this.editedArtist.image = '';
+      } else {
+        artist.image = '';
+      }
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Image Removed',
+        detail: 'Image removed from view. Save to confirm deletion from record.'
+      });
+    }
   }
 
   onImageError(event: any) {
@@ -566,84 +668,6 @@ export class ArtistListComponent implements OnInit {
     this.editedTableau = null;
   }
 
-  // Image Edit Dialog Methods
-  openImageEditDialog(artist: any) {
-    this.selectedArtistForImageEdit = artist;
-    this.imageEditDialog = true;
-    this.newImageFile = null;
-    this.imageUploadProgress = 0;
-  }
-
-  onImageFileSelect(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.newImageFile = file;
-    }
-  }
-
-  updateArtistImage() {
-    if (!this.newImageFile || !this.selectedArtistForImageEdit) return;
-
-    const fileName = this.newImageFile.name;
-    this.imageUploadProgress = 0;
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('PUT', `https://${environment.acountName}.blob.core.windows.net/${environment.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
-    xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
-
-    xhr.upload.onprogress = (event: ProgressEvent) => {
-      if (event.lengthComputable) {
-        this.imageUploadProgress = Math.round((event.loaded / event.total) * 100);
-      }
-    };
-
-    xhr.onload = () => {
-      if (xhr.status === 201 || xhr.status === 200) {
-        this.selectedArtistForImageEdit.image = fileName;
-        this.artisteService.AddArtiste(this.selectedArtistForImageEdit).subscribe(
-          () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Image de l\'artiste mise à jour avec succès'
-            });
-            this.imageEditDialog = false;
-            this.resetImageEditDialog();
-            this.loadArtists();
-          },
-          error => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Erreur lors de la mise à jour de l\'image dans la base de données'
-            });
-          }
-        );
-      } else {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Erreur lors du téléchargement de l\'image'
-        });
-      }
-    };
-
-    xhr.onerror = () => {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Erreur réseau lors du téléchargement de l\'image'
-      });
-    };
-
-    xhr.send(this.newImageFile);
-  }
-
-  resetImageEditDialog() {
-    this.selectedArtistForImageEdit = null;
-    this.newImageFile = null;
-    this.imageUploadProgress = 0;
-  }
 
   toggleArtistStatus(artist: any): void {
     // Note: If active property is toggleable by Switch
