@@ -41,9 +41,9 @@ $transition: all 0.3s ease;
 .admin-container {
   min-height: 100vh;
   background-color: $background-light;
-  
+
   .main-content {
-    padding: 2rem;
+    padding: 1.5rem;
     max-width: 1400px;
     margin: 0 auto;
   }
@@ -51,40 +51,40 @@ $transition: all 0.3s ease;
 
 // Page Header
 .page-header {
-  margin-bottom: 2rem;
-  
+  margin-bottom: 1.5rem;
+
   .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 2rem;
-    
+
     @media (max-width: 768px) {
       flex-direction: column;
       text-align: center;
       gap: 1rem;
     }
   }
-  
+
   .header-info {
     h1 {
       color: $text-primary;
-      font-size: 2.5rem;
+      font-size: 1.75rem;
       font-weight: 700;
-      margin: 0 0 0.5rem 0;
-      
+      margin: 0 0 0.25rem 0;
+
       @media (max-width: 768px) {
         font-size: 2rem;
       }
     }
-    
+
     .subtitle {
       color: $text-secondary;
-      font-size: 1.125rem;
+      font-size: 1rem;
       margin: 0;
     }
   }
-  
+
   .header-actions {
     .toggle-form-btn {
       min-width: 150px;
@@ -93,31 +93,33 @@ $transition: all 0.3s ease;
 }
 
 // Section Layout
-.form-section, .list-section {
+.form-section,
+.list-section {
   margin-bottom: 2rem;
 }
 
 // Cards
-.form-card, .list-card {
+.form-card,
+.list-card {
   background: white;
   border-radius: $border-radius;
   @include card-shadow;
   overflow: hidden;
   transition: $transition;
-  
+
   &:hover {
     @include hover-shadow;
   }
 }
 
 .card-header {
-  padding: 1.5rem 2rem;
+  padding: 1rem 1.5rem;
   background: linear-gradient(135deg, $primary-color, $secondary-color);
   color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   h2 {
     margin: 0;
     font-size: 1.25rem;
@@ -126,26 +128,130 @@ $transition: all 0.3s ease;
     align-items: center;
     gap: 0.5rem;
   }
-  
+
   i {
     font-size: 1.25rem;
+  }
+
+  .records-info {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    margin-left: 0.5rem;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .search-filter {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      .p-input-icon-left {
+        position: relative;
+
+        i {
+          position: absolute;
+          left: 0.75rem;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #9ca3af;
+          font-size: 1rem;
+          z-index: 1;
+        }
+
+        .search-input {
+          padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.1);
+          color: white;
+          font-size: 0.875rem;
+          transition: $transition;
+          min-width: 250px;
+
+          &::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+          }
+
+          &:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+          }
+        }
+      }
+
+      .clear-button {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        color: white !important;
+        width: 2rem !important;
+        height: 2rem !important;
+        min-width: 2rem !important;
+        border-radius: 6px !important;
+        transition: $transition !important;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2) !important;
+          border-color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .pi {
+          font-size: 0.75rem;
+        }
+      }
+    }
+
+    .header-icon {
+      font-size: 1.5rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem;
+    gap: 1rem;
+
+    .header-right {
+      justify-content: space-between;
+
+      .search-filter {
+        flex: 1;
+
+        .p-input-icon-left {
+          flex: 1;
+
+          .search-input {
+            min-width: 0;
+            width: 100%;
+          }
+        }
+      }
+    }
   }
 }
 
 // Form Styles
 .evenement-form {
-  padding: 2rem;
+  padding: 1.5rem;
 }
 
 .form-grid {
   display: grid;
   gap: 1.5rem;
   margin-bottom: 2rem;
-  
+
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   @media (min-width: 1024px) {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -160,20 +266,20 @@ $transition: all 0.3s ease;
     font-weight: 500;
     margin-bottom: 0.5rem;
     font-size: 0.875rem;
-    
+
     i {
       color: $primary-color;
       font-size: 1rem;
     }
   }
-  
+
   input[type="text"],
   input[type="number"],
   input[type="date"],
   input[type="file"] {
     @include form-input;
   }
-  
+
   input[type="file"] {
     padding: 0.5rem;
     cursor: pointer;
@@ -184,12 +290,12 @@ $transition: all 0.3s ease;
 .status-toggle {
   display: flex;
   gap: 0.5rem;
-  
+
   .status-btn {
     flex: 1;
     min-height: 2.5rem;
     transition: $transition;
-    
+
     &:hover {
       transform: translateY(-1px);
     }
@@ -201,10 +307,10 @@ $transition: all 0.3s ease;
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
-  
+
   @media (max-width: 768px) {
     justify-content: stretch;
-    
+
     .p-button {
       flex: 1;
     }
@@ -219,71 +325,288 @@ $transition: all 0.3s ease;
 
 .evenements-table {
   width: 100%;
-  
-  .col-image { width: 80px; min-width: 80px; }
-  .col-id { width: 60px; min-width: 60px; }
-  .col-name { width: 120px; min-width: 120px; }
-  .col-description { width: 200px; min-width: 200px; }
-  .col-date { width: 100px; min-width: 100px; }
-  .col-number { width: 80px; min-width: 80px; }
-  .col-status { width: 90px; min-width: 90px; }
-  .col-media { width: 140px; min-width: 140px; }
-  .col-actions { width: 140px; min-width: 140px; }
+
+  .col-image {
+    width: 120px;
+    min-width: 120px;
+  }
+
+  .col-status,
+  .col-id {
+    width: 50px;
+    min-width: 60px;
+  }
+
+  .col-name {
+    width: 120px;
+    min-width: 120px;
+  }
+
+  .col-description {
+    width: 200px;
+    min-width: 200px;
+  }
+
+  .col-date {
+    width: 100px;
+    min-width: 100px;
+  }
+
+  .col-number {
+    width: 80px;
+    min-width: 80px;
+  }
+
+  .col-status {
+    width: 90px;
+    min-width: 90px;
+  }
+
+  .col-media {
+    width: 140px;
+    min-width: 140px;
+  }
+
+  .col-actions {
+    width: 140px;
+    min-width: 140px;
+  }
 }
 
 // Table Cell Styles
 .image-cell {
   .evenement-image {
     position: relative;
-    width: 60px;
-    height: 60px;
+    width: 100px;
+    height: 100px;
     border-radius: 8px;
     overflow: hidden;
     margin: 0 auto;
-    
-    img {
+
+    // Image display when not editing
+    .image-display {
       width: 100%;
       height: 100%;
-      object-fit: cover;
       cursor: pointer;
-      transition: $transition;
-      
-      &:hover {
-        transform: scale(1.05);
+      position: relative;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: $transition;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+
+      .placeholder-image {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+        color: $text-secondary;
+        border: 2px dashed $border-color;
+        border-radius: 8px;
+
+        i {
+          font-size: 1.5rem;
+          margin-bottom: 0.25rem;
+          opacity: 0.5;
+        }
+
+        span {
+          font-size: 0.7rem;
+          opacity: 0.7;
+        }
       }
     }
-    
-    .image-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
+
+    // Image editing interface
+    .image-editor {
+      width: 100%;
+      height: 100%;
+      position: relative;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: $transition;
-      
-      &:hover {
-        opacity: 1;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      .current-image {
+        position: relative;
+        width: 100%;
+        height: 60px;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: $transition;
+
+        &:hover {
+          border-color: $primary-color;
+
+          .image-overlay {
+            opacity: 1;
+          }
+        }
+
+        .preview-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .image-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.6);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          transition: $transition;
+
+          i {
+            font-size: 1rem;
+            color: white;
+            margin-bottom: 0.25rem;
+          }
+
+          .change-text {
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 500;
+            text-align: center;
+          }
+        }
       }
-    }
-    
-    &:hover .image-overlay {
-      opacity: 1;
+
+      .no-image {
+        width: 100%;
+        height: 60px;
+        border: 2px dashed $border-color;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: $text-secondary;
+        cursor: pointer;
+        transition: $transition;
+
+        &:hover {
+          border-color: $primary-color;
+          background-color: rgba($primary-color, 0.05);
+
+          i {
+            color: $primary-color;
+          }
+        }
+
+        i {
+          font-size: 1.2rem;
+          margin-bottom: 0.25rem;
+          transition: $transition;
+        }
+
+        span {
+          font-size: 0.6rem;
+          font-weight: 500;
+          text-align: center;
+        }
+      }
+
+      .upload-progress {
+        margin: 0.1rem 0;
+        padding: 0.25rem;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        border: 1px solid #e9ecef;
+
+        small {
+          display: block;
+          margin-top: 0.1rem;
+          color: $text-secondary;
+          font-size: 0.6rem;
+          text-align: center;
+          font-weight: 500;
+        }
+
+        .upload-progress-bar {
+          height: 3px;
+          border-radius: 2px;
+          overflow: hidden;
+
+          ::ng-deep .p-progressbar-value {
+            background: linear-gradient(90deg, $primary-color, $secondary-color);
+            transition: width 0.3s ease;
+          }
+        }
+      }
+
+      .image-actions {
+        display: flex;
+        gap: 0.25rem;
+        width: 100%;
+
+        .upload-btn,
+        .remove-btn {
+          flex: 1;
+          font-size: 0.6rem !important;
+          padding: 0.25rem 0.375rem !important;
+          height: auto !important;
+          min-height: 22px !important;
+
+          .pi {
+            margin-right: 0.25rem;
+            font-size: 0.6rem;
+          }
+        }
+
+        .upload-btn {
+          background-color: $primary-color !important;
+          border-color: $primary-color !important;
+          color: white !important;
+
+          &:hover {
+            background-color: $secondary-color !important;
+            border-color: $secondary-color !important;
+          }
+        }
+
+        .remove-btn {
+          background-color: transparent !important;
+          border-color: $danger-color !important;
+          color: $danger-color !important;
+
+          &:hover {
+            background-color: $danger-color !important;
+            color: white !important;
+          }
+        }
+      }
     }
   }
 }
 
-.id-cell, .name-cell, .description-cell, .date-cell, .price-cell {
+.id-cell,
+.name-cell,
+.description-cell,
+.date-cell,
+.price-cell {
   .text-content {
     display: block;
     font-weight: 500;
     color: $text-primary;
   }
-  
+
   .edit-input {
     @include form-input;
     min-height: 32px;
@@ -303,16 +626,17 @@ $transition: all 0.3s ease;
 }
 
 // Status Cell
+// Status Cell
 .status-cell {
   .status-tag {
     cursor: pointer;
     transition: $transition;
-    
+
     &:hover {
       transform: scale(1.05);
     }
   }
-  
+
   .status-edit-buttons {
     display: flex;
     gap: 0.25rem;
@@ -354,7 +678,7 @@ $transition: all 0.3s ease;
 
   .inline-upload-progress {
     margin-top: 0.5rem;
-    
+
     ::ng-deep .p-progressbar {
       height: 0.5rem;
     }
@@ -375,18 +699,18 @@ $transition: all 0.3s ease;
   border-radius: 4px;
   overflow: hidden;
   border: 1px solid #ddd;
-  
+
   .media-content {
     width: 100%;
     height: 100%;
     cursor: pointer;
     transition: transform 0.2s ease;
-    
+
     &:hover {
       transform: scale(1.1);
     }
   }
-  
+
   .delete-media-btn {
     position: absolute;
     top: 2px;
@@ -405,16 +729,16 @@ $transition: all 0.3s ease;
     transition: opacity 0.2s ease, background 0.2s ease;
     z-index: 10;
     padding: 0;
-    
+
     i {
       font-size: 0.6rem;
     }
-    
+
     &:hover {
       background: rgba(220, 53, 69, 1);
     }
   }
-  
+
   &:hover .delete-media-btn {
     opacity: 1;
   }
@@ -444,7 +768,7 @@ $transition: all 0.3s ease;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    
+
     i {
       font-size: 1rem;
       color: white;
@@ -464,7 +788,7 @@ $transition: all 0.3s ease;
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 600;
-  
+
   &:hover {
     background: #5a6268;
     transform: scale(1.05);
@@ -486,7 +810,7 @@ $transition: all 0.3s ease;
   font-size: 0.85rem;
   color: #6c757d;
   padding: 0.5rem;
-  
+
   span {
     font-style: italic;
   }
@@ -510,11 +834,11 @@ $transition: all 0.3s ease;
   gap: 1rem;
   flex: 1;
   width: 100%;
-  
+
   .nav-btn-left,
   .nav-btn-right {
     flex-shrink: 0;
-    
+
     &:hover:not(:disabled) {
       background-color: rgba(0, 0, 0, 0.1);
     }
@@ -529,7 +853,7 @@ $transition: all 0.3s ease;
   justify-content: center;
   max-height: calc(90vh - 150px);
   width: 100%;
-  
+
   .zoom-image {
     max-width: 100%;
     max-height: 100%;
@@ -543,7 +867,7 @@ $transition: all 0.3s ease;
     border-radius: 8px;
     background: #000;
   }
-  
+
   .image-counter {
     position: absolute;
     bottom: 1rem;
@@ -565,7 +889,7 @@ $transition: all 0.3s ease;
   max-width: 100%;
   background: rgba(0, 0, 0, 0.05);
   border-radius: 8px;
-  
+
   .thumbnail-item {
     width: 60px;
     height: 60px;
@@ -575,17 +899,17 @@ $transition: all 0.3s ease;
     cursor: pointer;
     transition: all 0.3s ease;
     flex-shrink: 0;
-    
+
     &:hover {
       border-color: $primary-color;
       transform: scale(1.05);
     }
-    
+
     &.active {
       border-color: $primary-color;
       box-shadow: 0 0 0 2px rgba($primary-color, 0.3);
     }
-    
+
     .thumbnail-image {
       width: 100%;
       height: 100%;
@@ -602,12 +926,12 @@ $transition: all 0.3s ease;
   gap: 1rem;
   padding: 3rem;
   color: $text-secondary;
-  
+
   i {
     font-size: 3rem;
     opacity: 0.5;
   }
-  
+
   span {
     font-size: 1.125rem;
     font-weight: 500;
@@ -616,9 +940,11 @@ $transition: all 0.3s ease;
 
 // Image Edit Dialog Styles
 .image-edit-content {
-  .current-image-section, .new-image-section {
+
+  .current-image-section,
+  .new-image-section {
     margin-bottom: 1.5rem;
-    
+
     h4 {
       color: $text-primary;
       font-size: 1rem;
@@ -626,23 +952,23 @@ $transition: all 0.3s ease;
       margin-bottom: 1rem;
     }
   }
-  
+
   .current-image {
     display: flex;
     justify-content: center;
-    
+
     img {
       border-radius: 8px;
       @include card-shadow;
     }
   }
-  
+
   .file-upload-section {
     .file-input-wrapper {
       position: relative;
       display: inline-block;
       margin-bottom: 1rem;
-      
+
       .file-input {
         position: absolute;
         opacity: 0;
@@ -651,7 +977,7 @@ $transition: all 0.3s ease;
         cursor: pointer;
         z-index: 2;
       }
-      
+
       .file-input-label {
         display: inline-flex;
         align-items: center;
@@ -664,18 +990,18 @@ $transition: all 0.3s ease;
         cursor: pointer;
         transition: $transition;
         border: none;
-        
+
         &:hover {
           transform: translateY(-1px);
           @include hover-shadow;
         }
-        
+
         i {
           font-size: 1rem;
         }
       }
     }
-    
+
     .selected-file-info {
       display: flex;
       align-items: center;
@@ -687,15 +1013,15 @@ $transition: all 0.3s ease;
       color: $success-color;
       font-size: 0.875rem;
       font-weight: 500;
-      
+
       i {
         color: $success-color;
       }
     }
-    
+
     .upload-progress {
       margin-top: 1rem;
-      
+
       small {
         display: block;
         margin-top: 0.5rem;
@@ -714,47 +1040,48 @@ $transition: all 0.3s ease;
 
 // PrimeNG Component Overrides
 :host ::ng-deep {
+
   // Button Overrides
   .p-button {
     border-radius: 8px;
     font-weight: 500;
     transition: $transition;
-    
+
     &:not(:disabled):hover {
       transform: translateY(-1px);
       @include hover-shadow;
     }
-    
+
     &.p-button-success {
       background: linear-gradient(135deg, $success-color, #16a34a);
       border: none;
     }
-    
+
     &.p-button-warning {
       background: linear-gradient(135deg, $warning-color, #d97706);
       border: none;
     }
-    
+
     &.p-button-danger {
       background: linear-gradient(135deg, $danger-color, #dc2626);
       border: none;
     }
-    
+
     &.p-button-info {
       background: linear-gradient(135deg, $info-color, #2563eb);
       border: none;
     }
-    
+
     &.p-button-secondary {
       background: linear-gradient(135deg, $text-secondary, #4b5563);
       border: none;
     }
-    
+
     &.p-button-outlined {
       background: transparent;
       border: 1px solid $border-color;
       color: $text-secondary;
-      
+
       &:hover {
         background: $background-light;
         border-color: $primary-color;
@@ -762,18 +1089,18 @@ $transition: all 0.3s ease;
       }
     }
   }
-  
+
   // DataTable Overrides
   .p-datatable {
     border-radius: $border-radius;
     overflow: hidden;
     border: none;
-    
+
     .p-datatable-header {
       display: none;
     }
-    
-    .p-datatable-thead > tr > th {
+
+    .p-datatable-thead>tr>th {
       background: $background-light;
       color: $text-primary;
       font-weight: 600;
@@ -783,33 +1110,33 @@ $transition: all 0.3s ease;
       text-transform: uppercase;
       letter-spacing: 0.025em;
     }
-    
-    .p-datatable-tbody > tr {
+
+    .p-datatable-tbody>tr {
       transition: $transition;
-      
+
       &:hover {
         background: rgba($primary-color, 0.02);
       }
-      
-      > td {
+
+      >td {
         padding: 1rem 0.75rem;
         border-color: rgba($border-color, 0.5);
         vertical-align: middle;
       }
     }
-    
+
     .p-paginator {
       background: white;
       border: none;
       padding: 1rem;
-      
+
       .p-paginator-current {
         color: $text-secondary;
         font-weight: 500;
       }
     }
   }
-  
+
   // Tag Overrides
   .p-tag {
     border-radius: 20px;
@@ -818,63 +1145,63 @@ $transition: all 0.3s ease;
     font-size: 0.75rem;
     cursor: pointer;
     transition: $transition;
-    
+
     &:hover {
       transform: scale(1.05);
     }
-    
+
     &.p-tag-success {
       background: rgba($success-color, 0.1);
       color: $success-color;
     }
-    
+
     &.p-tag-warning {
       background: rgba($warning-color, 0.1);
       color: $warning-color;
     }
   }
-  
+
   // Dialog Overrides
   .p-dialog {
     border-radius: $border-radius;
-    
+
     .p-dialog-header {
       background: linear-gradient(135deg, $primary-color, $secondary-color);
       color: white;
       border-radius: $border-radius $border-radius 0 0;
       padding: 1.5rem 2rem;
-      
+
       .p-dialog-title {
         font-weight: 600;
         font-size: 1.125rem;
       }
-      
+
       .p-dialog-header-icons {
         .p-dialog-header-icon {
           color: white;
-          
+
           &:hover {
             background: rgba(255, 255, 255, 0.1);
           }
         }
       }
     }
-    
+
     .p-dialog-content {
       padding: 2rem;
     }
   }
-  
+
   // Input Overrides
   .p-inputtext {
     @include form-input;
   }
-  
+
   // Progress Bar Overrides
   .p-progressbar {
     border-radius: 8px;
     background: rgba($border-color, 0.5);
-    
+
     .p-progressbar-value {
       background: linear-gradient(135deg, $success-color, #16a34a);
       border-radius: 8px;
@@ -887,7 +1214,7 @@ $transition: all 0.3s ease;
   .form-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .evenements-table {
     .col-description {
       display: none;
@@ -899,46 +1226,47 @@ $transition: all 0.3s ease;
   .admin-container .main-content {
     padding: 1rem;
   }
-  
+
   .form-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .card-header {
     padding: 1rem 1.5rem;
-    
+
     h2 {
       font-size: 1.125rem;
     }
   }
-  
+
   .evenement-form {
     padding: 1.5rem;
   }
-  
+
   .table-wrapper {
     padding: 1rem;
   }
-  
+
   .evenements-table {
+
     .col-id,
     .col-date:last-of-type {
       display: none;
     }
-    
+
     .col-name,
     .col-date {
       min-width: 100px;
     }
-    
+
     .col-actions {
       min-width: 120px;
     }
   }
-  
+
   .actions-cell .action-buttons {
     gap: 0.125rem;
-    
+
     .p-button {
       min-width: 28px;
       min-height: 28px;
@@ -950,13 +1278,13 @@ $transition: all 0.3s ease;
   .page-header .header-content {
     gap: 1rem;
   }
-  
+
   .evenements-table {
     .col-number {
       display: none;
     }
   }
-  
+
   .status-toggle {
     flex-direction: column;
     gap: 0.5rem;
@@ -1014,7 +1342,7 @@ $transition: all 0.3s ease;
 
         .file-info {
           margin-top: 0.5rem;
-          
+
           small {
             color: $primary-color;
             font-weight: 500;
@@ -1022,7 +1350,7 @@ $transition: all 0.3s ease;
 
           .file-list {
             margin: 0.5rem 0 0 1rem;
-            
+
             li {
               color: $text-secondary;
               font-size: 0.875rem;
@@ -1034,7 +1362,7 @@ $transition: all 0.3s ease;
 
       .progress-section {
         margin: 1rem 0;
-        
+
         h4 {
           color: $text-primary;
           font-size: 1rem;
@@ -1043,7 +1371,7 @@ $transition: all 0.3s ease;
 
         .progress-item {
           margin-bottom: 0.75rem;
-          
+
           .file-name {
             display: block;
             font-size: 0.875rem;
@@ -1097,7 +1425,7 @@ $transition: all 0.3s ease;
 
         .media-image {
           margin-bottom: 0.5rem;
-          
+
           img {
             width: 100%;
             height: 80px;
@@ -1116,7 +1444,7 @@ $transition: all 0.3s ease;
           display: flex;
           justify-content: center;
           gap: 0.25rem;
-          
+
           .p-button {
             width: 28px;
             height: 28px;
@@ -1132,7 +1460,7 @@ $transition: all 0.3s ease;
       background-color: $background-light;
       border-radius: $border-radius;
       border: 1px solid $border-color;
-      
+
       i {
         font-size: 1.5rem;
         margin-right: 0.5rem;

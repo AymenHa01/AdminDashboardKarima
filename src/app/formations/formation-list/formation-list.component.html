@@ -1,8 +1,6 @@
 <p-toast></p-toast>
 
 <div class="admin-container">
-    <app-sidebar></app-sidebar>
-    
     <div class="main-content">
         <header class="page-header">
             <div class="header-content">
@@ -11,12 +9,9 @@
                     <p class="subtitle">Manage your trainings effortlessly</p>
                 </div>
                 <div class="header-actions">
-                    <p-button 
-                        [label]="showAddForm ? 'Hide Form' : 'Add Formation'" 
-                        [icon]="showAddForm ? 'pi pi-minus' : 'pi pi-plus'" 
-                        (click)="showAddForm = !showAddForm"
-                        [styleClass]="showAddForm ? 'p-button-secondary' : 'p-button-success'"
-                        class="toggle-form-btn">
+                    <p-button [label]="showAddForm ? 'Hide Form' : 'Add Formation'"
+                        [icon]="showAddForm ? 'pi pi-minus' : 'pi pi-plus'" (click)="showAddForm = !showAddForm"
+                        [styleClass]="showAddForm ? 'p-button-secondary' : 'p-button-success'" class="toggle-form-btn">
                     </p-button>
                 </div>
             </div>
@@ -35,50 +30,49 @@
                             <label for="name">
                                 <i class="pi pi-tag"></i> Nom
                             </label>
-                            <input id="name" type="text" pInputText [(ngModel)]="newFormation.name" 
-                                name="name" required placeholder="Enter name" />
+                            <input id="name" type="text" pInputText [(ngModel)]="newFormation.name" name="name" required
+                                placeholder="Enter name" />
                         </div>
                         <div class="form-field">
                             <label for="description">
                                 <i class="pi pi-info-circle"></i> Description
                             </label>
-                            <input id="description" type="text" pInputText [(ngModel)]="newFormation.description" 
+                            <input id="description" type="text" pInputText [(ngModel)]="newFormation.description"
                                 name="description" required placeholder="Enter description" />
                         </div>
                         <div class="form-field">
                             <label for="formateur">
                                 <i class="pi pi-user"></i> Formateur
                             </label>
-                            <input id="formateur" type="text" pInputText [(ngModel)]="newFormation.formateur" 
+                            <input id="formateur" type="text" pInputText [(ngModel)]="newFormation.formateur"
                                 name="formateur" required placeholder="Enter formateur" />
                         </div>
                         <div class="form-field">
                             <label for="debut">
                                 <i class="pi pi-calendar"></i> Date Début
                             </label>
-                            <input id="debut" type="date" pInputText [(ngModel)]="newFormation.debut" 
-                                name="debut" required />
+                            <input id="debut" type="date" pInputText [(ngModel)]="newFormation.debut" name="debut"
+                                required />
                         </div>
                         <div class="form-field">
                             <label for="fin">
                                 <i class="pi pi-calendar"></i> Date Fin
                             </label>
-                            <input id="fin" type="date" pInputText [(ngModel)]="newFormation.fin" 
-                                name="fin" required />
+                            <input id="fin" type="date" pInputText [(ngModel)]="newFormation.fin" name="fin" required />
                         </div>
                         <div class="form-field">
                             <label for="heures">
                                 <i class="pi pi-clock"></i> Nombre d'Heures
                             </label>
-                            <input id="heures" type="number" pInputText [(ngModel)]="newFormation.heures" 
-                                name="heures" required placeholder="Enter hours" />
+                            <input id="heures" type="number" pInputText [(ngModel)]="newFormation.heures" name="heures"
+                                required placeholder="Enter hours" />
                         </div>
                         <div class="form-field">
                             <label for="prix">
                                 <i class="pi pi-dollar"></i> Prix
                             </label>
-                            <input id="prix" type="number" pInputText [(ngModel)]="newFormation.prix" 
-                                name="prix" required placeholder="Enter price" />
+                            <input id="prix" type="number" pInputText [(ngModel)]="newFormation.prix" name="prix"
+                                required placeholder="Enter price" />
                         </div>
                         <div class="form-field">
                             <label for="image">
@@ -86,33 +80,27 @@
                             </label>
                             <input id="image" type="file" (change)="onFileChange($event)" />
                         </div>
-                        <div class="form-field">
+                        <!-- <div class="form-field">
                             <label>
                                 <i class="pi pi-check-circle"></i> Status
                             </label>
                             <div class="status-toggle">
-                                <p-button 
-                                    [label]="'Active'" 
-                                    [icon]="'pi pi-check'" 
-                                    (click)="newFormation.active = true"
+                                <p-button [label]="'Active'" [icon]="'pi pi-check'" (click)="newFormation.active = true"
                                     [styleClass]="newFormation.active ? 'p-button-success' : 'p-button-outlined'"
                                     class="status-btn">
                                 </p-button>
-                                <p-button 
-                                    [label]="'Inactive'" 
-                                    [icon]="'pi pi-times'" 
+                                <p-button [label]="'Inactive'" [icon]="'pi pi-times'"
                                     (click)="newFormation.active = false"
                                     [styleClass]="!newFormation.active ? 'p-button-warning' : 'p-button-outlined'"
                                     class="status-btn">
                                 </p-button>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     <footer class="form-actions">
-                        <p-button label="Add Formation" icon="pi pi-plus" type="submit" 
+                        <p-button label="Add Formation" icon="pi pi-plus" type="submit"
                             styleClass="p-button-success p-button-raised"></p-button>
-                        <p-button label="Cancel" icon="pi pi-times" type="button" 
-                            (click)="showAddForm = false"
+                        <p-button label="Cancel" icon="pi pi-times" type="button" (click)="showAddForm = false"
                             styleClass="p-button-text"></p-button>
                     </footer>
                 </form>
@@ -123,21 +111,33 @@
         <section class="list-section">
             <div class="list-card">
                 <header class="card-header">
-                    <h2>Formation List ({{formations.length}})</h2>
-                    <i class="pi pi-list"></i>
+                    <div class="header-left">
+                        <h2>Formation List ({{formations.length}})</h2>
+                        <span class="records-info">Total: {{filteredFormations.length}} formations</span>
+                    </div>
+                    <div class="header-right">
+                        <div class="search-filter">
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input type="text" pInputText placeholder="Search by formation title..."
+                                    [(ngModel)]="searchText" (input)="onSearchChange($event)" class="search-input" />
+                            </span>
+                            <button *ngIf="searchText" type="button" pButton icon="pi pi-times" (click)="clearSearch()"
+                                class="p-button-text p-button-sm clear-button" pTooltip="Clear search"
+                                tooltipPosition="top">
+                            </button>
+                        </div>
+                        <i class="pi pi-list header-icon"></i>
+                    </div>
                 </header>
+
                 <div class="table-wrapper">
-                    <p-table [value]="formations" 
-                        [paginator]="true" 
-                        [rows]="10" 
-                        [showCurrentPageReport]="true"
+                    <p-table [value]="filteredFormations" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} formations"
                         [rowsPerPageOptions]="[5,10,20,50]"
-                        styleClass="p-datatable-gridlines p-datatable-sm formations-table"
-                        responsiveLayout="scroll"
-                        [scrollable]="true"
-                        scrollHeight="70vh">
-                        
+                        styleClass="p-datatable-gridlines p-datatable-sm formations-table" responsiveLayout="scroll"
+                        [scrollable]="true" scrollHeight="70vh">
+
                         <ng-template pTemplate="header">
                             <tr>
                                 <th class="col-image">Image</th>
@@ -154,91 +154,63 @@
                                 <th class="col-actions">Actions</th>
                             </tr>
                         </ng-template>
-                        
+
                         <ng-template pTemplate="body" let-formation>
                             <tr>
                                 <td class="image-cell">
                                     <div class="formation-image">
-                                        <!-- Display current image when not editing -->
-                                        <div *ngIf="!isEditing(formation)" class="image-display">
-                                            <img 
-                                                [src]="formation.image ? (url + '/' + formation.image) : ''" 
-                                                [alt]="formation.name" 
-                                                (click)="showImage(formation.image)"
-                                                (error)="onImageError($event)"
-                                                [style.display]="formation.image ? 'block' : 'none'"
-                                            />
-                                            <div *ngIf="!formation.image" class="placeholder-image">
-                                                <i class="pi pi-image"></i>
-                                                <span>No Image</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Image editing interface when in edit mode -->
-                                        <div *ngIf="isEditing(formation)" class="image-editor">
-                                            <!-- Current image preview (always show if exists) -->
-                                            <div class="current-image" *ngIf="formation.image" (click)="fileInput.click()">
-                                                <img 
-                                                    [src]="url + '/' + formation.image" 
-                                                    [alt]="formation.name" 
-                                                    class="preview-image"
-                                                    (error)="onImageError($event)"
-                                                />
-                                                <div class="image-overlay">
-                                                    <i class="pi pi-camera"></i>
-                                                    <span class="change-text">Click to change</span>
+                                        <!-- Normal display -->
+                                        <ng-container *ngIf="!isEditing(formation)">
+                                            <div class="image-display" (click)="showImage(formation.image)">
+                                                <img [src]="url + '/' + formation.image" [alt]="formation.name"
+                                                    (error)="onImageError($event)" *ngIf="formation.image" />
+                                                <div *ngIf="!formation.image" class="no-image">
+                                                    <i class="pi pi-image text-4xl opacity-20"></i>
                                                 </div>
                                             </div>
-                                            
-                                            <!-- No image placeholder (show when no image) -->
-                                            <div class="no-image" *ngIf="!formation.image" (click)="fileInput.click()">
-                                                <i class="pi pi-image"></i>
-                                                <span>Click to add image</span>
+                                        </ng-container>
+
+                                        <!-- Edit mode display -->
+                                        <ng-container *ngIf="isEditing(formation)">
+                                            <div class="edit-image-section">
+                                                <!-- current preview -->
+                                                <div class="current-image-preview">
+                                                    <div class="image-wrapper" (click)="fileInput.click()">
+                                                        <img [src]="url + '/' + formation.image" class="preview-img"
+                                                            *ngIf="formation.image" (error)="onImageError($event)" />
+                                                        <div *ngIf="!formation.image" class="no-image-preview">
+                                                            <i class="pi pi-camera"></i>
+                                                        </div>
+                                                        <div class="image-overlay-edit">
+                                                            <i class="pi pi-camera"></i>
+                                                            <span>Change</span>
+                                                        </div>
+                                                    </div>
+                                                    <button *ngIf="formation.image" class="remove-image-btn"
+                                                        (click)="removeImage(formation)" pTooltip="Remove image">
+                                                        <i class="pi pi-times"></i>
+                                                    </button>
+                                                </div>
+
+                                                <!-- hidden input -->
+                                                <div class="image-input-wrapper">
+                                                    <input #fileInput type="file"
+                                                        (change)="onFileChange($event, formation.id)" accept="image/*"
+                                                        class="image-file-input">
+                                                    <p-button label="Change" icon="pi pi-upload"
+                                                        (click)="fileInput.click()"
+                                                        styleClass="p-button-outlined p-button-sm w-full"
+                                                        *ngIf="!formation.image"></p-button>
+                                                </div>
+
+                                                <!-- progress bar -->
+                                                <div class="upload-progress-inline"
+                                                    *ngIf="uploadingImages[formation.id]">
+                                                    <p-progressBar [value]="uploadProgress[formation.id]"
+                                                        [showValue]="false"></p-progressBar>
+                                                </div>
                                             </div>
-                                            
-                                            <!-- File input (hidden but functional) -->
-                                            <input 
-                                                type="file" 
-                                                (change)="onFileChange($event, formation.id)" 
-                                                accept="image/*" 
-                                                class="file-input"
-                                                #fileInput
-                                            />
-                                            
-                                            <!-- Upload Progress (show during upload) -->
-                                            <div *ngIf="uploadingImages[formation.id] && uploadProgress[formation.id] !== undefined" class="upload-progress">
-                                                <p-progressBar 
-                                                    [value]="uploadProgress[formation.id]" 
-                                                    [showValue]="true"
-                                                    styleClass="upload-progress-bar">
-                                                </p-progressBar>
-                                                <small>Uploading: {{uploadProgress[formation.id]}}%</small>
-                                            </div>
-                                            
-                                            <!-- Action buttons for image editing -->
-                                            <div class="image-actions">
-                                                <button 
-                                                    type="button" 
-                                                    pButton 
-                                                    icon="pi pi-upload" 
-                                                    [label]="formation.image ? 'Change' : 'Add'"
-                                                    (click)="fileInput.click()"
-                                                    class="p-button-outlined p-button-sm upload-btn"
-                                                    [disabled]="uploadingImages[formation.id]">
-                                                </button>
-                                                
-                                                <button 
-                                                    type="button" 
-                                                    pButton 
-                                                    icon="pi pi-trash" 
-                                                    label="Remove"
-                                                    (click)="removeImage(formation)"
-                                                    class="p-button-outlined p-button-danger p-button-sm remove-btn"
-                                                    [disabled]="uploadingImages[formation.id] || !formation.image"
-                                                    *ngIf="formation.image">
-                                                </button>
-                                            </div>
-                                        </div>
+                                        </ng-container>
                                     </div>
                                 </td>
                                 <td class="id-cell">{{formation.id}}</td>
@@ -247,15 +219,19 @@
                                         <span class="text-content">{{formation.name}}</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(formation)">
-                                        <input pInputText type="text" [(ngModel)]="editedFormation.name" class="edit-input">
+                                        <input pInputText type="text" [(ngModel)]="editedFormation.name"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="description-cell">
                                     <ng-container *ngIf="!isEditing(formation)">
-                                        <span class="text-content" [title]="formation.description">{{formation.description | slice:0:30}}{{formation.description?.length > 30 ? '...' : ''}}</span>
+                                        <span class="text-content"
+                                            [title]="formation.description">{{formation.description |
+                                            slice:0:30}}{{formation.description?.length > 30 ? '...' : ''}}</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(formation)">
-                                        <input pInputText type="text" [(ngModel)]="editedFormation.description" class="edit-input">
+                                        <input pInputText type="text" [(ngModel)]="editedFormation.description"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="formateur-cell">
@@ -263,7 +239,8 @@
                                         <span class="text-content">{{formation.formateur}}</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(formation)">
-                                        <input pInputText type="text" [(ngModel)]="editedFormation.formateur" class="edit-input">
+                                        <input pInputText type="text" [(ngModel)]="editedFormation.formateur"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="date-cell">
@@ -271,7 +248,8 @@
                                         <span class="text-content">{{formation.debut | date:'shortDate'}}</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(formation)">
-                                        <input pInputText type="date" [(ngModel)]="editedFormation.debut" class="edit-input">
+                                        <input pInputText type="date" [(ngModel)]="editedFormation.debut"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="date-cell">
@@ -279,7 +257,8 @@
                                         <span class="text-content">{{formation.fin | date:'shortDate'}}</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(formation)">
-                                        <input pInputText type="date" [(ngModel)]="editedFormation.fin" class="edit-input">
+                                        <input pInputText type="date" [(ngModel)]="editedFormation.fin"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="number-cell">
@@ -287,70 +266,70 @@
                                         <span class="text-content">{{formation.heures}}h</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(formation)">
-                                        <input pInputText type="number" [(ngModel)]="editedFormation.heures" class="edit-input">
+                                        <input pInputText type="number" [(ngModel)]="editedFormation.heures"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="price-cell">
                                     <ng-container *ngIf="!isEditing(formation)">
-                                        <span class="text-content">{{formation.prix}}€</span>
+                                        <span class="text-content">{{formation.prix}}DT</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(formation)">
-                                        <input pInputText type="number" [(ngModel)]="editedFormation.prix" class="edit-input">
+                                        <input pInputText type="number" [(ngModel)]="editedFormation.prix"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="status-cell">
                                     <ng-container *ngIf="!isEditing(formation)">
-                                        <p-inputSwitch 
-                                            [(ngModel)]="formation.active" 
+                                        <p-inputSwitch [(ngModel)]="formation.active"
                                             (onChange)="toggleFormationStatus(formation)"
                                             [pTooltip]="formation.active ? 'Active - Click to deactivate' : 'Inactive - Click to activate'"
                                             tooltipPosition="top">
                                         </p-inputSwitch>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(formation)">
-                                        <p-tag 
-                                            [value]="editedFormation.active ? 'Active' : 'Inactive'" 
-                                            [severity]="editedFormation.active ? 'success' : 'warning'"
-                                            class="status-tag">
-                                        </p-tag>
+                                        <div class="status-edit-buttons">
+                                            <p-button [icon]="'pi pi-check'" (click)="editedFormation.active = true"
+                                                [styleClass]="editedFormation.active ? 'p-button-success p-button-sm' : 'p-button-outlined p-button-sm'"
+                                                pTooltip="Active">
+                                            </p-button>
+                                            <p-button [icon]="'pi pi-times'" (click)="editedFormation.active = false"
+                                                [styleClass]="!editedFormation.active ? 'p-button-warning p-button-sm' : 'p-button-outlined p-button-sm'"
+                                                pTooltip="Inactive">
+                                            </p-button>
+                                        </div>
                                     </ng-container>
                                 </td>
                                 <td class="media-cell">
                                     <div class="table-images-container">
                                         <!-- Add Media Button -->
                                         <div class="add-media-inline">
-                                            <input type="file" 
-                                                   #mediaFileInput
-                                                   (change)="uploadMediaInline($event, formation)" 
-                                                   multiple 
-                                                   accept="image/*,video/*" 
-                                                   class="file-input"
-                                                   [id]="'mediaInput' + formation.id">
-                                            <p-button 
-                                                icon="pi pi-plus" 
-                                                styleClass="p-button-success p-button-sm" 
-                                                (click)="mediaFileInput.click()" 
-                                                title="Ajouter media"
+                                            <input type="file" #mediaFileInput
+                                                (change)="uploadMediaInline($event, formation)" multiple
+                                                accept="image/*,video/*" class="file-input"
+                                                [id]="'mediaInput' + formation.id">
+                                            <p-button icon="pi pi-plus" styleClass="p-button-success p-button-sm"
+                                                (click)="mediaFileInput.click()" title="Ajouter media"
                                                 pTooltip="Ajouter images/vidéos">
                                             </p-button>
                                         </div>
-                                        
+
                                         <!-- Display existing media -->
-                                        <div class="table-images-grid" *ngIf="formation.media && formation.media.length > 0">
-                                            <div *ngFor="let media of formation.media.slice(0, 4)" 
-                                                 class="table-image-item">
+                                        <div class="table-images-grid"
+                                            *ngIf="formation.media && formation.media.length > 0">
+                                            <div *ngFor="let media of formation.media.slice(0, 4)"
+                                                class="table-image-item">
                                                 <div class="media-content"
-                                                     (click)="isImage(media.path) ? showImageInZoom(media.path, formation) : showVideoInZoom(media.path, formation)">
+                                                    (click)="isImage(media.path) ? showImageInZoom(media.path, formation) : showVideoInZoom(media.path, formation)">
                                                     <!-- Image thumbnail -->
-                                                    <img *ngIf="isImage(media.path)"
-                                                         [src]="url + '/' + media.path" 
-                                                         alt="Formation media" 
-                                                         class="table-image-thumbnail">
-                                                    
+                                                    <img *ngIf="isImage(media.path)" [src]="url + '/' + media.path"
+                                                        alt="Formation media" class="table-image-thumbnail">
+
                                                     <!-- Video thumbnail -->
                                                     <div *ngIf="isVideo(media.path)" class="table-video-thumbnail">
                                                         <video class="table-video-element">
-                                                            <source [src]="url + '/' + media.path" [type]="getVideoMimeType(media.path)">
+                                                            <source [src]="url + '/' + media.path"
+                                                                [type]="getVideoMimeType(media.path)">
                                                         </video>
                                                         <div class="video-play-icon">
                                                             <i class="pi pi-play"></i>
@@ -358,59 +337,52 @@
                                                     </div>
                                                 </div>
                                                 <!-- Delete button -->
-                                                <button class="delete-media-btn" 
-                                                        (click)="deleteMedia(media); $event.stopPropagation()"
-                                                        pTooltip="Supprimer"
-                                                        tooltipPosition="top">
+                                                <button class="delete-media-btn"
+                                                    (click)="deleteMedia(media); $event.stopPropagation()"
+                                                    pTooltip="Supprimer" tooltipPosition="top">
                                                     <i class="pi pi-times"></i>
                                                 </button>
                                             </div>
-                                            <div *ngIf="formation.media.length > 4" 
-                                                 class="more-images-indicator"
-                                                 (click)="expandMediaView(formation)"
-                                                 pTooltip="Voir tous les media">
+                                            <div *ngIf="formation.media.length > 4" class="more-images-indicator"
+                                                (click)="expandMediaView(formation)" pTooltip="Voir tous les media">
                                                 +{{ formation.media.length - 4 }}
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Upload progress -->
                                         <div *ngIf="uploadProgress[formation.id]" class="inline-upload-progress">
-                                            <p-progressBar [value]="uploadProgress[formation.id]" [showValue]="true"></p-progressBar>
+                                            <p-progressBar [value]="uploadProgress[formation.id]"
+                                                [showValue]="true"></p-progressBar>
                                         </div>
-                                        
-                                        <div *ngIf="!formation.media || formation.media.length === 0" class="no-table-images">
+
+                                        <div *ngIf="!formation.media || formation.media.length === 0"
+                                            class="no-table-images">
                                             <span>Aucun media</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="actions-cell">
                                     <div class="action-buttons">
-                                        <p-button 
-                                            [icon]="isEditing(formation) ? 'pi pi-check' : 'pi pi-pencil'" 
+                                        <p-button [icon]="isEditing(formation) ? 'pi pi-check' : 'pi pi-pencil'"
                                             (click)="toggleEdit(formation)"
                                             [styleClass]="isEditing(formation) ? 'p-button-rounded p-button-success p-button-sm' : 'p-button-rounded p-button-info p-button-sm'"
                                             [pTooltip]="isEditing(formation) ? 'Save' : 'Edit'">
                                         </p-button>
                                         <ng-container *ngIf="isEditing(formation)">
-                                            <p-button 
-                                                icon="pi pi-times" 
-                                                (click)="cancelEdit(formation)"
+                                            <p-button icon="pi pi-times" (click)="cancelEdit(formation)"
                                                 styleClass="p-button-rounded p-button-danger p-button-sm"
                                                 pTooltip="Cancel">
                                             </p-button>
                                         </ng-container>
-                                        <p-button 
-                                            *ngIf="!isEditing(formation)" 
-                                            icon="pi pi-trash" 
+                                        <p-button *ngIf="!isEditing(formation)" icon="pi pi-trash"
                                             (click)="DeleteFormation(formation.id)"
-                                            styleClass="p-button-rounded p-button-danger p-button-sm"
-                                            pTooltip="Delete">
+                                            styleClass="p-button-rounded p-button-danger p-button-sm" pTooltip="Delete">
                                         </p-button>
                                     </div>
                                 </td>
                             </tr>
                         </ng-template>
-                        
+
                         <ng-template pTemplate="emptymessage">
                             <tr>
                                 <td colspan="12" class="empty-message">
@@ -423,72 +395,74 @@
                         </ng-template>
                     </p-table>
                 </div>
+
+                <!-- No results message -->
+                <div *ngIf="filteredFormations.length === 0 && searchText" class="no-results">
+                    <div class="no-results-content">
+                        <i class="pi pi-search"></i>
+                        <h3>No formations found</h3>
+                        <p>No formations match your search for "<strong>{{searchText}}</strong>"</p>
+                        <p-button label="Clear Search" icon="pi pi-times" (click)="clearSearch()"
+                            styleClass="p-button-outlined">
+                        </p-button>
+                    </div>
+                </div>
+
+                <!-- Empty state message -->
+                <div *ngIf="formations.length === 0 && !searchText" class="empty-state">
+                    <div class="empty-state-content">
+                        <i class="pi pi-inbox"></i>
+                        <h3>No formations yet</h3>
+                        <p>Create your first formation using the form above.</p>
+                        <p-button label="Add Formation" icon="pi pi-plus" (click)="showAddForm = true"
+                            styleClass="p-button-success">
+                        </p-button>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
 </div>
 
-<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000"
+    rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
 <!-- Media Zoom Dialog -->
-<p-dialog [header]="isVideo(selectedImage) ? 'Video' : 'Image'" 
-    [(visible)]="imageDialog" 
-    [modal]="true" 
-    [style]="{width: '90vw', height: '90vh'}" 
-    [baseZIndex]="10000"
-    [maximizable]="true"
-    [closable]="true">
-    
+<p-dialog [header]="isVideo(selectedImage) ? 'Video' : 'Image'" [(visible)]="imageDialog" [modal]="true"
+    [style]="{width: '90vw', height: '90vh'}" [baseZIndex]="10000" [maximizable]="true" [closable]="true">
+
     <div class="image-zoom-container" *ngIf="selectedImage">
         <!-- Navigation arrows -->
         <div class="image-nav-controls">
-            <p-button 
-                icon="pi pi-chevron-left" 
-                (click)="previousImage()"
-                [disabled]="currentImageIndex === 0"
-                styleClass="p-button-rounded p-button-text p-button-lg nav-btn-left"
-                pTooltip="Image précédente">
+            <p-button icon="pi pi-chevron-left" (click)="previousImage()" [disabled]="currentImageIndex === 0"
+                styleClass="p-button-rounded p-button-text p-button-lg nav-btn-left" pTooltip="Image précédente">
             </p-button>
-            
+
             <div class="main-image-wrapper">
                 <!-- Image Display -->
-                <img *ngIf="isImage(selectedImage)" 
-                     [src]="selectedImage" 
-                     alt="Formation media"
-                     class="zoom-image"/>
-                
+                <img *ngIf="isImage(selectedImage)" [src]="selectedImage" alt="Formation media" class="zoom-image" />
+
                 <!-- Video Display -->
-                <video *ngIf="isVideo(selectedImage)" 
-                       class="zoom-video"
-                       controls
-                       autoplay>
+                <video *ngIf="isVideo(selectedImage)" class="zoom-video" controls autoplay>
                     <source [src]="selectedImage" [type]="getVideoMimeType(selectedImage)">
                     Your browser does not support the video tag.
                 </video>
-                
+
                 <div class="image-counter">
                     <span>{{ currentImageIndex + 1 }} / {{ totalImagesCount }}</span>
                 </div>
             </div>
-            
-            <p-button 
-                icon="pi pi-chevron-right" 
-                (click)="nextImage()"
+
+            <p-button icon="pi pi-chevron-right" (click)="nextImage()"
                 [disabled]="currentImageIndex === totalImagesCount - 1"
-                styleClass="p-button-rounded p-button-text p-button-lg nav-btn-right"
-                pTooltip="Image suivante">
+                styleClass="p-button-rounded p-button-text p-button-lg nav-btn-right" pTooltip="Image suivante">
             </p-button>
         </div>
-        
+
         <!-- Thumbnail strip at bottom -->
-        <div class="thumbnail-strip" *ngIf="totalImagesCount > 1">
-            <div *ngFor="let media of selectedFormation?.media; let i = index" 
-                 class="thumbnail-item"
-                 [class.active]="i === currentImageIndex"
-                 (click)="goToImage(i)">
-                <img [src]="url + '/' + media.path" alt="Thumbnail {{i+1}}">
-            </div>
+        <div *ngFor="let media of selectedFormation?.media; let i = index" class="thumbnail-item"
+            [class.active]="i === currentImageIndex" (click)="goToImage(i)">
+            <img [src]="url + '/' + media.path" alt="Thumbnail {{i+1}}">
         </div>
     </div>
-</p-dialog> 
-
+</p-dialog>

@@ -1,8 +1,8 @@
 <p-toast></p-toast>
 
 <div class="admin-container">
-    <app-sidebar></app-sidebar>
-    
+
+
     <div class="main-content">
         <header class="page-header">
             <div class="header-content">
@@ -11,12 +11,9 @@
                     <p class="subtitle">Manage your events effortlessly</p>
                 </div>
                 <div class="header-actions">
-                    <p-button 
-                        [label]="showAddForm ? 'Hide Form' : 'Add Event'" 
-                        [icon]="showAddForm ? 'pi pi-minus' : 'pi pi-plus'" 
-                        (click)="showAddForm = !showAddForm"
-                        [styleClass]="showAddForm ? 'p-button-secondary' : 'p-button-success'"
-                        class="toggle-form-btn">
+                    <p-button [label]="showAddForm ? 'Hide Form' : 'Add Event'"
+                        [icon]="showAddForm ? 'pi pi-minus' : 'pi pi-plus'" (click)="showAddForm = !showAddForm"
+                        [styleClass]="showAddForm ? 'p-button-secondary' : 'p-button-success'" class="toggle-form-btn">
                     </p-button>
                 </div>
             </div>
@@ -35,36 +32,36 @@
                             <label for="name">
                                 <i class="pi pi-tag"></i> Titre
                             </label>
-                            <input id="name" type="text" pInputText [(ngModel)]="newEvenement.name" 
-                                name="name" required placeholder="Enter title" />
+                            <input id="name" type="text" pInputText [(ngModel)]="newEvenement.name" name="name" required
+                                placeholder="Enter title" />
                         </div>
                         <div class="form-field">
                             <label for="description">
                                 <i class="pi pi-info-circle"></i> Description
                             </label>
-                            <input id="description" type="text" pInputText [(ngModel)]="newEvenement.description" 
+                            <input id="description" type="text" pInputText [(ngModel)]="newEvenement.description"
                                 name="description" required placeholder="Enter description" />
                         </div>
                         <div class="form-field">
                             <label for="dateDebut">
                                 <i class="pi pi-calendar"></i> Date Début
                             </label>
-                            <input id="dateDebut" type="date" pInputText [(ngModel)]="newEvenement.dateDebut" 
+                            <input id="dateDebut" type="date" pInputText [(ngModel)]="newEvenement.dateDebut"
                                 name="dateDebut" required />
                         </div>
                         <div class="form-field">
                             <label for="dateFin">
                                 <i class="pi pi-calendar"></i> Date Fin
                             </label>
-                            <input id="dateFin" type="date" pInputText [(ngModel)]="newEvenement.dateFin" 
-                                name="dateFin" required />
+                            <input id="dateFin" type="date" pInputText [(ngModel)]="newEvenement.dateFin" name="dateFin"
+                                required />
                         </div>
                         <div class="form-field">
                             <label for="prix">
                                 <i class="pi pi-dollar"></i> Prix
                             </label>
-                            <input id="prix" type="number" pInputText [(ngModel)]="newEvenement.prix" 
-                                name="prix" required placeholder="Enter price" />
+                            <input id="prix" type="number" pInputText [(ngModel)]="newEvenement.prix" name="prix"
+                                required placeholder="Enter price" />
                         </div>
                         <div class="form-field">
                             <label for="image">
@@ -72,33 +69,27 @@
                             </label>
                             <input id="image" type="file" (change)="onFileChange($event)" />
                         </div>
-                        <div class="form-field">
+                        <!-- <div class="form-field">
                             <label>
                                 <i class="pi pi-check-circle"></i> Status
                             </label>
                             <div class="status-toggle">
-                                <p-button 
-                                    [label]="'Active'" 
-                                    [icon]="'pi pi-check'" 
-                                    (click)="newEvenement.active = true"
+                                <p-button [label]="'Active'" [icon]="'pi pi-check'" (click)="newEvenement.active = true"
                                     [styleClass]="newEvenement.active ? 'p-button-success' : 'p-button-outlined'"
                                     class="status-btn">
                                 </p-button>
-                                <p-button 
-                                    [label]="'Inactive'" 
-                                    [icon]="'pi pi-times'" 
+                                <p-button [label]="'Inactive'" [icon]="'pi pi-times'"
                                     (click)="newEvenement.active = false"
                                     [styleClass]="!newEvenement.active ? 'p-button-warning' : 'p-button-outlined'"
                                     class="status-btn">
                                 </p-button>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     <footer class="form-actions">
-                        <p-button label="Add Event" icon="pi pi-plus" type="submit" 
+                        <p-button label="Add Event" icon="pi pi-plus" type="submit"
                             styleClass="p-button-success p-button-raised"></p-button>
-                        <p-button label="Cancel" icon="pi pi-times" type="button" 
-                            (click)="showAddForm = false"
+                        <p-button label="Cancel" icon="pi pi-times" type="button" (click)="showAddForm = false"
                             styleClass="p-button-text"></p-button>
                     </footer>
                 </form>
@@ -109,21 +100,32 @@
         <section class="list-section">
             <div class="list-card">
                 <header class="card-header">
-                    <h2>Event List ({{evenements.length}})</h2>
-                    <i class="pi pi-list"></i>
+                    <div class="header-left">
+                        <h2>Event List ({{evenements.length}})</h2>
+                        <span class="records-info">Total: {{filteredEvenements.length}} events</span>
+                    </div>
+                    <div class="header-right">
+                        <div class="search-filter">
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input type="text" pInputText placeholder="Search by event title..."
+                                    [(ngModel)]="searchText" (input)="onSearchChange($event)" class="search-input" />
+                            </span>
+                            <button *ngIf="searchText" type="button" pButton icon="pi pi-times" (click)="clearSearch()"
+                                class="p-button-text p-button-sm clear-button" pTooltip="Clear search"
+                                tooltipPosition="top">
+                            </button>
+                        </div>
+                        <i class="pi pi-list header-icon"></i>
+                    </div>
                 </header>
                 <div class="table-wrapper">
-                    <p-table [value]="evenements" 
-                        [paginator]="true" 
-                        [rows]="10" 
-                        [showCurrentPageReport]="true"
+                    <p-table [value]="filteredEvenements" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} events"
                         [rowsPerPageOptions]="[5,10,20,50]"
-                        styleClass="p-datatable-gridlines p-datatable-sm evenements-table"
-                        responsiveLayout="scroll"
-                        [scrollable]="true"
-                        scrollHeight="70vh">
-                        
+                        styleClass="p-datatable-gridlines p-datatable-sm evenements-table" responsiveLayout="scroll"
+                        [scrollable]="true" scrollHeight="70vh">
+
                         <ng-template pTemplate="header">
                             <tr>
                                 <th class="col-image">Image</th>
@@ -138,22 +140,72 @@
                                 <th class="col-actions">Actions</th>
                             </tr>
                         </ng-template>
-                        
+
                         <ng-template pTemplate="body" let-evenement>
                             <tr>
                                 <td class="image-cell">
                                     <div class="evenement-image">
-                                        <img [src]="url + '/' + evenement.image" 
-                                             [alt]="evenement.name" 
-                                             (click)="showImage(evenement.image)"/>
-                                        <div class="image-overlay">
-                                            <p-button 
-                                                icon="pi pi-camera" 
-                                                (click)="openImageEditDialog(evenement)"
-                                                styleClass="p-button-rounded p-button-sm p-button-secondary"
-                                                pTooltip="Change Image"
-                                                tooltipPosition="top">
-                                            </p-button>
+                                        <!-- Display current image when not editing -->
+                                        <div *ngIf="!isEditing(evenement)" class="image-display">
+                                            <img [src]="evenement.image ? (url + '/' + evenement.image) : ''"
+                                                [alt]="evenement.name" (click)="showImage(evenement.image)"
+                                                (error)="onImageError($event)"
+                                                [style.display]="evenement.image ? 'block' : 'none'" />
+                                            <div *ngIf="!evenement.image" class="placeholder-image">
+                                                <i class="pi pi-image"></i>
+                                                <span>No Image</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Image editing interface when in edit mode -->
+                                        <div *ngIf="isEditing(evenement)" class="image-editor">
+                                            <!-- Current image preview -->
+                                            <div class="current-image" *ngIf="editedEvenement.image"
+                                                (click)="fileInput.click()">
+                                                <img [src]="url + '/' + editedEvenement.image" [alt]="evenement.name"
+                                                    class="preview-image" (error)="onImageError($event)" />
+                                                <div class="image-overlay">
+                                                    <i class="pi pi-camera"></i>
+                                                    <span class="change-text">Click to change</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- No image placeholder -->
+                                            <div class="no-image" *ngIf="!editedEvenement.image"
+                                                (click)="fileInput.click()">
+                                                <i class="pi pi-image"></i>
+                                                <span>Click to add image</span>
+                                            </div>
+
+                                            <!-- File input (hidden but functional) -->
+                                            <input type="file" (change)="onFileChange($event, evenement.id)"
+                                                accept="image/*" class="file-input" #fileInput style="display: none;" />
+
+                                            <!-- Upload Progress -->
+                                            <div *ngIf="uploadingImages[evenement.id] && uploadProgress[evenement.id] !== undefined"
+                                                class="upload-progress">
+                                                <p-progressBar [value]="uploadProgress[evenement.id]" [showValue]="true"
+                                                    styleClass="upload-progress-bar">
+                                                </p-progressBar>
+                                                <small>Uploading: {{uploadProgress[evenement.id]}}%</small>
+                                            </div>
+
+                                            <!-- Action buttons -->
+                                            <div class="image-actions">
+                                                <button type="button" pButton icon="pi pi-upload"
+                                                    [label]="editedEvenement.image ? 'Change' : 'Add'"
+                                                    (click)="fileInput.click()"
+                                                    class="p-button-outlined p-button-sm upload-btn"
+                                                    [disabled]="uploadingImages[evenement.id]">
+                                                </button>
+
+                                                <button type="button" pButton icon="pi pi-trash" label="Remove"
+                                                    (click)="removeImage(evenement)"
+                                                    class="p-button-outlined p-button-danger p-button-sm remove-btn"
+                                                    [disabled]="uploadingImages[evenement.id] || !editedEvenement.image"
+                                                    *ngIf="editedEvenement.image">
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
@@ -163,15 +215,19 @@
                                         <span class="text-content">{{evenement.name}}</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(evenement)">
-                                        <input pInputText type="text" [(ngModel)]="editedEvenement.name" class="edit-input">
+                                        <input pInputText type="text" [(ngModel)]="editedEvenement.name"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="description-cell">
                                     <ng-container *ngIf="!isEditing(evenement)">
-                                        <span class="text-content" [title]="evenement.description">{{evenement.description | slice:0:30}}{{evenement.description?.length > 30 ? '...' : ''}}</span>
+                                        <span class="text-content"
+                                            [title]="evenement.description">{{evenement.description |
+                                            slice:0:30}}{{evenement.description?.length > 30 ? '...' : ''}}</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(evenement)">
-                                        <input pInputText type="text" [(ngModel)]="editedEvenement.description" class="edit-input">
+                                        <input pInputText type="text" [(ngModel)]="editedEvenement.description"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="date-cell">
@@ -179,7 +235,8 @@
                                         <span class="text-content">{{evenement.dateDebut | date:'shortDate'}}</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(evenement)">
-                                        <input pInputText type="date" [(ngModel)]="editedEvenement.dateDebut" class="edit-input">
+                                        <input pInputText type="date" [(ngModel)]="editedEvenement.dateDebut"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="date-cell">
@@ -187,21 +244,22 @@
                                         <span class="text-content">{{evenement.dateFin | date:'shortDate'}}</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(evenement)">
-                                        <input pInputText type="date" [(ngModel)]="editedEvenement.dateFin" class="edit-input">
+                                        <input pInputText type="date" [(ngModel)]="editedEvenement.dateFin"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="price-cell">
                                     <ng-container *ngIf="!isEditing(evenement)">
-                                        <span class="text-content">{{evenement.prix}}€</span>
+                                        <span class="text-content">{{evenement.prix}} DT</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(evenement)">
-                                        <input pInputText type="number" [(ngModel)]="editedEvenement.prix" class="edit-input">
+                                        <input pInputText type="number" [(ngModel)]="editedEvenement.prix"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="status-cell">
                                     <ng-container *ngIf="!isEditing(evenement)">
-                                        <p-inputSwitch 
-                                            [(ngModel)]="evenement.active" 
+                                        <p-inputSwitch [(ngModel)]="evenement.active"
                                             (onChange)="toggleEvenementStatus(evenement)"
                                             [pTooltip]="evenement.active ? 'Active - Click to deactivate' : 'Inactive - Click to activate'"
                                             tooltipPosition="top">
@@ -209,15 +267,11 @@
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(evenement)">
                                         <div class="status-edit-buttons">
-                                            <p-button 
-                                                [icon]="'pi pi-check'" 
-                                                (click)="editedEvenement.active = true"
+                                            <p-button [icon]="'pi pi-check'" (click)="editedEvenement.active = true"
                                                 [styleClass]="editedEvenement.active ? 'p-button-success p-button-sm' : 'p-button-outlined p-button-sm'"
                                                 pTooltip="Active">
                                             </p-button>
-                                            <p-button 
-                                                [icon]="'pi pi-times'" 
-                                                (click)="editedEvenement.active = false"
+                                            <p-button [icon]="'pi pi-times'" (click)="editedEvenement.active = false"
                                                 [styleClass]="!editedEvenement.active ? 'p-button-warning p-button-sm' : 'p-button-outlined p-button-sm'"
                                                 pTooltip="Inactive">
                                             </p-button>
@@ -228,38 +282,32 @@
                                     <div class="table-images-container">
                                         <!-- Add Media Button -->
                                         <div class="add-media-inline">
-                                            <input type="file" 
-                                                   #mediaFileInput
-                                                   (change)="uploadMediaInline($event, evenement)" 
-                                                   multiple 
-                                                   accept="image/*,video/*" 
-                                                   class="file-input"
-                                                   [id]="'mediaInput' + evenement.id">
-                                            <p-button 
-                                                icon="pi pi-plus" 
-                                                styleClass="p-button-success p-button-sm" 
-                                                (click)="mediaFileInput.click()" 
-                                                title="Ajouter media"
+                                            <input type="file" #mediaFileInput
+                                                (change)="uploadMediaInline($event, evenement)" multiple
+                                                accept="image/*,video/*" class="file-input"
+                                                [id]="'mediaInput' + evenement.id">
+                                            <p-button icon="pi pi-plus" styleClass="p-button-success p-button-sm"
+                                                (click)="mediaFileInput.click()" title="Ajouter media"
                                                 pTooltip="Ajouter images/vidéos">
                                             </p-button>
                                         </div>
-                                        
+
                                         <!-- Display existing media -->
-                                        <div class="table-images-grid" *ngIf="evenement.media && evenement.media.length > 0">
-                                            <div *ngFor="let media of evenement.media.slice(0, 4)" 
-                                                 class="table-image-item">
+                                        <div class="table-images-grid"
+                                            *ngIf="evenement.media && evenement.media.length > 0">
+                                            <div *ngFor="let media of evenement.media.slice(0, 4)"
+                                                class="table-image-item">
                                                 <div class="media-content"
-                                                     (click)="isImage(media.path) ? showImageInZoom(media.path, evenement) : showVideoInZoom(media.path, evenement)">
+                                                    (click)="isImage(media.path) ? showImageInZoom(media.path, evenement) : showVideoInZoom(media.path, evenement)">
                                                     <!-- Image thumbnail -->
-                                                    <img *ngIf="isImage(media.path)"
-                                                         [src]="url + '/' + media.path" 
-                                                         alt="Evenement media" 
-                                                         class="table-image-thumbnail">
-                                                    
+                                                    <img *ngIf="isImage(media.path)" [src]="url + '/' + media.path"
+                                                        alt="Evenement media" class="table-image-thumbnail">
+
                                                     <!-- Video thumbnail -->
                                                     <div *ngIf="isVideo(media.path)" class="table-video-thumbnail">
                                                         <video class="table-video-element">
-                                                            <source [src]="url + '/' + media.path" [type]="getVideoMimeType(media.path)">
+                                                            <source [src]="url + '/' + media.path"
+                                                                [type]="getVideoMimeType(media.path)">
                                                         </video>
                                                         <div class="video-play-icon">
                                                             <i class="pi pi-play"></i>
@@ -267,59 +315,52 @@
                                                     </div>
                                                 </div>
                                                 <!-- Delete button -->
-                                                <button class="delete-media-btn" 
-                                                        (click)="deleteMedia(media); $event.stopPropagation()"
-                                                        pTooltip="Supprimer"
-                                                        tooltipPosition="top">
+                                                <button class="delete-media-btn"
+                                                    (click)="deleteMedia(media); $event.stopPropagation()"
+                                                    pTooltip="Supprimer" tooltipPosition="top">
                                                     <i class="pi pi-times"></i>
                                                 </button>
                                             </div>
-                                            <div *ngIf="evenement.media.length > 4" 
-                                                 class="more-images-indicator"
-                                                 (click)="expandMediaView(evenement)"
-                                                 pTooltip="Voir tous les media">
+                                            <div *ngIf="evenement.media.length > 4" class="more-images-indicator"
+                                                (click)="expandMediaView(evenement)" pTooltip="Voir tous les media">
                                                 +{{ evenement.media.length - 4 }}
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Upload progress -->
                                         <div *ngIf="uploadProgress[evenement.id]" class="inline-upload-progress">
-                                            <p-progressBar [value]="uploadProgress[evenement.id]" [showValue]="true"></p-progressBar>
+                                            <p-progressBar [value]="uploadProgress[evenement.id]"
+                                                [showValue]="true"></p-progressBar>
                                         </div>
-                                        
-                                        <div *ngIf="!evenement.media || evenement.media.length === 0" class="no-table-images">
+
+                                        <div *ngIf="!evenement.media || evenement.media.length === 0"
+                                            class="no-table-images">
                                             <span>Aucun media</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="actions-cell">
                                     <div class="action-buttons">
-                                        <p-button 
-                                            [icon]="isEditing(evenement) ? 'pi pi-check' : 'pi pi-pencil'" 
+                                        <p-button [icon]="isEditing(evenement) ? 'pi pi-check' : 'pi pi-pencil'"
                                             (click)="toggleEdit(evenement)"
                                             [styleClass]="isEditing(evenement) ? 'p-button-rounded p-button-success p-button-sm' : 'p-button-rounded p-button-info p-button-sm'"
                                             [pTooltip]="isEditing(evenement) ? 'Save' : 'Edit'">
                                         </p-button>
                                         <ng-container *ngIf="isEditing(evenement)">
-                                            <p-button 
-                                                icon="pi pi-times" 
-                                                (click)="cancelEdit(evenement)"
+                                            <p-button icon="pi pi-times" (click)="cancelEdit(evenement)"
                                                 styleClass="p-button-rounded p-button-danger p-button-sm"
                                                 pTooltip="Cancel">
                                             </p-button>
                                         </ng-container>
-                                        <p-button 
-                                            *ngIf="!isEditing(evenement)" 
-                                            icon="pi pi-trash" 
+                                        <p-button *ngIf="!isEditing(evenement)" icon="pi pi-trash"
                                             (click)="DeleteEvenement(evenement.id)"
-                                            styleClass="p-button-rounded p-button-danger p-button-sm"
-                                            pTooltip="Delete">
+                                            styleClass="p-button-rounded p-button-danger p-button-sm" pTooltip="Delete">
                                         </p-button>
                                     </div>
                                 </td>
                             </tr>
                         </ng-template>
-                        
+
                         <ng-template pTemplate="emptymessage">
                             <tr>
                                 <td colspan="10" class="empty-message">
@@ -332,73 +373,75 @@
                         </ng-template>
                     </p-table>
                 </div>
+
+                <!-- No results message -->
+                <div *ngIf="filteredEvenements.length === 0 && searchText" class="no-results">
+                    <div class="no-results-content">
+                        <i class="pi pi-search"></i>
+                        <h3>No events found</h3>
+                        <p>No events match your search for "<strong>{{searchText}}</strong>"</p>
+                        <p-button label="Clear Search" icon="pi pi-times" (click)="clearSearch()"
+                            styleClass="p-button-outlined">
+                        </p-button>
+                    </div>
+                </div>
+
+                <!-- Empty state message -->
+                <div *ngIf="evenements.length === 0 && !searchText" class="empty-state">
+                    <div class="empty-state-content">
+                        <i class="pi pi-inbox"></i>
+                        <h3>No events yet</h3>
+                        <p>Create your first event using the form above.</p>
+                        <p-button label="Add Event" icon="pi pi-plus" (click)="showAddForm = true"
+                            styleClass="p-button-success">
+                        </p-button>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
 </div>
 
-<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000"
+    rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
 <!-- Media Zoom Dialog -->
-<p-dialog [header]="isVideo(selectedImage) ? 'Video' : 'Image'" 
-    [(visible)]="imageDialog" 
-    [modal]="true" 
-    [style]="{width: '90vw', height: '90vh'}" 
-    [baseZIndex]="10000"
-    [maximizable]="true"
-    [closable]="true">
-    
+<p-dialog [header]="isVideo(selectedImage) ? 'Video' : 'Image'" [(visible)]="imageDialog" [modal]="true"
+    [style]="{width: '90vw', height: '90vh'}" [baseZIndex]="10000" [maximizable]="true" [closable]="true">
+
     <div class="image-zoom-container" *ngIf="selectedImage">
         <!-- Navigation arrows -->
         <div class="image-nav-controls">
-            <p-button 
-                icon="pi pi-chevron-left" 
-                (click)="previousImage()"
-                [disabled]="currentImageIndex === 0"
-                styleClass="p-button-rounded p-button-text p-button-lg nav-btn-left"
-                pTooltip="Media précédent">
+            <p-button icon="pi pi-chevron-left" (click)="previousImage()" [disabled]="currentImageIndex === 0"
+                styleClass="p-button-rounded p-button-text p-button-lg nav-btn-left" pTooltip="Media précédent">
             </p-button>
-            
+
             <div class="main-image-wrapper">
                 <!-- Image Display -->
-                <img *ngIf="isImage(selectedImage)" 
-                     [src]="selectedImage" 
-                     alt="Evenement media"
-                     class="zoom-image"/>
-                
+                <img *ngIf="isImage(selectedImage)" [src]="selectedImage" alt="Evenement media" class="zoom-image" />
+
                 <!-- Video Display -->
-                <video *ngIf="isVideo(selectedImage)" 
-                       class="zoom-video"
-                       controls
-                       autoplay>
+                <video *ngIf="isVideo(selectedImage)" class="zoom-video" controls autoplay>
                     <source [src]="selectedImage" [type]="getVideoMimeType(selectedImage)">
                     Your browser does not support the video tag.
                 </video>
-                
+
                 <div class="image-counter">
                     <span>{{ currentImageIndex + 1 }} / {{ totalImagesCount }}</span>
                 </div>
             </div>
-            
-            <p-button 
-                icon="pi pi-chevron-right" 
-                (click)="nextImage()"
+
+            <p-button icon="pi pi-chevron-right" (click)="nextImage()"
                 [disabled]="currentImageIndex === totalImagesCount - 1"
-                styleClass="p-button-rounded p-button-text p-button-lg nav-btn-right"
-                pTooltip="Media suivant">
+                styleClass="p-button-rounded p-button-text p-button-lg nav-btn-right" pTooltip="Media suivant">
             </p-button>
         </div>
-        
+
         <!-- Thumbnail strip -->
         <div class="thumbnail-strip" *ngIf="selectedEvenement?.media && selectedEvenement.media.length > 1">
-            <div *ngFor="let media of selectedEvenement.media; let i = index" 
-                 class="thumbnail-item"
-                 [class.active]="i === currentImageIndex"
-                 (click)="goToImage(i)">
-                <img *ngIf="isImage(media.path)"
-                     [src]="url + '/' + media.path" 
-                     alt="Thumbnail"
-                     class="thumbnail-image">
+            <div *ngFor="let media of selectedEvenement.media; let i = index" class="thumbnail-item"
+                [class.active]="i === currentImageIndex" (click)="goToImage(i)">
+                <img *ngIf="isImage(media.path)" [src]="url + '/' + media.path" alt="Thumbnail" class="thumbnail-image">
                 <video *ngIf="isVideo(media.path)" class="thumbnail-video">
                     <source [src]="url + '/' + media.path" [type]="getVideoMimeType(media.path)">
                 </video>
@@ -406,16 +449,11 @@
         </div>
     </div>
 </p-dialog>
- 
-<!-- Image Edit Dialog -->
-    
-<p-dialog header="Manage Event Images" 
-    [(visible)]="mediaDialogVisible" 
-    [modal]="true" 
-    [style]="{width: '90vw', maxWidth: '1200px'}" 
-    [closable]="true"
-    [maximizable]="true" >
-    
+
+<!-- Manage Event Images Dialog -->
+<p-dialog header="Manage Event Images" [(visible)]="mediaDialogVisible" [modal]="true"
+    [style]="{width: '90vw', maxWidth: '1200px'}" [closable]="true" [maximizable]="true">
+
     <div class="media-management">
         <!-- Upload Multiple Images Form -->
         <div class="upload-form-section">
@@ -425,10 +463,9 @@
                     <label for="multipleImages">
                         <i class="pi pi-images"></i> Select Multiple Images
                     </label>
-                    <input id="multipleImages" type="file" 
-                        (change)="onMultipleFilesChange($event)" 
-                        accept="image/*" multiple />
-                    
+                    <input id="multipleImages" type="file" (change)="onMultipleFilesChange($event)" accept="image/*"
+                        multiple />
+
                     <div *ngIf="selectedFiles.length > 0" class="file-info">
                         <small><i class="pi pi-file"></i> Selected: {{selectedFiles.length}} file(s)</small>
                         <ul class="file-list">
@@ -436,26 +473,21 @@
                         </ul>
                     </div>
                 </div>
-                
+
                 <!-- Upload Progress -->
                 <div *ngIf="getUploadProgressKeys().length > 0" class="progress-section">
                     <h4>Upload Progress</h4>
                     <div *ngFor="let fileName of getUploadProgressKeys()" class="progress-item">
                         <span class="file-name">{{fileName}}</span>
-                        <p-progressBar [value]="uploadProgress[fileName]" 
-                            [showValue]="true" 
+                        <p-progressBar [value]="uploadProgress[fileName]" [showValue]="true"
                             styleClass="upload-progress">
                         </p-progressBar>
                     </div>
                 </div>
-                
-
 
                 <div class="form-actions">
-                    <p-button label="Upload Images" icon="pi pi-upload" 
-                        (click)="uploadMultipleImages()" 
-                        styleClass="p-button-success"
-                        [disabled]="selectedFiles.length === 0">
+                    <p-button label="Upload Images" icon="pi pi-upload" (click)="uploadMultipleImages()"
+                        styleClass="p-button-success" [disabled]="selectedFiles.length === 0">
                     </p-button>
                 </div>
             </div>
@@ -467,31 +499,23 @@
             <div class="media-grid">
                 <div *ngFor="let media of selectedEvenement?.media" class="media-item">
                     <div class="media-image">
-                        <img [src]="url + '/' + media.path" 
-                            alt="Event image" 
-                            (click)="showImage(media.path)"/>
+                        <img [src]="url + '/' + media.path" alt="Event image" (click)="showImage(media.path)" />
                     </div>
                     <div class="media-actions">
-                        <p-button icon="pi pi-eye" 
-                            (click)="showImage(media.path)"
-                            styleClass="p-button-rounded p-button-info p-button-sm"
-                            pTooltip="View Image">
+                        <p-button icon="pi pi-eye" (click)="showImage(media.path)"
+                            styleClass="p-button-rounded p-button-info p-button-sm" pTooltip="View Image">
                         </p-button>
-                        <p-button icon="pi pi-trash" 
-                            (click)="deleteMedia(media)"
-                            styleClass="p-button-rounded p-button-danger p-button-sm"
-                            pTooltip="Delete Image">
+                        <p-button icon="pi pi-trash" (click)="deleteMedia(media)"
+                            styleClass="p-button-rounded p-button-danger p-button-sm" pTooltip="Delete Image">
                         </p-button>
                     </div>
                 </div>
             </div>
-            
-            <div *ngIf="evenementMedias.length === 0" class="empty-media">
+
+            <div *ngIf="!selectedEvenement?.media || selectedEvenement.media.length === 0" class="empty-media">
                 <i class="pi pi-info-circle"></i>
                 <span>No images found for this event</span>
             </div>
         </div>
     </div>
 </p-dialog>
-
-<!-- Multiple Images Management Dialog -->

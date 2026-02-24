@@ -1,0 +1,59 @@
+<p-toast></p-toast>
+
+<div class="settings-page">
+    <header class="page-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h1><i class="pi pi-cog"></i> Paramètres</h1>
+                <p class="subtitle">Personnalisez votre tableau de bord</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="settings-grid">
+
+
+        <!-- Text Settings Card -->
+        <div class="settings-card">
+            <div class="card-header">
+                <i class="pi pi-align-left"></i>
+                <h2>Texte et lisibilité</h2>
+            </div>
+            <div class="card-body">
+                <p class="setting-description">Personnalisez la taille et le style du texte.</p>
+
+                <div class="setting-row">
+                    <label class="setting-label">Taille du texte</label>
+                    <p-dropdown [options]="fontSizeOptions" [(ngModel)]="settings.fontSize" optionLabel="label"
+                        optionValue="value" placeholder="Choisir une taille">
+                    </p-dropdown>
+                </div>
+
+                <div class="setting-row">
+                    <label class="setting-label">Texte en gras</label>
+                    <div class="toggle-row">
+                        <p-inputSwitch [(ngModel)]="settings.fontBold"></p-inputSwitch>
+                        <span class="toggle-hint">{{ settings.fontBold ? 'Activé' : 'Désactivé' }}</span>
+                    </div>
+                </div>
+
+                <div class="text-preview" [class.font-bold]="settings.fontBold" [class]="'font-' + settings.fontSize">
+                    <p>Aperçu du texte sur le tableau de bord.</p>
+                    <p>Formation en ligne - 5 participants</p>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="settings-actions">
+        <p-button label="Sauvegarder les paramètres" icon="pi pi-save" styleClass="p-button-success"
+            (click)="saveSettings()">
+        </p-button>
+        <p-button label="Réinitialiser" icon="pi pi-refresh" styleClass="p-button-outlined p-button-secondary"
+            (click)="resetSettings()">
+        </p-button>
+    </div>
+</div>

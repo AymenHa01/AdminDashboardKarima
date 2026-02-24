@@ -25,8 +25,10 @@ export class FormationListComponent implements OnInit {
   selectedImage: string = '';
   currentImageIndex: number = 0;
   totalImagesCount: number = 0;
-  
-  // Inline image editing properties
+
+  // Search filter properties
+  searchText: string = '';
+  filteredFormations: any[] = [];
   uploadingImages: { [key: string]: boolean } = {};
 
   // Multiple images management
@@ -35,7 +37,7 @@ export class FormationListComponent implements OnInit {
   formationMedias: any[] = [];
   selectedFiles: File[] = [];
   uploadProgress: { [key: string]: number } = {};
-  
+
   // Form visibility toggle
   showAddForm: boolean = false;
 
@@ -80,7 +82,7 @@ export class FormationListComponent implements OnInit {
         });
         return;
       }
-      
+
       this.saveFormationChanges();
     } else {
       // Start editing
@@ -99,7 +101,7 @@ export class FormationListComponent implements OnInit {
       // Reload formations to reset any changes
       this.loadFormations();
     }
-    
+
     this.editingId = null;
     this.editedFormation = null;
   }
@@ -126,29 +128,34 @@ export class FormationListComponent implements OnInit {
   }
 
   saveFormation() {
-    if (this.file && this.file.target && this.file.target.files) {
-      this.newFormation.image = this.file.target.files[0].name;
-      this.formationService.addFormation(this.newFormation).subscribe(
-        response => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Formation ajoutée avec succès'
-          });
-          this.UploadImages(this.file);
-          this.loadFormations();
-          this.resetNewFormation();
-        },
-        error => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Erreur lors de l\'ajout de la formation'
-          });
-          console.error('Erreur lors de l\'ajout de la formation', error);
-        }
-      );
+    console.log("Saving formation...", this.newFormation);
+
+    if (this.file) {
+      this.newFormation.image = this.file.name;
     }
+
+    this.formationService.addFormation(this.newFormation).subscribe(
+      response => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Formation ajoutée avec succès'
+        });
+
+        // Image is already uploaded in onFileChange/uploadImageForNewFormation
+        this.loadFormations();
+        this.resetNewFormation();
+        this.showAddForm = false; // Hide form after success
+      },
+      error => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Erreur lors de l\'ajout de la formation'
+        });
+        console.error('Erreur lors de l\'ajout de la formation', error);
+      }
+    );
   }
 
   loadFormations(): void {
@@ -156,6 +163,8 @@ export class FormationListComponent implements OnInit {
       (data: Formation[]) => {
         console.log('Formations récupérées:', data);
         this.formations = data;
+        this.filteredFormations = [...this.formations]; // Initialize filtered list
+        this.applyFilter(); // Apply current search filter if any
       },
       (error) => {
         this.messageService.add({
@@ -187,7 +196,7 @@ export class FormationListComponent implements OnInit {
   UploadImages(file: any) {
     if (file && file.target && file.target.files && file.target.files[0]) {
       const fileName = file.target.files[0].name;
-      
+
       this.blob.uploadImage(file.target.files[0], fileName, (event: ProgressEvent) => {
         if (event.lengthComputable) {
           this.progress = Math.round(100 * event.loaded / event.total);
@@ -236,12 +245,12 @@ export class FormationListComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       const fileName = file.name;
-      
+
       if (formationId) {
         // Editing existing formation - upload immediately
         this.uploadingImages[formationId] = true;
         this.uploadProgress[formationId] = 0;
-        
+
         // Find the formation being edited and update its image
         const formationIndex = this.formations.findIndex(f => f.id.toString() === formationId.toString());
         if (formationIndex !== -1) {
@@ -251,7 +260,7 @@ export class FormationListComponent implements OnInit {
       } else {
         // Creating new formation
         this.newFormation.image = fileName;
-        this.file = file;
+        this.file = file; // Store the file object itself
         this.uploadImageForNewFormation(file, fileName);
       }
     }
@@ -276,17 +285,17 @@ export class FormationListComponent implements OnInit {
         if (this.editedFormation && this.editedFormation.id === formationId) {
           this.editedFormation.image = fileName;
           console.log("Edited formation image updated:", this.editedFormation);
-          
+
         }
         this.uploadingImages[formationId] = false;
         this.uploadProgress[formationId] = 100;
-        
+
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
           detail: 'Image uploaded successfully'
         });
-        
+
         // Reset progress after a delay
         setTimeout(() => {
           this.uploadProgress[formationId] = 0;
@@ -393,12 +402,12 @@ export class FormationListComponent implements OnInit {
 
   onMultipleFilesChange(event: any) {
     const files = Array.from(event.target.files) as File[];
-    
+
     if (files.length > 0) {
       files.forEach((file) => {
         this.uploadSingleImage(file);
       });
-      
+
       event.target.value = '';
     }
   }
@@ -436,7 +445,7 @@ export class FormationListComponent implements OnInit {
       }
     });
   }
- 
+
 
   uploadMultipleImages() {
     if (this.selectedFiles.length === 0) {
@@ -464,7 +473,7 @@ export class FormationListComponent implements OnInit {
                   summary: 'Success',
                   detail: `Image ${index + 1} uploaded successfully`
                 });
-                
+
                 // Reload formations to update media list
                 this.loadFormations();
                 delete this.uploadProgress[file.name];
@@ -514,7 +523,7 @@ export class FormationListComponent implements OnInit {
   private resetMultipleImagesForm() {
     this.selectedFiles = [];
     this.uploadProgress = {};
-    
+
     // Reset file input
     const fileInput = document.getElementById('multipleImagesFormation') as HTMLInputElement;
     if (fileInput) {
@@ -546,7 +555,7 @@ export class FormationListComponent implements OnInit {
   saveFormationChanges() {
 
     console.log("edited dddddddddddddddddd", this.editedFormation);
-    
+
     this.formationService.updateFormation(this.editedFormation).subscribe(
       () => {
         this.messageService.add({
@@ -570,17 +579,17 @@ export class FormationListComponent implements OnInit {
 
   toggleFormationStatus(formation: any): void {
 
-    
+
     if (formation.active) {
       formation.active = true
-    }else{
+    } else {
 
       formation.active = false
     }
-    
+
     console.log('Formation after status change:', formation.active);
     console.log('Formation:', formation);
-   
+
     this.formationService.updateFormation(formation).subscribe(
       () => {
         this.messageService.add({
@@ -637,7 +646,7 @@ export class FormationListComponent implements OnInit {
     }
     this.selectedImage = this.url + '/' + videoPath;
     this.imageDialog = true;
-    
+
     // Find current video index
     if (this.selectedFormation?.media) {
       this.currentImageIndex = this.selectedFormation.media.findIndex((m: any) => m.path === videoPath);
@@ -648,13 +657,13 @@ export class FormationListComponent implements OnInit {
   // Inline media upload from table
   uploadMediaInline(event: any, formation: any) {
     const files = Array.from(event.target.files) as File[];
-    
+
     if (files.length > 0) {
       this.selectedFormation = formation;
-      
+
       files.forEach((file) => {
         this.uploadProgress[formation.id] = 0;
-        
+
         this.blob.uploadImage(file, file.name, (progressEvent: ProgressEvent) => {
           if (progressEvent.lengthComputable) {
             this.uploadProgress[formation.id] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
@@ -670,7 +679,7 @@ export class FormationListComponent implements OnInit {
 
                   // Reload formation data to update media list
                   this.loadFormations();
-                  
+
                   setTimeout(() => {
                     delete this.uploadProgress[formation.id];
                   }, 1000);
@@ -689,7 +698,7 @@ export class FormationListComponent implements OnInit {
           }
         });
       });
-      
+
       // Reset file input
       event.target.value = '';
     }
@@ -713,15 +722,37 @@ export class FormationListComponent implements OnInit {
     if (formation) {
       this.selectedFormation = formation;
     }
-    
+
     if (!this.selectedFormation?.media) return;
-    
+
     this.selectedImage = this.url + '/' + imagePath;
     this.imageDialog = true;
-    
+
     // Find current image index
     this.currentImageIndex = this.selectedFormation.media.findIndex((m: any) => m.path === imagePath);
     this.totalImagesCount = this.selectedFormation.media.length;
+  }
+
+  // Search filter methods
+  onSearchChange(event: any) {
+    this.searchText = event.target.value;
+    this.applyFilter();
+  }
+
+  clearSearch() {
+    this.searchText = '';
+    this.applyFilter();
+  }
+
+  applyFilter() {
+    if (!this.searchText || this.searchText.trim() === '') {
+      this.filteredFormations = [...this.formations];
+    } else {
+      const searchTerm = this.searchText.toLowerCase().trim();
+      this.filteredFormations = this.formations.filter(formation =>
+        formation.name && formation.name.toLowerCase().includes(searchTerm)
+      );
+    }
   }
 }
 

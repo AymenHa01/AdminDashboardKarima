@@ -20,24 +20,25 @@ export class ArtistListComponent implements OnInit {
   editingId: number | null = null;
   editedArtist: any = null;
   showAddForm: boolean = false;
-  
+
+  // Search properties
+  filteredArtists: any[] = [];
+  searchText: string = '';
+
   newArtist: any = {
     id: 0,
     nom: '',
     prenom: '',
     email: '',
     numero: '',
-    image: '',
-    active: true
+    image: ''
   };
   progress: number = 0;
 
-  // Image dialog properties
-  imageDialog: boolean = false;
-  selectedImage: string = '';
-  
   // Image edit functionality
+  imageDialog: boolean = false;
   imageEditDialog: boolean = false;
+  selectedImage: string = '';
   selectedArtistForImageEdit: any = null;
   newImageFile: File | null = null;
   imageUploadProgress: number = 0;
@@ -54,7 +55,7 @@ export class ArtistListComponent implements OnInit {
     artiste: null
   };
   tableauFile: any;
-  
+
   // Edit tableau properties
   editingTableauId: number | null = null;
   editedTableau: any = null;
@@ -135,6 +136,7 @@ export class ArtistListComponent implements OnInit {
     );
   }
 
+
   saveArtist() {
     if (this.file && this.file.target && this.file.target.files) {
       this.newArtist.image = this.file.target.files[0].name;
@@ -165,6 +167,8 @@ export class ArtistListComponent implements OnInit {
     this.artisteService.GetAllArtistes().subscribe(
       (data: any) => {
         this.artists = data;
+        this.filteredArtists = [...this.artists];
+        this.applyFilter();
       },
       (error) => {
         this.messageService.add({
@@ -184,33 +188,9 @@ export class ArtistListComponent implements OnInit {
       prenom: '',
       email: '',
       numero: '',
-      image: '',
-      active: true
+      image: ''
     };
     this.file = null;
-  }
-
-  toggleActiveStatus(artist: any) {
-    const updatedArtist = { ...artist, active: !artist.active };
-    
-    this.artisteService.AddArtiste(updatedArtist).subscribe(
-      response => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: `Artist ${updatedArtist.active ? 'activated' : 'deactivated'} successfully`
-        });
-        this.loadArtists();
-      },
-      error => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Error updating artist status'
-        });
-        console.error('Error updating status:', error);
-      }
-    );
   }
 
   showImage(image: string) {
@@ -218,108 +198,41 @@ export class ArtistListComponent implements OnInit {
     this.imageDialog = true;
   }
 
-  // Image edit functionality
-  openImageEditDialog(artist: any) {
-    this.selectedArtistForImageEdit = artist;
-    this.newImageFile = null;
-    this.imageUploadProgress = 0;
-    this.imageEditDialog = true;
+  // Search filter methods
+  onSearchChange(event: any) {
+    this.searchText = event.target.value;
+    this.applyFilter();
   }
 
-  onImageFileSelect(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Invalid File',
-          detail: 'Please select a valid image file'
-        });
-        return;
-      }
-      
-      // Validate file size (max 5MB)
-      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-      if (file.size > maxSize) {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'File Too Large',
-          detail: 'Please select an image smaller than 5MB'
-        });
-        return;
-      }
-      
-      this.newImageFile = file;
-      this.messageService.add({
-        severity: 'info',
-        summary: 'File Selected',
-        detail: `Selected: ${file.name}`
-      });
+  clearSearch() {
+    this.searchText = '';
+    this.applyFilter();
+  }
+
+  applyFilter() {
+    if (!this.searchText || this.searchText.trim() === '') {
+      this.filteredArtists = [...this.artists];
+    } else {
+      const searchTerm = this.searchText.toLowerCase().trim();
+      this.filteredArtists = this.artists.filter(artist =>
+        (artist.nom && artist.nom.toLowerCase().includes(searchTerm)) ||
+        (artist.prenom && artist.prenom.toLowerCase().includes(searchTerm))
+      );
     }
   }
 
-  updateArtistImage() {
-    if (!this.newImageFile || !this.selectedArtistForImageEdit) {
-      return;
-    }
-
-    const fileName = `artist_${this.selectedArtistForImageEdit.id}_${Date.now()}_${this.newImageFile.name}`;
-    this.imageUploadProgress = 0;
-
-    this.blob.uploadImage(this.newImageFile, fileName, (progressEvent: ProgressEvent) => {
-      if (progressEvent.lengthComputable) {
-        this.imageUploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-        
-        if (this.imageUploadProgress === 100) {
-          // Update the artist with the new image
-          const updatedArtist = {
-            ...this.selectedArtistForImageEdit,
-            image: fileName
-          };
-
-          this.artisteService.AddArtiste(updatedArtist).subscribe({
-            next: (response: any) => {
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Artist image updated successfully'
-              });
-              
-              this.imageEditDialog = false;
-              this.resetImageEditDialog();
-              this.loadArtists();
-            },
-            error: (error) => {
-              console.error('Error updating artist image:', error);
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Failed to update artist image'
-              });
-            }
-          });
-        }
-      }
-    });
+  onFileChange(event: any) {
+    this.file = event;
   }
 
-  resetImageEditDialog() {
-    this.newImageFile = null;
-    this.imageUploadProgress = 0;
-    this.selectedArtistForImageEdit = null;
-    
-    // Reset file input
-    const fileInput = document.getElementById('imageEditInput') as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = '';
-    }
+  onImageError(event: any) {
+    event.target.style.display = 'none';
   }
 
   UploadImages(file: any) {
     if (file && file.target && file.target.files && file.target.files[0]) {
       const fileName = file.target.files[0].name;
-      
+
       this.blob.uploadImage(file.target.files[0], fileName, (event: ProgressEvent) => {
         if (event.lengthComputable) {
           this.progress = Math.round(100 * event.loaded / event.total);
@@ -355,7 +268,7 @@ export class ArtistListComponent implements OnInit {
     });
   }
 
-  onFileChange(event: any) {
+  onFileChangeOld(event: any) {
     this.file = event;
   }
 
@@ -387,7 +300,7 @@ export class ArtistListComponent implements OnInit {
 
   addTableau() {
     console.log(this.newTableau);
-    
+
     if (!this.newTableau.titre || !this.newTableau.description || this.newTableau.prix === null || this.newTableau.prix === undefined) {
       this.messageService.add({
         severity: 'warn',
@@ -406,7 +319,7 @@ export class ArtistListComponent implements OnInit {
     if (this.tableauFile) {
       const filename = this.tableauFile.uniqueName || this.tableauFile.name;
       this.newTableau.image = filename;
-      
+
       this.blob.uploadImage(this.tableauFile, filename, (progressEvent: ProgressEvent) => {
         if (progressEvent.lengthComputable) {
           this.progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
@@ -422,7 +335,7 @@ export class ArtistListComponent implements OnInit {
 
   private submitTableau() {
     console.log(this.newTableau);
-    
+
     this.artisteService.AddTableau(this.newTableau).subscribe({
       next: (response: any) => {
         this.messageService.add({
@@ -430,7 +343,7 @@ export class ArtistListComponent implements OnInit {
           summary: 'Success',
           detail: 'Tableau added successfully'
         });
-        
+
         // Show image upload success if there was a file
         if (this.tableauFile) {
           this.messageService.add({
@@ -439,7 +352,7 @@ export class ArtistListComponent implements OnInit {
             detail: 'Image uploaded successfully to blob storage'
           });
         }
-        
+
         this.loadArtistTableaux(this.selectedArtist.id);
         this.resetTableauForm();
         this.progress = 0; // Reset progress
@@ -490,7 +403,7 @@ export class ArtistListComponent implements OnInit {
         });
         return;
       }
-      
+
       // Validate file size (max 5MB)
       const maxSize = 5 * 1024 * 1024; // 5MB in bytes
       if (file.size > maxSize) {
@@ -501,10 +414,10 @@ export class ArtistListComponent implements OnInit {
         });
         return;
       }
-      
+
       // Store the file for either new tableau or editing
       this.tableauFile = file;
-      
+
       // Generate a unique filename for image upload
       if (this.editingTableauId !== null && this.editedTableau) {
         // For editing mode, use tableau ID in filename
@@ -515,7 +428,7 @@ export class ArtistListComponent implements OnInit {
         const uniqueName = `tableau_new_${Date.now()}_${file.name}`;
         this.tableauFile.uniqueName = uniqueName;
       }
-      
+
       this.messageService.add({
         severity: 'success',
         summary: 'File Selected',
@@ -523,17 +436,17 @@ export class ArtistListComponent implements OnInit {
       });
     }
   }
-  
+
   removeTableauFile() {
     this.tableauFile = null;
     this.progress = 0;
-    
+
     // Reset file input
     const fileInput = document.getElementById('tableauImage') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = '';
     }
-    
+
     this.messageService.add({
       severity: 'info',
       summary: 'File Removed',
@@ -553,18 +466,18 @@ export class ArtistListComponent implements OnInit {
     this.progress = 0;
     this.editingTableauId = null;
     this.editedTableau = null;
-    
+
     // Reset file input
     const fileInput = document.getElementById('tableauImage') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = '';
     }
-    
+
     const editFileInput = document.getElementById('tableauEditImage') as HTMLInputElement;
     if (editFileInput) {
       editFileInput.value = '';
     }
-    
+
     // Show reset confirmation
     this.messageService.add({
       severity: 'info',
@@ -572,7 +485,7 @@ export class ArtistListComponent implements OnInit {
       detail: 'Tableau form has been reset'
     });
   }
-  
+
   // Edit tableau methods
   toggleTableauEdit(tableau: any) {
     if (this.editingTableauId === tableau.id) {
@@ -581,7 +494,7 @@ export class ArtistListComponent implements OnInit {
         // First upload the image
         const filename = this.tableauFile.uniqueName || this.tableauFile.name;
         this.editedTableau.image = filename;
-        
+
         this.blob.uploadImage(this.tableauFile, filename, (progressEvent: ProgressEvent) => {
           if (progressEvent.lengthComputable) {
             this.progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
@@ -607,7 +520,7 @@ export class ArtistListComponent implements OnInit {
       // Reset any previously selected image
       this.tableauFile = null;
       this.progress = 0;
-      
+
       // Reset file input for edit
       const fileInput = document.getElementById('tableauEditImage') as HTMLInputElement;
       if (fileInput) {
@@ -615,11 +528,11 @@ export class ArtistListComponent implements OnInit {
       }
     }
   }
-  
+
   // Save tableau changes to API
   private saveTableauChanges() {
     console.log(this.editedTableau);
-    
+
     this.artisteService.EditTableau(this.editedTableau).subscribe({
       next: () => {
         this.messageService.add({
@@ -643,13 +556,114 @@ export class ArtistListComponent implements OnInit {
       }
     });
   }
-  
+
   isEditingTableau(tableau: any): boolean {
     return this.editingTableauId === tableau.id;
   }
-  
+
   cancelTableauEdit() {
     this.editingTableauId = null;
     this.editedTableau = null;
+  }
+
+  // Image Edit Dialog Methods
+  openImageEditDialog(artist: any) {
+    this.selectedArtistForImageEdit = artist;
+    this.imageEditDialog = true;
+    this.newImageFile = null;
+    this.imageUploadProgress = 0;
+  }
+
+  onImageFileSelect(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.newImageFile = file;
+    }
+  }
+
+  updateArtistImage() {
+    if (!this.newImageFile || !this.selectedArtistForImageEdit) return;
+
+    const fileName = this.newImageFile.name;
+    this.imageUploadProgress = 0;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', `https://${environment.acountName}.blob.core.windows.net/${environment.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
+    xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
+
+    xhr.upload.onprogress = (event: ProgressEvent) => {
+      if (event.lengthComputable) {
+        this.imageUploadProgress = Math.round((event.loaded / event.total) * 100);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 201 || xhr.status === 200) {
+        this.selectedArtistForImageEdit.image = fileName;
+        this.artisteService.AddArtiste(this.selectedArtistForImageEdit).subscribe(
+          () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Image de l\'artiste mise à jour avec succès'
+            });
+            this.imageEditDialog = false;
+            this.resetImageEditDialog();
+            this.loadArtists();
+          },
+          error => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Erreur lors de la mise à jour de l\'image dans la base de données'
+            });
+          }
+        );
+      } else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Erreur lors du téléchargement de l\'image'
+        });
+      }
+    };
+
+    xhr.onerror = () => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Erreur réseau lors du téléchargement de l\'image'
+      });
+    };
+
+    xhr.send(this.newImageFile);
+  }
+
+  resetImageEditDialog() {
+    this.selectedArtistForImageEdit = null;
+    this.newImageFile = null;
+    this.imageUploadProgress = 0;
+  }
+
+  toggleArtistStatus(artist: any): void {
+    // Note: If active property is toggleable by Switch
+    this.artisteService.AddArtiste(artist).subscribe(
+      () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Statut de l\'artiste mis à jour'
+        });
+      },
+      error => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Erreur lors de la mise à jour du statut'
+        });
+        // Revert UI state on error
+        artist.active = !artist.active;
+      }
+    );
   }
 }

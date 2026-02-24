@@ -1,12 +1,12 @@
 import {
-  MatCommonModule
-} from "./chunk-XX6KOLLJ.js";
-import {
   DomSanitizer
 } from "./chunk-MSS7YHDL.js";
 import {
   HttpClient
 } from "./chunk-LMUCZWE6.js";
+import {
+  MatCommonModule
+} from "./chunk-XX6KOLLJ.js";
 import {
   DOCUMENT
 } from "./chunk-KJWMDIWW.js";
@@ -44,10 +44,10 @@ import {
   ɵɵprojection,
   ɵɵprojectionDef
 } from "./chunk-HGERZWF5.js";
-import "./chunk-LFVCTHGI.js";
 import {
   forkJoin
 } from "./chunk-4RMHXXWK.js";
+import "./chunk-LFVCTHGI.js";
 import {
   Subscription,
   catchError,

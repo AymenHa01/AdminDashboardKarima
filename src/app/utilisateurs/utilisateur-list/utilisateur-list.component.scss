@@ -15,180 +15,817 @@ $radius: 12px;
 $trans: all .3s ease;
 
 // Layout
-.admin-container { display: flex; min-height: 100vh; background: $bg-light; }
-.main-content { flex: 1; padding: 1.5rem; margin-left: 0; overflow-x: hidden; @media (min-width: 768px) { padding: 2rem; }}
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  background: $bg-light;
+}
+
+.main-content {
+  flex: 1;
+  padding: 1.5rem;
+  margin-left: 0;
+  overflow-x: hidden;
+
+  @media (min-width: 768px) {
+    padding: 1.5rem;
+  }
+}
 
 // Header
 .page-header {
-  background: $bg-white; border-radius: $radius; padding: 1.5rem; margin-bottom: 2rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
-  .header-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
-    .header-info h1 { color: $t-primary; font-size: 1.875rem; font-weight: 700; margin: 0 0 .5rem; display: flex; align-items: center; gap: .75rem;
-      i { color: $primary; }
-      @media (min-width: 768px) { font-size: 2.25rem; }
+  background: $bg-white;
+  border-radius: $radius;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .1), 0 1px 2px rgba(0, 0, 0, .06);
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .header-info h1 {
+      color: $t-primary;
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin: 0 0 .5rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+
+      i {
+        color: $primary;
+      }
+
+      @media (min-width: 768px) {
+        font-size: 1.75rem;
+      }
     }
-    .header-info .subtitle { color: $t-secondary; font-size: .95rem; margin: 0; }
+
+    .header-info .subtitle {
+      color: $t-secondary;
+      font-size: .95rem;
+      margin: 0;
+    }
   }
 }
 
 // Statistics
-.stats-section { margin-bottom: 2rem;
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem;
-    .stat-card { background: $bg-white; border-radius: $radius; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
-      display: flex; align-items: center; gap: 1.5rem; transition: $trans; border-left: 4px solid transparent;
-      &:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05); }
-      .stat-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; color: white; }
-      .stat-info h3 { font-size: 2rem; font-weight: 700; margin: 0 0 .25rem; }
-      .stat-info p { color: $t-secondary; margin: 0; font-size: .95rem; }
-      &.total-users { border-left-color: $info; .stat-icon { background: linear-gradient(135deg, $info 0%, darken($info, 10%) 100%); } .stat-info h3 { color: $info; }}
-      &.active-users { border-left-color: $success; .stat-icon { background: linear-gradient(135deg, $success 0%, darken($success, 10%) 100%); } .stat-info h3 { color: $success; }}
-      &.participants { border-left-color: $danger; .stat-icon { background: linear-gradient(135deg, $danger 0%, darken($danger, 10%) 100%); } .stat-info h3 { color: $danger; }}
-      &.subscriptions { border-left-color: $warning; .stat-icon { background: linear-gradient(135deg, $warning 0%, darken($warning, 10%) 100%); } .stat-info h3 { color: $warning; }}
+.stats-section {
+  margin-bottom: 2rem;
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+
+    .stat-card {
+      background: $bg-white;
+      border-radius: $radius;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .1), 0 1px 2px rgba(0, 0, 0, .06);
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      transition: $trans;
+      border-left: 4px solid transparent;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05);
+      }
+
+      .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        color: white;
+      }
+
+      .stat-info h3 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 .25rem;
+      }
+
+      .stat-info p {
+        color: $t-secondary;
+        margin: 0;
+        font-size: .95rem;
+      }
+
+      &.total-users {
+        border-left-color: $info;
+
+        .stat-icon {
+          background: linear-gradient(135deg, $info 0%, darken($info, 10%) 100%);
+        }
+
+        .stat-info h3 {
+          color: $info;
+        }
+      }
+
+      &.active-users {
+        border-left-color: $success;
+
+        .stat-icon {
+          background: linear-gradient(135deg, $success 0%, darken($success, 10%) 100%);
+        }
+
+        .stat-info h3 {
+          color: $success;
+        }
+      }
+
+      &.participants {
+        border-left-color: $danger;
+
+        .stat-icon {
+          background: linear-gradient(135deg, $danger 0%, darken($danger, 10%) 100%);
+        }
+
+        .stat-info h3 {
+          color: $danger;
+        }
+      }
+
+      &.subscriptions {
+        border-left-color: $warning;
+
+        .stat-icon {
+          background: linear-gradient(135deg, $warning 0%, darken($warning, 10%) 100%);
+        }
+
+        .stat-info h3 {
+          color: $warning;
+        }
+      }
     }
   }
 }
 
 // Filters
-.filters-section { margin-bottom: 2rem;
-  .filters-card { background: $bg-white; border-radius: $radius; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
-    .filters-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1rem;
-      .filter-group { display: flex; flex-direction: column; gap: .5rem;
-        label { font-weight: 600; color: $t-primary; font-size: .875rem; display: flex; align-items: center; gap: .5rem; i { color: $primary; }}
-        .search-wrapper, .search-input { width: 100%; }
-        &.view-mode-group .view-toggle-buttons { display: flex; gap: .5rem; }
+.filters-section {
+  margin-bottom: 2rem;
+
+  .filters-card {
+    background: $bg-white;
+    border-radius: $radius;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .1), 0 1px 2px rgba(0, 0, 0, .06);
+
+    .filters-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.25rem;
+      align-items: flex-end;
+      margin-bottom: 1rem;
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+
+        label {
+          font-weight: 600;
+          color: $t-primary;
+          font-size: .875rem;
+          display: flex;
+          align-items: center;
+          gap: .5rem;
+
+          i {
+            color: $primary;
+          }
+        }
+
+        .search-wrapper,
+        .search-input {
+          width: 100%;
+        }
+
+        &.view-mode-group .view-toggle-buttons {
+          display: flex;
+          gap: .5rem;
+        }
       }
     }
-    .results-info { padding-top: 1rem; border-top: 1px solid $border;
-      .results-count { color: $t-secondary; font-size: .9rem; display: flex; align-items: center; gap: .5rem; i { color: $primary; }}
+
+    .results-info {
+      padding-top: 1rem;
+      border-top: 1px solid $border;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .results-count {
+        color: $t-secondary;
+        font-size: .9rem;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+
+        i {
+          color: $primary;
+        }
+      }
+    }
+  }
+}
+
+// Custom Activity Dropdowns
+.activity-dropdown {
+  width: 100%;
+
+  ::ng-deep .p-dropdown {
+    width: 100%;
+    background: #fdfdfd;
+    border-color: #e2e8f0;
+
+    &:hover {
+      border-color: #6366f1;
+    }
+
+    .p-dropdown-label {
+      font-size: 0.875rem;
+      padding: 0.5rem 0.75rem;
+      font-weight: 500;
+    }
+
+    .p-dropdown-panel {
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+      .p-dropdown-items .p-dropdown-item {
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+      }
+
+      .p-dropdown-filter-container {
+        padding: 0.5rem;
+
+        .p-dropdown-filter {
+          padding: 0.4rem 0.75rem 0.4rem 2rem;
+        }
+      }
     }
   }
 }
 
 // List Section
-.list-section .list-card { background: $bg-white; border-radius: $radius; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
-  .card-header { background: linear-gradient(135deg, $primary, $secondary); color: white; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;
-    h2 { margin: 0; font-size: 1.5rem; font-weight: 600; display: flex; align-items: center; gap: .75rem; }
-    .record-count { background: rgba(255,255,255,.2); padding: .5rem 1rem; border-radius: 20px; font-size: .9rem; }
+.list-section .list-card {
+  background: $bg-white;
+  border-radius: $radius;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .1), 0 1px 2px rgba(0, 0, 0, .06);
+
+  .card-header {
+    background: linear-gradient(135deg, $primary, $secondary);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+
+    .record-count {
+      background: rgba(255, 255, 255, .2);
+      padding: .5rem 1rem;
+      border-radius: 20px;
+      font-size: .9rem;
+    }
   }
+
   .table-wrapper :host ::ng-deep .users-table {
-    .p-datatable-header { background: $bg-light; border-bottom: 2px solid $border; }
-    .p-datatable-thead > tr > th { background: $bg-light !important; color: $t-primary !important; font-weight: 600 !important; padding: 1rem !important; 
-      border-bottom: 2px solid $border !important; font-size: .8rem; text-transform: uppercase; letter-spacing: .025em; }
-    .p-datatable-tbody > tr { transition: all .2s ease;
-      &:hover { background: $bg-light !important; }
-      > td { padding: 1rem !important; vertical-align: middle;
-        &.id-cell .user-id { background: lighten($border, 5%); padding: .25rem .75rem; border-radius: 12px; font-weight: 600; color: $t-secondary; font-size: .85rem; }
-        &.user-cell .user-info { display: flex; align-items: center; gap: 1rem;
-          .user-avatar { width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, $info 0%, darken($info, 10%) 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; }
-          .user-details { display: flex; flex-direction: column; gap: .25rem;
-            .user-name { font-weight: 600; color: $t-primary; }
-            .username { font-size: .85rem; color: $t-secondary; }
+    .p-datatable-header {
+      background: $bg-light;
+      border-bottom: 2px solid $border;
+    }
+
+    .p-datatable-thead>tr>th {
+      background: $bg-light !important;
+      color: $t-primary !important;
+      font-weight: 600 !important;
+      padding: 1rem !important;
+      border-bottom: 2px solid $border !important;
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .025em;
+    }
+
+    .p-datatable-tbody>tr {
+      transition: all .2s ease;
+
+      &:hover {
+        background: $bg-light !important;
+      }
+
+      >td {
+        padding: 1rem !important;
+        vertical-align: middle;
+
+        &.id-cell .user-id {
+          background: lighten($border, 5%);
+          padding: .25rem .75rem;
+          border-radius: 12px;
+          font-weight: 600;
+          color: $t-secondary;
+          font-size: .85rem;
+        }
+
+        &.user-cell .user-info {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+
+          .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, $info 0%, darken($info, 10%) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+          }
+
+          .user-details {
+            display: flex;
+            flex-direction: column;
+            gap: .25rem;
+
+            .user-name {
+              font-weight: 600;
+              color: $t-primary;
+            }
+
+            .username {
+              font-size: .85rem;
+              color: $t-secondary;
+            }
           }
         }
-        &.contact-cell .contact-info { display: flex; flex-direction: column; gap: .5rem;
-          .contact-item { display: flex; align-items: center; gap: .5rem; font-size: .9rem;
-            i { color: $info; font-size: .85rem; }
-            span { color: $t-secondary; }
+
+        &.contact-cell .contact-info {
+          display: flex;
+          flex-direction: column;
+          gap: .5rem;
+
+          .contact-item {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .9rem;
+
+            i {
+              color: $info;
+              font-size: .85rem;
+            }
+
+            span {
+              color: $t-secondary;
+            }
           }
         }
-        &.stats-cell { text-align: center; }
-        &.type-cell .case-types { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center;
-          :host ::ng-deep .type-tag { font-size: .75rem; padding: .25rem .75rem; font-weight: 600; }
-          .no-type { color: $t-muted; font-style: italic; font-size: .85rem; }
+
+        &.stats-cell {
+          text-align: center;
+        }
+
+        &.type-cell .case-types {
+          display: flex;
+          gap: .5rem;
+          flex-wrap: wrap;
+          align-items: center;
+
+          :host ::ng-deep .type-tag {
+            font-size: .75rem;
+            padding: .25rem .75rem;
+            font-weight: 600;
+          }
+
+          .no-type {
+            color: $t-muted;
+            font-style: italic;
+            font-size: .85rem;
+          }
         }
       }
     }
-    .expanded-row { background: $bg-light;
-      > td { padding: 0 !important; }
-      .expanded-content { padding: 2rem; animation: slideDown .3s ease;
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); }}
-        .expansion-title { margin: 0 0 1.5rem; font-size: 1.25rem; font-weight: 600; color: $t-primary; display: flex; align-items: center; gap: .75rem; i { color: $primary; }}
-        .participations-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;
-          .participation-section { background: white; border-radius: 8px; padding: 1.25rem; border-left: 4px solid;
-            h4 { margin: 0 0 1rem; font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: .5rem; }
-            .participation-list { display: flex; flex-direction: column; gap: .75rem;
-              .participation-item { display: flex; align-items: center; gap: .75rem; padding: .75rem; background: $bg-light; border-radius: 6px; transition: all .2s ease;
-                &:hover { background: darken($bg-light, 3%); transform: translateX(4px); }
-                i { font-size: .9rem; }
-                span { color: $t-primary; font-size: .95rem; }
+
+    .expanded-row {
+      background: $bg-light;
+
+      >td {
+        padding: 0 !important;
+      }
+
+      .expanded-content {
+        padding: 2rem;
+        animation: slideDown .3s ease;
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .expansion-title {
+          margin: 0 0 1.5rem;
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: $t-primary;
+          display: flex;
+          align-items: center;
+          gap: .75rem;
+
+          i {
+            color: $primary;
+          }
+        }
+
+        .participations-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 1.5rem;
+          margin-bottom: 1.5rem;
+
+          .participation-section {
+            background: white;
+            border-radius: 8px;
+            padding: 1.25rem;
+            border-left: 4px solid;
+
+            h4 {
+              margin: 0 0 1rem;
+              font-size: 1.1rem;
+              font-weight: 600;
+              display: flex;
+              align-items: center;
+              gap: .5rem;
+            }
+
+            .participation-list {
+              display: flex;
+              flex-direction: column;
+              gap: .75rem;
+
+              .participation-item {
+                display: flex;
+                align-items: center;
+                gap: .75rem;
+                padding: .75rem;
+                background: $bg-light;
+                border-radius: 6px;
+                transition: all .2s ease;
+
+                &:hover {
+                  background: darken($bg-light, 3%);
+                  transform: translateX(4px);
+                }
+
+                i {
+                  font-size: .9rem;
+                }
+
+                span {
+                  color: $t-primary;
+                  font-size: .95rem;
+                }
               }
             }
-            .no-data { color: $t-muted; font-style: italic; text-align: center; padding: 1rem 0; }
-            &.events-section { border-left-color: $info; h4 { color: $info; } .participation-item i { color: $info; }}
-            &.formations-section { border-left-color: $success; h4 { color: $success; } .participation-item i { color: $success; }}
-            &.ateliers-section { border-left-color: $warning; h4 { color: $warning; } .participation-item i { color: $warning; }}
+
+            .no-data {
+              color: $t-muted;
+              font-style: italic;
+              text-align: center;
+              padding: 1rem 0;
+            }
+
+            &.events-section {
+              border-left-color: $info;
+
+              h4 {
+                color: $info;
+              }
+
+              .participation-item i {
+                color: $info;
+              }
+            }
+
+            &.formations-section {
+              border-left-color: $success;
+
+              h4 {
+                color: $success;
+              }
+
+              .participation-item i {
+                color: $success;
+              }
+            }
+
+            &.ateliers-section {
+              border-left-color: $warning;
+
+              h4 {
+                color: $warning;
+              }
+
+              .participation-item i {
+                color: $warning;
+              }
+            }
           }
         }
-        .user-additional-info { background: white; border-radius: 8px; padding: 1.25rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;
-          .info-item { display: flex; flex-direction: column; gap: .5rem;
-            .info-label { font-weight: 600; color: $t-secondary; font-size: .85rem; text-transform: uppercase; letter-spacing: .5px; }
-            .info-value { font-size: 1.1rem; color: $t-primary; font-weight: 600; }
+
+        .user-additional-info {
+          background: white;
+          border-radius: 8px;
+          padding: 1.25rem;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 1.5rem;
+
+          .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+
+            .info-label {
+              font-weight: 600;
+              color: $t-secondary;
+              font-size: .85rem;
+              text-transform: uppercase;
+              letter-spacing: .5px;
+            }
+
+            .info-value {
+              font-size: 1.1rem;
+              color: $t-primary;
+              font-weight: 600;
+            }
           }
         }
       }
     }
-    .empty-message .empty-content { text-align: center; padding: 3rem 2rem;
-      i { font-size: 4rem; color: lighten($t-muted, 10%); margin-bottom: 1rem; }
-      h3 { font-size: 1.5rem; color: $t-secondary; margin: 0 0 .5rem; }
-      p { color: $t-muted; margin: 0; }
+
+    .empty-message .empty-content {
+      text-align: center;
+      padding: 3rem 2rem;
+
+      i {
+        font-size: 4rem;
+        color: lighten($t-muted, 10%);
+        margin-bottom: 1rem;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        color: $t-secondary;
+        margin: 0 0 .5rem;
+      }
+
+      p {
+        color: $t-muted;
+        margin: 0;
+      }
     }
   }
 }
 
 // Card View
 .cards-section {
-  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;
-    .user-card { background: $bg-white; border-radius: $radius; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06); transition: $trans;
-      &:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05); }
-      .card-header { background: linear-gradient(135deg, $primary, $secondary); padding: 1.5rem; display: flex; gap: 1rem; align-items: center;
-        .user-avatar-large { width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,.2); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.75rem; flex-shrink: 0; }
-        .user-info { flex: 1;
-          h3 { margin: 0 0 .25rem; color: white; font-size: 1.2rem; font-weight: 600; }
-          .username { color: rgba(255,255,255,.9); margin: 0 0 .5rem; font-size: .9rem; }
-        }
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    .user-card {
+      background: $bg-white;
+      border-radius: $radius;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .1), 0 1px 2px rgba(0, 0, 0, .06);
+      transition: $trans;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05);
       }
-      .card-body { padding: 1.5rem;
-        .contact-info { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid $border;
-          .contact-item { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; color: $t-secondary;
-            &:last-child { margin-bottom: 0; }
-            i { color: $info; font-size: 1rem; }
-            span { font-size: .95rem; }
+
+      .card-header {
+        background: linear-gradient(135deg, $primary, $secondary);
+        padding: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+
+        .user-avatar-large {
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, .2);
+          backdrop-filter: blur(10px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 1.75rem;
+          flex-shrink: 0;
+        }
+
+        .user-info {
+          flex: 1;
+
+          h3 {
+            margin: 0 0 .25rem;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+          }
+
+          .username {
+            color: rgba(255, 255, 255, .9);
+            margin: 0 0 .5rem;
+            font-size: .9rem;
           }
         }
-        .participations-summary {
-          h4 { margin: 0 0 1rem; font-size: 1rem; font-weight: 600; color: $t-primary; }
-          .participation-stats { display: flex; flex-direction: column; gap: .75rem;
-            .stat-item { display: flex; align-items: center; gap: .75rem; padding: .75rem; border-radius: 8px; background: $bg-light;
-              i { font-size: 1.1rem; }
-              span { color: $t-primary; font-weight: 500; }
-              &.events i { color: $info; }
-              &.formations i { color: $success; }
-              &.ateliers i { color: $warning; }
+      }
+
+      .card-body {
+        padding: 1.5rem;
+
+        .contact-info {
+          margin-bottom: 1.5rem;
+          padding-bottom: 1.5rem;
+          border-bottom: 1px solid $border;
+
+          .contact-item {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            margin-bottom: .75rem;
+            color: $t-secondary;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            i {
+              color: $info;
+              font-size: 1rem;
+            }
+
+            span {
+              font-size: .95rem;
             }
           }
         }
-        .case-type-section { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid $border;
-          h4 { margin: 0 0 1rem; font-size: 1rem; font-weight: 600; color: $t-primary; }
-          .case-types-card { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center;
-            :host ::ng-deep .type-tag { font-size: .8rem; padding: .35rem .85rem; font-weight: 600; }
-            .no-type { color: $t-muted; font-style: italic; font-size: .9rem; }
+
+        .participations-summary {
+          h4 {
+            margin: 0 0 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: $t-primary;
+          }
+
+          .participation-stats {
+            display: flex;
+            flex-direction: column;
+            gap: .75rem;
+
+            .stat-item {
+              display: flex;
+              align-items: center;
+              gap: .75rem;
+              padding: .75rem;
+              border-radius: 8px;
+              background: $bg-light;
+
+              i {
+                font-size: 1.1rem;
+              }
+
+              span {
+                color: $t-primary;
+                font-weight: 500;
+              }
+
+              &.events i {
+                color: $info;
+              }
+
+              &.formations i {
+                color: $success;
+              }
+
+              &.ateliers i {
+                color: $warning;
+              }
+            }
+          }
+        }
+
+        .case-type-section {
+          margin-top: 1.5rem;
+          padding-top: 1.5rem;
+          border-top: 1px solid $border;
+
+          h4 {
+            margin: 0 0 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: $t-primary;
+          }
+
+          .case-types-card {
+            display: flex;
+            gap: .5rem;
+            flex-wrap: wrap;
+            align-items: center;
+
+            :host ::ng-deep .type-tag {
+              font-size: .8rem;
+              padding: .35rem .85rem;
+              font-weight: 600;
+            }
+
+            .no-type {
+              color: $t-muted;
+              font-style: italic;
+              font-size: .9rem;
+            }
           }
         }
       }
-      .card-footer { padding: 1rem 1.5rem; background: $bg-light; display: flex; gap: .75rem; justify-content: center; }
+
+      .card-footer {
+        padding: 1rem 1.5rem;
+        background: $bg-light;
+        display: flex;
+        gap: .75rem;
+        justify-content: center;
+      }
     }
   }
-  .card-pagination { background: $bg-white; border-radius: $radius; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06); }
+
+  .card-pagination {
+    background: $bg-white;
+    border-radius: $radius;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .1), 0 1px 2px rgba(0, 0, 0, .06);
+  }
 }
 
 // Responsive
 @media (max-width: 1200px) {
-  .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
-  .filters-content { grid-template-columns: 1fr !important; }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .filters-content {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 @media (max-width: 768px) {
-  .page-header .header-content { flex-direction: column; align-items: flex-start; }
-  .stats-grid, .cards-grid { grid-template-columns: 1fr !important; }
-  .main-content { padding: 1rem; }
+  .page-header .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats-grid,
+  .cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
 }

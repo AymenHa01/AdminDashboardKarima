@@ -1,28 +1,28 @@
+.editable-field {
+  border: none;
+  background-color: transparent;
+  font-size: 1em;
+  width: 100%;
+  padding: 0;
+  outline: none;
+}
 
-  .editable-field {
-    border: none;
-    background-color: transparent;
-    font-size: 1em;
-    width: 100%;
-    padding: 0;
-    outline: none;
-  }
-  
-  .editable-field:focus {
-    border-bottom: 1px solid #ccc; /* Optional: add a subtle underline on focus */
-  }
+.editable-field:focus {
+  border-bottom: 1px solid #ccc;
+  /* Optional: add a subtle underline on focus */
+}
 
 // View Controls Styling
 .view-controls {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   background: #f8f9fa;
   border-radius: 8px;
   border: 1px solid #e9ecef;
-  
+
   .form-controls {
     display: flex;
     gap: 1rem;
@@ -42,7 +42,7 @@
   display: flex;
   align-items: center;
   margin-bottom: 0.5rem;
-  
+
   .file-input {
     display: none;
   }
@@ -65,7 +65,7 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: scale(1.05);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -77,7 +77,7 @@
   flex-direction: column;
   gap: 0.5rem;
   width: 100%;
-  
+
   .current-image {
     width: 80px;
     height: 60px;
@@ -85,11 +85,11 @@
     overflow: hidden;
     border: 1px solid #ddd;
   }
-  
+
   .image-upload-controls {
     display: flex;
     justify-content: center;
-    
+
     .file-input {
       display: none;
     }
@@ -99,7 +99,7 @@
 .inline-upload-progress {
   width: 100%;
   margin-top: 0.25rem;
-  
+
   small {
     display: block;
     text-align: center;
@@ -107,10 +107,10 @@
     font-size: 0.7rem;
     margin-top: 0.25rem;
   }
-  
+
   .p-progressbar {
     height: 6px;
-    
+
     .p-progressbar-value {
       background: linear-gradient(90deg, #28a745, #20c997);
     }
@@ -135,17 +135,17 @@
   font-size: 0.7rem;
   text-align: center;
   transition: all 0.3s ease;
-  
+
   &:hover {
     background-color: #e9ecef;
     color: #495057;
   }
-  
+
   i {
     font-size: 1.2rem;
     margin-bottom: 2px;
   }
-  
+
   span {
     font-size: 0.6rem;
     font-weight: 500;
@@ -160,14 +160,14 @@
   width: 100%;
   padding: 0.25rem;
   outline: none;
-  
+
   &.edit-active {
     background-color: #fff;
     border: 1px solid #007bff;
     border-radius: 4px;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }
-  
+
   &:focus {
     border-bottom: 1px solid #ccc;
   }
@@ -183,7 +183,7 @@
   display: flex;
   gap: 0.5rem;
   justify-content: center;
-  
+
   .edit-mode-actions,
   .view-mode-actions {
     display: flex;
@@ -205,18 +205,18 @@
   border-radius: 4px;
   overflow: hidden;
   border: 1px solid #ddd;
-  
+
   .media-content {
     width: 100%;
     height: 100%;
     cursor: pointer;
     transition: transform 0.2s ease;
-    
+
     &:hover {
       transform: scale(1.1);
     }
   }
-  
+
   .delete-media-btn {
     position: absolute;
     top: 2px;
@@ -235,16 +235,16 @@
     transition: opacity 0.2s ease, background 0.2s ease;
     z-index: 10;
     padding: 0;
-    
+
     i {
       font-size: 0.6rem;
     }
-    
+
     &:hover {
       background: rgba(220, 53, 69, 1);
     }
   }
-  
+
   &:hover .delete-media-btn {
     opacity: 1;
   }
@@ -265,13 +265,13 @@
   overflow: hidden;
   border: 1px solid #ddd;
   cursor: pointer;
-  
+
   .table-video-element {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  
+
   .video-play-icon {
     position: absolute;
     top: 50%;
@@ -287,7 +287,7 @@
     align-items: center;
     justify-content: center;
     pointer-events: none;
-    
+
     i {
       font-size: 0.7rem;
     }
@@ -304,7 +304,7 @@
   min-width: 25px;
   cursor: pointer;
   transition: background 0.2s ease;
-  
+
   &:hover {
     background: #5a6268;
   }
@@ -313,11 +313,11 @@
 .inline-upload-progress {
   width: 100%;
   margin-top: 0.5rem;
-  
+
   ::ng-deep .p-progressbar {
     height: 8px;
     border-radius: 4px;
-    
+
     .p-progressbar-value {
       background: linear-gradient(90deg, #28a745, #20c997);
     }
@@ -336,7 +336,7 @@
   gap: 8px;
   font-size: 0.9rem;
   color: #6c757d;
-  
+
   span {
     font-style: italic;
   }
@@ -345,19 +345,19 @@
 // Add Image Dialog Styling
 .add-image-dialog-content {
   padding: 1rem;
-  
+
   .upload-section {
     text-align: center;
     padding: 2rem;
     border: 2px dashed #ddd;
     border-radius: 8px;
     background-color: #f8f9fa;
-    
+
     h4 {
       margin-bottom: 1rem;
       color: #495057;
     }
-    
+
     .file-input {
       display: none;
     }
@@ -367,9 +367,9 @@
 // New Form Styling
 .form-container {
   background: #f8f9fa;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 8px;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   border: 1px solid #e9ecef;
 
   h4 {
@@ -383,20 +383,23 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
-  
+
   .form-group {
     display: flex;
     flex-direction: column;
-    
-    &:nth-child(2) { // Description field spans full width
+
+    &:nth-child(2) {
+      // Description field spans full width
       grid-column: 1 / -1;
     }
-    
-    &:nth-child(4) { // Image field spans full width
+
+    &:nth-child(4) {
+      // Image field spans full width
       grid-column: 1 / -1;
     }
-    
-    &:nth-child(5) { // Actions span full width
+
+    &:nth-child(5) {
+      // Actions span full width
       grid-column: 1 / -1;
       justify-self: center;
       margin-top: 1rem;
@@ -414,18 +417,18 @@
 }
 
 .form-input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    
-    &:focus {
-      border-color: #80bdff;
-      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-      outline: none;
-    }
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+  }
 }
 
 .form-textarea {
@@ -437,7 +440,7 @@
   resize: vertical;
   font-family: inherit;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  
+
   &:focus {
     border-color: #80bdff;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
@@ -449,7 +452,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  
+
   .file-input {
     display: none;
   }
@@ -459,7 +462,7 @@
   position: relative;
   display: inline-block;
   max-width: 200px;
-  
+
   .preview-image {
     width: 100%;
     height: 120px;
@@ -467,7 +470,7 @@
     border-radius: 6px;
     border: 1px solid #dee2e6;
   }
-  
+
   .remove-image-btn {
     position: absolute;
     top: -5px;
@@ -481,13 +484,15 @@
   display: flex;
   justify-content: center;
   margin-top: 1rem;
-}.p-grid .p-col {
-    display: flex;
-    align-items: center;
+}
+
+.p-grid .p-col {
+  display: flex;
+  align-items: center;
 }
 
 .p-button {
-    margin-left: 0.5rem;
+  margin-left: 0.5rem;
 }
 
 // Image management styles
@@ -514,7 +519,7 @@
 
 .upload-progress {
   margin-top: 1rem;
-  
+
   .error-message {
     color: #dc3545;
     margin-top: 0.5rem;
@@ -539,13 +544,13 @@
   border: 1px solid #eee;
   border-radius: 8px;
   overflow: hidden;
-  
+
   .image-thumbnail {
     width: 100%;
     height: 150px;
     object-fit: cover;
   }
-  
+
   .image-actions {
     position: absolute;
     top: 5px;
@@ -593,78 +598,78 @@
     border: 2px dashed #ddd;
     border-radius: 8px;
     text-align: center;
-    
+
     .file-input {
       display: none;
     }
-    
+
     .upload-btn {
       margin-top: 1rem;
     }
   }
-  
+
   .upload-progress {
     margin-top: 1rem;
-    
+
     .error-message {
       color: #e74c3c;
       margin-top: 0.5rem;
     }
   }
-  
+
   .images-list {
     h4 {
       margin-bottom: 1rem;
     }
-    
+
     .images-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
-      
+
       h4 {
         margin: 0;
       }
     }
   }
-  
+
   .download-progress {
     margin-bottom: 2rem;
     padding: 1rem;
     background-color: #f8f9fa;
     border-radius: 6px;
     border: 1px solid #e9ecef;
-    
+
     .download-status {
       margin-top: 0.5rem;
       font-size: 0.9rem;
       color: #495057;
-      
+
       small {
         color: #6c757d;
       }
     }
   }
-  
+
   .images-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 1rem;
   }
-  
+
   .image-item {
     position: relative;
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
-    
+
     .image-thumbnail {
       width: 100%;
       height: 120px;
       object-fit: cover;
     }
-    
+
     .image-actions {
       position: absolute;
       top: 5px;
@@ -673,7 +678,7 @@
       gap: 5px;
     }
   }
-  
+
   .no-images {
     text-align: center;
     color: #666;
@@ -684,7 +689,7 @@
 // Simple Gallery Styling
 .simple-gallery-content {
   padding: 1.5rem;
-  
+
   .gallery-add-section {
     text-align: center;
     margin-bottom: 2rem;
@@ -692,14 +697,14 @@
     border: 2px dashed #28a745;
     border-radius: 8px;
     background-color: #f8fff9;
-    
+
     .file-input {
       display: none;
     }
-    
+
     .upload-progress {
       margin-top: 1rem;
-      
+
       .error-message {
         color: #dc3545;
         margin-top: 0.5rem;
@@ -707,7 +712,7 @@
       }
     }
   }
-  
+
   .simple-images-section {
     h4 {
       margin-bottom: 1rem;
@@ -728,14 +733,14 @@
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
-  
+
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
-  
+
   .simple-image-actions {
     position: absolute;
     top: 8px;
@@ -743,7 +748,7 @@
     opacity: 0;
     transition: opacity 0.3s ease;
   }
-  
+
   &:hover .simple-image-actions {
     opacity: 1;
   }
@@ -796,11 +801,11 @@
 
     .status-label {
       font-weight: 500;
-      color: #dc3545;  // Red for inactive
+      color: #dc3545; // Red for inactive
       transition: color 0.3s ease;
 
       &.active {
-        color: #28a745;  // Green for active
+        color: #28a745; // Green for active
       }
     }
   }
@@ -812,7 +817,7 @@
     &.p-inputswitch-checked .p-inputswitch-slider {
       background-color: #28a745 !important;
     }
-    
+
     .p-inputswitch-slider {
       background-color: #dc3545 !important;
       transition: background-color 0.3s ease;
@@ -826,7 +831,7 @@
   flex-direction: column;
   align-items: center;
   height: 100%;
-  
+
   .image-nav-controls {
     display: flex;
     align-items: center;
@@ -834,12 +839,12 @@
     width: 100%;
     flex: 1;
     gap: 1rem;
-    
+
     .nav-btn-left,
     .nav-btn-right {
       flex-shrink: 0;
     }
-    
+
     .main-image-wrapper {
       position: relative;
       max-width: 80%;
@@ -847,20 +852,20 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      
+
       .zoom-image {
         max-width: 100%;
         max-height: 70vh;
         object-fit: contain;
         border-radius: 8px;
       }
-      
+
       .zoom-video {
         max-width: 100%;
         max-height: 70vh;
         border-radius: 8px;
       }
-      
+
       .image-counter {
         position: absolute;
         bottom: 10px;
@@ -873,7 +878,7 @@
       }
     }
   }
-  
+
   .thumbnail-strip {
     display: flex;
     gap: 0.5rem;
@@ -881,7 +886,7 @@
     padding: 1rem;
     overflow-x: auto;
     max-width: 100%;
-    
+
     .thumbnail-item {
       flex-shrink: 0;
       width: 60px;
@@ -891,16 +896,16 @@
       border: 2px solid transparent;
       cursor: pointer;
       transition: all 0.2s ease;
-      
+
       &:hover {
         border-color: #007bff;
         transform: scale(1.1);
       }
-      
+
       &.active {
         border-color: #28a745;
       }
-      
+
       .thumbnail-image,
       .thumbnail-video {
         width: 100%;
@@ -918,13 +923,13 @@
     width: 100%;
     height: 200px;
     cursor: pointer;
-    
+
     video {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    
+
     .video-play-icon {
       position: absolute;
       top: 50%;

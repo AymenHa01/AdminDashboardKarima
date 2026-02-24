@@ -1,4 +1,4 @@
-import { NgModule , CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -29,6 +29,7 @@ import { SousAtelierFormComponent } from './sousAteliers/sous-atelier-form/sous-
 import { ArtistListComponent } from './artists/artist-list/artist-list.component';
 import { ArtistFormComponent } from './artists/artist-form/artist-form.component';
 import { ImagesModelsComponent } from './images-models/images-models.component';
+import { SettingsComponent } from './pages/settings/settings.component';
 
 // Interceptors
 import { AuthInterceptor } from './interceptors/auth.interceptor';
@@ -43,6 +44,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { DropdownModule } from 'primeng/dropdown';
+import { SliderModule } from 'primeng/slider';
 import { EditorModule } from 'primeng/editor';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { DialogModule } from 'primeng/dialog';
@@ -80,7 +82,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     SousAtelierFormComponent,
     ArtistListComponent,
     ArtistFormComponent,
-    ImagesModelsComponent
+    ImagesModelsComponent,
+    SettingsComponent
   ],
   imports: [
     BrowserModule,
@@ -100,6 +103,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     InputNumberModule,
     InputSwitchModule,
     DropdownModule,
+    SliderModule,
     EditorModule,
     ProgressBarModule,
     DialogModule,

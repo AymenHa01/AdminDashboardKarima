@@ -1,6 +1,6 @@
 import {
   BaseIcon
-} from "./chunk-XVGYQNKH.js";
+} from "./chunk-5F3ROWOU.js";
 import {
   UniqueComponentId
 } from "./chunk-EBWFS737.js";
@@ -92,4 +92,4 @@ var SpinnerIcon = class _SpinnerIcon extends BaseIcon {
 export {
   SpinnerIcon
 };
-//# sourceMappingURL=chunk-EHOM5VYX.js.map
+//# sourceMappingURL=chunk-QDQOEEXA.js.map

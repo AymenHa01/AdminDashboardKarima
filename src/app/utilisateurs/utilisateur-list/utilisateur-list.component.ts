@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UtilisateurService } from '../../services/utilisateur/utilisateur.service';
 import { MessageService } from 'primeng/api';
+import { EvenementService } from '../../services/evenement.service';
+import { FormationService } from '../../services/formation.service';
+import { AtelierService } from '../../services/atelier.service';
 
 interface UserWithParticipations {
   id: number;
@@ -42,23 +45,32 @@ export class UtilisateurListComponent implements OnInit {
   utilisateurs: UserWithParticipations[] = [];
   filteredUtilisateurs: UserWithParticipations[] = [];
   loading: boolean = false;
-  
+
   // Search and filter
   searchText: string = '';
   selectedFilterType: string = 'ALL';
   viewMode: 'table' | 'cards' = 'table';
   searchBy: string = 'user'; // Options: 'user', 'evenement', 'formation', 'atelier'
-  
+
+  // Specific Activity Filtering
+  selectedActivityCategory: string = 'ALL'; // 'ALL', 'EVENEMENT', 'Formation', 'SousAtelier'
+  selectedActivityId: number | null = null;
+
+  allEvenements: any[] = [];
+  allFormations: any[] = [];
+  allSousAteliers: any[] = [];
+  currentActivityOptions: any[] = [];
+
   // Pagination
   currentPage: number = 0;
   rowsPerPage: number = 10;
   totalRecords: number = 0;
-  
+
   // Statistics
   totalEventSubscriptions: number = 0;
   totalFormationSubscriptions: number = 0;
   totalAtelierSubscriptions: number = 0;
-  
+
   // Filter options
   filterOptions = [
     { label: 'All Users', value: 'ALL' },
@@ -68,7 +80,7 @@ export class UtilisateurListComponent implements OnInit {
     { label: 'Active Participants', value: 'ACTIVE' },
     { label: 'No Participations', value: 'NONE' }
   ];
-  
+
   // Search options
   searchOptions = [
     { label: 'Search by User', value: 'user' },
@@ -79,11 +91,15 @@ export class UtilisateurListComponent implements OnInit {
 
   constructor(
     private utilisateurService: UtilisateurService,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    private evenementService: EvenementService,
+    private formationService: FormationService,
+    private atelierService: AtelierService
+  ) { }
 
   ngOnInit() {
     this.loadUsers();
+    this.loadAllActivities();
   }
 
   loadUsers() {
@@ -110,8 +126,8 @@ export class UtilisateurListComponent implements OnInit {
     this.totalEventSubscriptions = 0;
     this.totalFormationSubscriptions = 0;
     this.totalAtelierSubscriptions = 0;
-    
-    const participationPromises = this.utilisateurs.map(user => 
+
+    const participationPromises = this.utilisateurs.map(user =>
       this.utilisateurService.getUserParticipations(user.id).toPromise()
         .then((response: any) => {
           user.participations = {
@@ -119,31 +135,31 @@ export class UtilisateurListComponent implements OnInit {
             formations: response.formations || [],
             sousAteliers: response.sousAteliers || []
           };
-          
+
           // Update global subscription counts
           this.totalEventSubscriptions += user.participations.evenements.length;
           this.totalFormationSubscriptions += user.participations.formations.length;
           this.totalAtelierSubscriptions += user.participations.sousAteliers.length;
-          
+
           // Determine participation types for filtering
           user.participationTypes = [];
           if (user.participations.evenements.length > 0) user.participationTypes.push('EVENEMENT');
           if (user.participations.formations.length > 0) user.participationTypes.push('Formation');
           if (user.participations.sousAteliers.length > 0) user.participationTypes.push('SousAtelier');
-          
+
           // Extract participation names for search functionality
           user.searchDetails = {
-            eventNames: user.participations.evenements.map(event => 
+            eventNames: user.participations.evenements.map(event =>
               (event.nom || event.title || '').toLowerCase()
             ),
-            formationNames: user.participations.formations.map(formation => 
+            formationNames: user.participations.formations.map(formation =>
               (formation.nom || formation.title || '').toLowerCase()
             ),
-            atelierNames: user.participations.sousAteliers.map(atelier => 
+            atelierNames: user.participations.sousAteliers.map(atelier =>
               (atelier.nom || atelier.name || '').toLowerCase()
             )
           };
-          
+
           return user;
         })
         .catch(error => {
@@ -161,6 +177,63 @@ export class UtilisateurListComponent implements OnInit {
     });
   }
 
+  loadAllActivities() {
+    // Load Events
+    this.evenementService.GetAllevents().subscribe((data: any) => {
+      this.allEvenements = data || [];
+    });
+
+    // Load Formations
+    this.formationService.getFormations().subscribe((data: any) => {
+      this.allFormations = data || [];
+    });
+
+    // Load Sous-Ateliers
+    this.atelierService.GetAtelier().subscribe((data: any) => {
+      const ateliers = data || [];
+      const allSous: any[] = [];
+      ateliers.forEach((atl: any) => {
+        if (atl.sousAteliers) allSous.push(...atl.sousAteliers);
+      });
+      this.allSousAteliers = allSous;
+    });
+  }
+
+  onActivityCategoryChange() {
+    this.selectedActivityId = null;
+    this.updateActivityOptions();
+    this.applyFilters();
+  }
+
+  updateActivityOptions() {
+    switch (this.selectedActivityCategory) {
+      case 'EVENEMENT':
+        this.currentActivityOptions = this.allEvenements.map(e => ({ label: e.nom || e.title, value: e.id }));
+        break;
+      case 'Formation':
+        this.currentActivityOptions = this.allFormations.map(f => ({ label: f.nom || f.title, value: f.id }));
+        break;
+      case 'SousAtelier':
+        this.currentActivityOptions = this.allSousAteliers.map(a => ({ label: a.nom || a.name, value: a.id }));
+        break;
+      default:
+        this.currentActivityOptions = [];
+    }
+  }
+
+  onActivitySelect() {
+    this.applyFilters();
+  }
+
+  clearActivityFilter() {
+    this.selectedActivityCategory = 'ALL';
+    this.selectedActivityId = null;
+    this.currentActivityOptions = [];
+    this.searchText = '';
+    this.selectedFilterType = 'ALL';
+    this.applyFilters();
+  }
+
   // Search functionality
   onSearchChange() {
     this.currentPage = 0; // Reset to first page when search changes
@@ -172,13 +245,13 @@ export class UtilisateurListComponent implements OnInit {
     this.currentPage = 0; // Reset to first page when filter changes
     this.applyFilters();
   }
-  
+
   // Search type functionality
   onSearchTypeChange() {
     this.searchText = ''; // Clear search when changing search type
     this.applyFilters();
   }
-  
+
   // Pagination
   onPageChange(event: any) {
     this.currentPage = event.page;
@@ -192,36 +265,36 @@ export class UtilisateurListComponent implements OnInit {
     // Apply text search based on search type
     if (this.searchText && this.searchText.trim()) {
       const searchTerm = this.searchText.toLowerCase().trim();
-      
+
       switch (this.searchBy) {
         case 'user':
-          filtered = filtered.filter(user => 
+          filtered = filtered.filter(user =>
             user.nom?.toLowerCase().includes(searchTerm) ||
             user.prenom?.toLowerCase().includes(searchTerm) ||
             user.email?.toLowerCase().includes(searchTerm) ||
             user.username?.toLowerCase().includes(searchTerm)
           );
           break;
-        
+
         case 'evenement':
-          filtered = filtered.filter(user => 
-            user.searchDetails?.eventNames.some(eventName => 
+          filtered = filtered.filter(user =>
+            user.searchDetails?.eventNames.some(eventName =>
               eventName.includes(searchTerm)
             )
           );
           break;
-        
+
         case 'formation':
-          filtered = filtered.filter(user => 
-            user.searchDetails?.formationNames.some(formationName => 
+          filtered = filtered.filter(user =>
+            user.searchDetails?.formationNames.some(formationName =>
               formationName.includes(searchTerm)
             )
           );
           break;
-        
+
         case 'atelier':
-          filtered = filtered.filter(user => 
-            user.searchDetails?.atelierNames.some(atelierName => 
+          filtered = filtered.filter(user =>
+            user.searchDetails?.atelierNames.some(atelierName =>
               atelierName.includes(searchTerm)
             )
           );
@@ -233,17 +306,27 @@ export class UtilisateurListComponent implements OnInit {
     if (this.selectedFilterType === 'ALL') {
       // No additional filtering
     } else if (this.selectedFilterType === 'NONE') {
-      filtered = filtered.filter(user => 
+      filtered = filtered.filter(user =>
         !user.participationTypes || user.participationTypes.length === 0
       );
     } else if (this.selectedFilterType === 'ACTIVE') {
-      filtered = filtered.filter(user => 
+      filtered = filtered.filter(user =>
         user.participationTypes && user.participationTypes.length > 0
       );
     } else {
-      filtered = filtered.filter(user => 
+      filtered = filtered.filter(user =>
         user.participationTypes && user.participationTypes.includes(this.selectedFilterType)
       );
+    }
+
+    // Apply specific activity filter (The new feature requested)
+    if (this.selectedActivityCategory !== 'ALL' && this.selectedActivityId) {
+      filtered = filtered.filter(user => {
+        if (!user.adherents) return false;
+        return user.adherents.some(adj =>
+          adj.type === this.selectedActivityCategory && adj.idType === this.selectedActivityId
+        );
+      });
     }
 
     this.filteredUtilisateurs = filtered;
@@ -305,7 +388,7 @@ export class UtilisateurListComponent implements OnInit {
 
   getParticipationSummary(user: UserWithParticipations): string {
     if (!user.participations) return 'Loading...';
-    
+
     const summary: string[] = [];
     if (user.participations.evenements.length > 0) {
       summary.push(`${user.participations.evenements.length} Event(s)`);
@@ -316,7 +399,7 @@ export class UtilisateurListComponent implements OnInit {
     if (user.participations.sousAteliers.length > 0) {
       summary.push(`${user.participations.sousAteliers.length} Atelier(s)`);
     }
-    
+
     return summary.length > 0 ? summary.join(', ') : 'No participations';
   }
 

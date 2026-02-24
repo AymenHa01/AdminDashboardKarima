@@ -7,8 +7,10 @@
 
 .admin-main {
   flex: 1;
-  margin-left: 280px;
+  margin-left: 240px;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   position: relative;
@@ -20,7 +22,7 @@
 
 /* Content Area */
 .admin-main .page-content {
-  padding: 2rem;
+  padding: 1.5rem;
   max-width: 100%;
 }
 
@@ -30,11 +32,11 @@
     margin-left: 0;
     width: 100%;
   }
-  
+
   .admin-main.sidebar-collapsed {
     margin-left: 0;
   }
-  
+
   .admin-main .page-content {
     padding: 1rem;
   }
@@ -50,7 +52,7 @@
 }
 
 .page-title {
-  font-size: 1.875rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #1f2937;
   margin: 0;
@@ -68,7 +70,7 @@
   .page-header {
     padding: 1rem;
   }
-  
+
   .page-title {
     font-size: 1.5rem;
   }

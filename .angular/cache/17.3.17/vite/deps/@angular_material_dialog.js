@@ -93,7 +93,6 @@ import {
   ɵɵtemplate,
   ɵɵviewQuery
 } from "./chunk-HGERZWF5.js";
-import "./chunk-LFVCTHGI.js";
 import {
   animationFrameScheduler,
   asapScheduler,
@@ -102,6 +101,7 @@ import {
   isObservable,
   merge
 } from "./chunk-4RMHXXWK.js";
+import "./chunk-LFVCTHGI.js";
 import {
   ConnectableObservable,
   Observable,

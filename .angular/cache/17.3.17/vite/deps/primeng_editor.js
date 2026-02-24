@@ -1,11 +1,11 @@
 import {
-  DomHandler
-} from "./chunk-JZQAVOZS.js";
-import {
   Header,
   PrimeTemplate,
   SharedModule
 } from "./chunk-EBWFS737.js";
+import {
+  DomHandler
+} from "./chunk-JZQAVOZS.js";
 import {
   NG_VALUE_ACCESSOR
 } from "./chunk-JBTCVGOT.js";
@@ -54,8 +54,8 @@ import {
   ɵɵtemplate,
   ɵɵtext
 } from "./chunk-HGERZWF5.js";
-import "./chunk-LFVCTHGI.js";
 import "./chunk-4RMHXXWK.js";
+import "./chunk-LFVCTHGI.js";
 import "./chunk-AJN3JCM6.js";
 import {
   __spreadValues

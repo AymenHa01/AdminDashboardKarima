@@ -1,0 +1,228 @@
+$primary: #6366f1;
+$secondary: #4f46e5;
+$bg: #f8fafc;
+$white: #ffffff;
+$border: #e5e7eb;
+$text: #1f2937;
+$text-muted: #6b7280;
+$radius: 12px;
+
+.settings-page {
+    padding: 2rem;
+    max-width: 1200px;
+}
+
+// Header
+.page-header {
+    margin-bottom: 2rem;
+
+    .header-info {
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: $text;
+            margin: 0 0 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+
+            i {
+                color: $primary;
+            }
+        }
+
+        .subtitle {
+            color: $text-muted;
+            margin: 0;
+            font-size: 1rem;
+        }
+    }
+}
+
+// Settings Grid
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+// Settings Card
+.settings-card {
+    background: $white;
+    border-radius: $radius;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+
+    .card-header {
+        padding: 1.25rem 1.5rem;
+        background: linear-gradient(135deg, $primary, $secondary);
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        i {
+            font-size: 1.25rem;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+    }
+
+    .card-body {
+        padding: 1.5rem;
+
+        .setting-description {
+            color: $text-muted;
+            font-size: 0.875rem;
+            margin: 0 0 1.5rem;
+            line-height: 1.5;
+        }
+    }
+}
+
+// Setting Row
+.setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+
+    .setting-label {
+        font-weight: 600;
+        color: $text;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    .zoom-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        .zoom-value-badge {
+            background: rgba($primary, 0.1);
+            color: $primary;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            white-space: nowrap;
+        }
+    }
+
+    .toggle-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        .toggle-hint {
+            color: $text-muted;
+            font-size: 0.875rem;
+        }
+    }
+}
+
+// Zoom Preview
+.zoom-preview {
+    background: $bg;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    border: 1px solid $border;
+
+    .preview-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: $text-muted;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+    }
+
+    .preview-box {
+        display: flex;
+        gap: 0.5rem;
+
+        .preview-card {
+            flex: 1;
+            background: $white;
+            border: 1px solid $border;
+            border-radius: 8px;
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: $text;
+
+            i {
+                font-size: 1.25rem;
+                color: $primary;
+            }
+        }
+    }
+}
+
+// Text Preview
+.text-preview {
+    background: $bg;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    border: 1px solid $border;
+    color: $text;
+    line-height: 1.6;
+    transition: all 0.2s ease;
+
+    p {
+        margin: 0 0 0.5rem;
+
+        &:last-child {
+            margin: 0;
+        }
+    }
+
+    &.font-bold {
+        font-weight: 700;
+    }
+
+    &.font-small {
+        font-size: 0.75rem;
+    }
+
+    &.font-normal {
+        font-size: 0.875rem;
+    }
+
+    &.font-large {
+        font-size: 1rem;
+    }
+
+    &.font-xlarge {
+        font-size: 1.125rem;
+    }
+}
+
+// Action Buttons
+.settings-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding: 1.5rem 0;
+    border-top: 1px solid $border;
+}
+
+// PrimeNG overrides
+:host ::ng-deep {
+    .p-dropdown {
+        min-width: 180px;
+    }
+}

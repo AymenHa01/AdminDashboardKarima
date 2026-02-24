@@ -17,6 +17,7 @@ import { ArtistListComponent } from './artists/artist-list/artist-list.component
 import { ArtistFormComponent } from './artists/artist-form/artist-form.component';
 import { LoginComponent } from './pages/login/login.component';
 import { AuthGuard } from './guards/auth.guard';
+import { SettingsComponent } from './pages/settings/settings.component';
 
 const routes: Routes = [
   {
@@ -55,6 +56,8 @@ const routes: Routes = [
       { path: 'users', component: UtilisateurListComponent },
       { path: 'users/form', component: UtilisateurFormComponent },
       { path: 'users/form/:id', component: UtilisateurFormComponent },
+
+      { path: 'settings', component: SettingsComponent },
     ],
   },
 ];

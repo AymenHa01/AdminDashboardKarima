@@ -1,5 +1,4 @@
 <div class="admin-container">
-    <app-sidebar></app-sidebar>
     <main class="content-area">
         <header class="admin-header">
             <div class="header-content">
@@ -8,9 +7,7 @@
                     <p class="subtitle">Gérer les sous ateliers</p>
                 </div>
                 <div class="actions-section">
-                    <p-button icon="pi pi-arrow-left" 
-                        label="Retour aux Ateliers" 
-                        (click)="goBack()"
+                    <p-button icon="pi pi-arrow-left" label="Retour aux Ateliers" (click)="goBack()"
                         styleClass="p-button-secondary">
                     </p-button>
                 </div>
@@ -28,12 +25,9 @@
                             <label for="name">
                                 <i class="pi pi-tag"></i> Name
                             </label>
-                            <input id="name" 
-                                type="text" 
-                                pInputText 
-                                formControlName="name"
-                                placeholder="Enter name" />
-                            <small class="error-message" *ngIf="sousAtelierForm.get('name')?.invalid && sousAtelierForm.get('name')?.touched">
+                            <input id="name" type="text" pInputText formControlName="name" placeholder="Enter name" />
+                            <small class="error-message"
+                                *ngIf="sousAtelierForm.get('name')?.invalid && sousAtelierForm.get('name')?.touched">
                                 Name is required
                             </small>
                         </div>
@@ -42,11 +36,10 @@
                             <label for="description">
                                 <i class="pi pi-info-circle"></i> Description
                             </label>
-                            <textarea id="description" 
-                                pInputText 
-                                formControlName="description"
+                            <textarea id="description" pInputText formControlName="description"
                                 placeholder="Enter description" rows="3"></textarea>
-                            <small class="error-message" *ngIf="sousAtelierForm.get('description')?.invalid && sousAtelierForm.get('description')?.touched">
+                            <small class="error-message"
+                                *ngIf="sousAtelierForm.get('description')?.invalid && sousAtelierForm.get('description')?.touched">
                                 Description is required
                             </small>
                         </div>
@@ -55,12 +48,10 @@
                             <label for="prix">
                                 <i class="pi pi-dollar"></i> Prix
                             </label>
-                            <input id="prix" 
-                                type="number" 
-                                pInputText 
-                                formControlName="prix"
-                                placeholder="Enter prix" step="0.01" />
-                            <small class="error-message" *ngIf="sousAtelierForm.get('prix')?.invalid && sousAtelierForm.get('prix')?.touched">
+                            <input id="prix" type="number" pInputText formControlName="prix" placeholder="Enter prix"
+                                step="0.01" />
+                            <small class="error-message"
+                                *ngIf="sousAtelierForm.get('prix')?.invalid && sousAtelierForm.get('prix')?.touched">
                                 Prix is required and must be a positive number
                             </small>
                         </div>
@@ -69,9 +60,7 @@
                             <label for="image">
                                 <i class="pi pi-image"></i> Image
                             </label>
-                            <input id="image" 
-                                type="file" 
-                                (change)="onFileChange($event)" />
+                            <input id="image" type="file" (change)="onFileChange($event)" />
                         </div>
 
                         <div class="form-field status-field">
@@ -79,11 +68,7 @@
                                 <i class="pi pi-power-off"></i> Status
                             </label>
                             <div class="status-toggle">
-                                <p-inputSwitch 
-                                    id="active"
-                                    formControlName="active"
-                                    trueValue="true"
-                                    falseValue="false">
+                                <p-inputSwitch id="active" formControlName="active" trueValue="true" falseValue="false">
                                 </p-inputSwitch>
                                 <span class="status-label" [class.active]="sousAtelierForm.get('active')?.value">
                                     {{sousAtelierForm.get('active')?.value ? 'Active' : 'Inactive'}}
@@ -93,10 +78,7 @@
                     </div>
 
                     <div class="form-actions">
-                        <p-button type="submit" 
-                            label="Save" 
-                            icon="pi pi-check" 
-                            [disabled]="sousAtelierForm.invalid"
+                        <p-button type="submit" label="Save" icon="pi pi-check" [disabled]="sousAtelierForm.invalid"
                             styleClass="p-button-success">
                         </p-button>
                     </div>

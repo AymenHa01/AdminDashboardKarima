@@ -1,8 +1,7 @@
 ﻿<p-toast></p-toast>
 
 <div class="admin-container">
-    <app-sidebar></app-sidebar>
-    
+
     <div class="main-content">
         <!-- Page Header -->
         <header class="page-header">
@@ -15,11 +14,7 @@
                     <p class="subtitle">View and manage user participations across events, formations, and ateliers</p>
                 </div>
                 <div class="header-actions">
-                    <p-button 
-                        icon="pi pi-refresh" 
-                        label="Refresh"
-                        (click)="loadUsers()"
-                        styleClass="p-button-outlined"
+                    <p-button icon="pi pi-refresh" label="Refresh" (click)="loadUsers()" styleClass="p-button-outlined"
                         [loading]="loading">
                     </p-button>
                 </div>
@@ -38,7 +33,7 @@
                         <p>Total Users</p>
                     </div>
                 </div>
-                
+
                 <div class="stat-card subscriptions">
                     <div class="stat-icon">
                         <i class="pi pi-calendar"></i>
@@ -61,17 +56,12 @@
                             <i class="pi pi-search"></i>
                             Search By
                         </label>
-                        <p-dropdown 
-                            [options]="searchOptions" 
-                            [(ngModel)]="searchBy"
-                            (onChange)="onSearchTypeChange()"
-                            optionLabel="label" 
-                            optionValue="value"
-                            placeholder="Select search type"
+                        <p-dropdown [options]="searchOptions" [(ngModel)]="searchBy" (onChange)="onSearchTypeChange()"
+                            optionLabel="label" optionValue="value" placeholder="Select search type"
                             styleClass="search-type-dropdown">
                         </p-dropdown>
                     </div>
-                    
+
                     <!-- Search Input -->
                     <div class="filter-group search-group">
                         <label>
@@ -80,33 +70,48 @@
                         </label>
                         <span class="p-input-icon-left search-wrapper">
                             <i class="pi pi-search"></i>
-                            <input 
-                                type="text" 
-                                pInputText 
-                                [(ngModel)]="searchText"
-                                (input)="onSearchChange()"
-                                [placeholder]="getSearchPlaceholder()"
-                                class="search-input">
+                            <input type="text" pInputText [(ngModel)]="searchText" (input)="onSearchChange()"
+                                [placeholder]="getSearchPlaceholder()" class="search-input">
                         </span>
                     </div>
-                    
+
                     <!-- Filter Type -->
                     <div class="filter-group filter-type-group">
                         <label>
                             <i class="pi pi-list"></i>
                             Filter
                         </label>
-                        <p-dropdown 
-                            [options]="filterOptions" 
-                            [(ngModel)]="selectedFilterType"
-                            (onChange)="onFilterChange()"
-                            optionLabel="label" 
-                            optionValue="value"
-                            placeholder="Filter by type"
-                            styleClass="filter-dropdown">
+                        <p-dropdown [options]="filterOptions" [(ngModel)]="selectedFilterType"
+                            (onChange)="onFilterChange()" optionLabel="label" optionValue="value"
+                            placeholder="Filter by type" styleClass="filter-dropdown">
                         </p-dropdown>
                     </div>
-                    
+
+                    <!-- Activity Category Filter (New) -->
+                    <div class="filter-group activity-category-group">
+                        <label>
+                            <i class="pi pi-tags"></i>
+                            Select Category
+                        </label>
+                        <p-dropdown [options]="filterOptions.slice(1, 4)" [(ngModel)]="selectedActivityCategory"
+                            (onChange)="onActivityCategoryChange()" optionLabel="label" optionValue="value"
+                            placeholder="All Categories" styleClass="activity-dropdown" [showClear]="true">
+                        </p-dropdown>
+                    </div>
+
+                    <!-- Specific Activity Selector (New) -->
+                    <div class="filter-group activity-selector-group" *ngIf="selectedActivityCategory !== 'ALL'">
+                        <label>
+                            <i class="pi pi-check-circle"></i>
+                            Specific Activity
+                        </label>
+                        <p-dropdown [options]="currentActivityOptions" [(ngModel)]="selectedActivityId"
+                            (onChange)="onActivitySelect()" optionLabel="label" optionValue="value"
+                            [placeholder]="'Select ' + selectedActivityCategory" styleClass="activity-dropdown"
+                            [filter]="true" [showClear]="true">
+                        </p-dropdown>
+                    </div>
+
                     <!-- View Mode Toggle -->
                     <div class="filter-group view-mode-group">
                         <label>
@@ -114,28 +119,28 @@
                             View
                         </label>
                         <div class="view-toggle-buttons">
-                            <p-button 
-                                icon="pi pi-table" 
-                                (click)="setViewMode('table')"
+                            <p-button icon="pi pi-table" (click)="setViewMode('table')"
                                 [styleClass]="viewMode === 'table' ? 'p-button-primary' : 'p-button-outlined'"
                                 pTooltip="Table View">
                             </p-button>
-                            <p-button 
-                                icon="pi pi-th-large" 
-                                (click)="setViewMode('cards')"
+                            <p-button icon="pi pi-th-large" (click)="setViewMode('cards')"
                                 [styleClass]="viewMode === 'cards' ? 'p-button-primary' : 'p-button-outlined'"
                                 pTooltip="Card View">
                             </p-button>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Results Info -->
                 <div class="results-info">
                     <span class="results-count">
                         <i class="pi pi-info-circle"></i>
                         Showing {{filteredUtilisateurs.length}} of {{utilisateurs.length}} users
                     </span>
+                    <p-button (click)="clearActivityFilter()" icon="pi pi-filter-slash" label="Clear All Filters"
+                        *ngIf="selectedActivityCategory !== 'ALL' || selectedFilterType !== 'ALL' || searchText"
+                        styleClass="p-button-text p-button-sm p-button-secondary">
+                    </p-button>
                 </div>
             </div>
         </section>
@@ -150,23 +155,15 @@
                     </h2>
                     <span class="record-count">{{filteredUtilisateurs.length}} records</span>
                 </header>
-                
+
                 <div class="table-wrapper">
-                    <p-table 
-                        [value]="filteredUtilisateurs" 
-                        [paginator]="true" 
-                        [rows]="rowsPerPage"
+                    <p-table [value]="filteredUtilisateurs" [paginator]="true" [rows]="rowsPerPage"
                         [showCurrentPageReport]="true"
                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
-                        [rowsPerPageOptions]="[5,10,20,50]"
-                        [loading]="loading"
-                        styleClass="p-datatable-gridlines p-datatable-striped users-table"
-                        responsiveLayout="scroll"
-                        [scrollable]="true"
-                        scrollHeight="60vh"
-                        [first]="currentPage"
-                        (onPage)="onPageChange($event)">
-                        
+                        [rowsPerPageOptions]="[5,10,20,50]" [loading]="loading"
+                        styleClass="p-datatable-gridlines p-datatable-striped users-table" responsiveLayout="scroll"
+                        [scrollable]="true" scrollHeight="60vh" [first]="currentPage" (onPage)="onPageChange($event)">
+
                         <ng-template pTemplate="header">
                             <tr>
                                 <th style="width: 50px;"></th>
@@ -176,12 +173,11 @@
                                 <th class="col-type">Case Type</th>
                             </tr>
                         </ng-template>
-                        
+
                         <ng-template pTemplate="body" let-user let-expanded="expanded">
                             <tr>
                                 <td>
-                                    <p-button 
-                                        type="button"
+                                    <p-button type="button"
                                         [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
                                         (click)="toggleUserDetails(user)"
                                         styleClass="p-button-text p-button-rounded p-button-sm"
@@ -216,18 +212,17 @@
                                 </td>
                                 <td class="type-cell">
                                     <div class="case-types">
-                                        <p-tag 
-                                            *ngFor="let adherent of user.adherents"
-                                            [value]="adherent.type" 
+                                        <p-tag *ngFor="let adherent of user.adherents" [value]="adherent.type"
                                             [severity]="adherent.type === 'EVENEMENT' ? 'info' : (adherent.type === 'Formation' ? 'success' : 'warning')"
                                             styleClass="type-tag">
                                         </p-tag>
-                                        <span *ngIf="!user.adherents || user.adherents.length === 0" class="no-type">None</span>
+                                        <span *ngIf="!user.adherents || user.adherents.length === 0"
+                                            class="no-type">None</span>
                                     </div>
                                 </td>
                             </tr>
                         </ng-template>
-                        
+
                         <ng-template pTemplate="rowexpansion" let-user>
                             <tr class="expanded-row">
                                 <td colspan="5">
@@ -236,7 +231,7 @@
                                             <i class="pi pi-info-circle"></i>
                                             Participation Details for {{user.prenom}} {{user.nom}}
                                         </h3>
-                                        
+
                                         <div class="participations-grid">
                                             <!-- Events -->
                                             <div class="participation-section events-section">
@@ -244,8 +239,10 @@
                                                     <i class="pi pi-calendar"></i>
                                                     Events ({{user.participations?.evenements?.length || 0}})
                                                 </h4>
-                                                <div class="participation-list" *ngIf="user.participations?.evenements?.length > 0; else noEvents">
-                                                    <div class="participation-item" *ngFor="let event of user.participations.evenements">
+                                                <div class="participation-list"
+                                                    *ngIf="user.participations?.evenements?.length > 0; else noEvents">
+                                                    <div class="participation-item"
+                                                        *ngFor="let event of user.participations.evenements">
                                                         <i class="pi pi-check-circle"></i>
                                                         <span>{{event.nom || event.title || 'Unnamed Event'}}</span>
                                                     </div>
@@ -254,34 +251,40 @@
                                                     <p class="no-data">No event participations</p>
                                                 </ng-template>
                                             </div>
-                                            
+
                                             <!-- Formations -->
                                             <div class="participation-section formations-section">
                                                 <h4>
                                                     <i class="pi pi-book"></i>
                                                     Formations ({{user.participations?.formations?.length || 0}})
                                                 </h4>
-                                                <div class="participation-list" *ngIf="user.participations?.formations?.length > 0; else noFormations">
-                                                    <div class="participation-item" *ngFor="let formation of user.participations.formations">
+                                                <div class="participation-list"
+                                                    *ngIf="user.participations?.formations?.length > 0; else noFormations">
+                                                    <div class="participation-item"
+                                                        *ngFor="let formation of user.participations.formations">
                                                         <i class="pi pi-check-circle"></i>
-                                                        <span>{{formation.nom || formation.title || 'Unnamed Formation'}}</span>
+                                                        <span>{{formation.nom || formation.title || 'Unnamed
+                                                            Formation'}}</span>
                                                     </div>
                                                 </div>
                                                 <ng-template #noFormations>
                                                     <p class="no-data">No formation participations</p>
                                                 </ng-template>
                                             </div>
-                                            
+
                                             <!-- Ateliers -->
                                             <div class="participation-section ateliers-section">
                                                 <h4>
                                                     <i class="pi pi-palette"></i>
                                                     Ateliers ({{user.participations?.sousAteliers?.length || 0}})
                                                 </h4>
-                                                <div class="participation-list" *ngIf="user.participations?.sousAteliers?.length > 0; else noAteliers">
-                                                    <div class="participation-item" *ngFor="let atelier of user.participations.sousAteliers">
+                                                <div class="participation-list"
+                                                    *ngIf="user.participations?.sousAteliers?.length > 0; else noAteliers">
+                                                    <div class="participation-item"
+                                                        *ngFor="let atelier of user.participations.sousAteliers">
                                                         <i class="pi pi-check-circle"></i>
-                                                        <span>{{atelier.nom || atelier.name || 'Unnamed Atelier'}}</span>
+                                                        <span>{{atelier.nom || atelier.name || 'Unnamed
+                                                            Atelier'}}</span>
                                                     </div>
                                                 </div>
                                                 <ng-template #noAteliers>
@@ -289,7 +292,7 @@
                                                 </ng-template>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="user-additional-info">
                                             <div class="info-item">
                                                 <span class="info-label">Age:</span>
@@ -302,9 +305,9 @@
                                             <div class="info-item">
                                                 <span class="info-label">Total Participations:</span>
                                                 <span class="info-value">
-                                                    {{(user.participations?.evenements?.length || 0) + 
-                                                      (user.participations?.formations?.length || 0) + 
-                                                      (user.participations?.sousAteliers?.length || 0)}}
+                                                    {{(user.participations?.evenements?.length || 0) +
+                                                    (user.participations?.formations?.length || 0) +
+                                                    (user.participations?.sousAteliers?.length || 0)}}
                                                 </span>
                                             </div>
                                         </div>
@@ -312,7 +315,7 @@
                                 </td>
                             </tr>
                         </ng-template>
-                        
+
                         <ng-template pTemplate="emptymessage">
                             <tr>
                                 <td colspan="6" class="empty-message">
@@ -332,7 +335,8 @@
         <!-- Card View -->
         <section class="cards-section" *ngIf="viewMode === 'cards'">
             <div class="cards-grid">
-                <div class="user-card" *ngFor="let user of filteredUtilisateurs | slice:currentPage*rowsPerPage:(currentPage+1)*rowsPerPage">
+                <div class="user-card"
+                    *ngFor="let user of filteredUtilisateurs | slice:currentPage*rowsPerPage:(currentPage+1)*rowsPerPage">
                     <div class="card-header">
                         <div class="user-avatar-large">
                             <i class="pi pi-user"></i>
@@ -340,14 +344,12 @@
                         <div class="user-info">
                             <h3>{{user.prenom}} {{user.nom}}</h3>
                             <p class="username">{{'@' + user.username}}</p>
-                            <p-tag 
-                                [value]="user.statut ? 'Active' : 'Inactive'" 
-                                [severity]="user.statut ? 'success' : 'danger'"
-                                styleClass="status-tag">
+                            <p-tag [value]="user.statut ? 'Active' : 'Inactive'"
+                                [severity]="user.statut ? 'success' : 'danger'" styleClass="status-tag">
                             </p-tag>
                         </div>
                     </div>
-                    
+
                     <div class="card-body">
                         <div class="contact-info">
                             <div class="contact-item">
@@ -359,7 +361,7 @@
                                 <span>{{user.numero || 'N/A'}}</span>
                             </div>
                         </div>
-                        
+
                         <div class="participations-summary">
                             <h4>Participations</h4>
                             <div class="participation-stats">
@@ -377,40 +379,32 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="case-type-section">
                             <h4>Case Type</h4>
                             <div class="case-types-card">
-                                <p-tag 
-                                    *ngFor="let adherent of user.adherents"
-                                    [value]="adherent.type" 
+                                <p-tag *ngFor="let adherent of user.adherents" [value]="adherent.type"
                                     [severity]="adherent.type === 'EVENEMENT' ? 'info' : (adherent.type === 'Formation' ? 'success' : 'warning')"
                                     styleClass="type-tag">
                                 </p-tag>
-                                <span *ngIf="!user.adherents || user.adherents.length === 0" class="no-type">No participation type</span>
+                                <span *ngIf="!user.adherents || user.adherents.length === 0" class="no-type">No
+                                    participation type</span>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="card-footer">
-                        <p-button 
-                            icon="pi pi-eye" 
-                            label="View Details"
-                            (click)="viewUserDetails(user)"
+                        <p-button icon="pi pi-eye" label="View Details" (click)="viewUserDetails(user)"
                             styleClass="p-button-info p-button-sm">
                         </p-button>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Card View Pagination -->
             <div class="card-pagination">
-                <p-paginator 
-                    [rows]="rowsPerPage" 
-                    [totalRecords]="filteredUtilisateurs.length"
-                    [rowsPerPageOptions]="[6,12,24,48]"
-                    [first]="currentPage"
-                    (onPageChange)="onPageChange($event)">
+                <p-paginator [rows]="rowsPerPage" [totalRecords]="filteredUtilisateurs.length"
+                    [rowsPerPageOptions]="[6,12,24,48]" [first]="currentPage" (onPageChange)="onPageChange($event)">
                 </p-paginator>
             </div>
         </section>

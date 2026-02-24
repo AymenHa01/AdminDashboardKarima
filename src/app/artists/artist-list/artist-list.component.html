@@ -1,8 +1,6 @@
 <p-toast></p-toast>
 
 <div class="admin-container">
-    <app-sidebar></app-sidebar>
-    
     <div class="main-content">
         <header class="page-header">
             <div class="header-content">
@@ -11,12 +9,9 @@
                     <p class="subtitle">Manage your artists effortlessly</p>
                 </div>
                 <div class="header-actions">
-                    <p-button 
-                        [label]="showAddForm ? 'Hide Form' : 'Add Artist'" 
-                        [icon]="showAddForm ? 'pi pi-minus' : 'pi pi-plus'" 
-                        (click)="showAddForm = !showAddForm"
-                        [styleClass]="showAddForm ? 'p-button-secondary' : 'p-button-success'"
-                        class="toggle-form-btn">
+                    <p-button [label]="showAddForm ? 'Hide Form' : 'Add Artist'"
+                        [icon]="showAddForm ? 'pi pi-minus' : 'pi pi-plus'" (click)="showAddForm = !showAddForm"
+                        [styleClass]="showAddForm ? 'p-button-secondary' : 'p-button-success'" class="toggle-form-btn">
                     </p-button>
                 </div>
             </div>
@@ -35,52 +30,46 @@
                             <label for="nom">
                                 <i class="pi pi-user"></i> Nom
                             </label>
-                            <input id="nom" type="text" pInputText [(ngModel)]="newArtist.nom" 
-                                name="nom" required placeholder="Enter last name" />
+                            <input id="nom" type="text" pInputText [(ngModel)]="newArtist.nom" name="nom" required
+                                placeholder="Enter last name" />
                         </div>
                         <div class="form-field">
                             <label for="prenom">
                                 <i class="pi pi-user"></i> Prénom
                             </label>
-                            <input id="prenom" type="text" pInputText [(ngModel)]="newArtist.prenom" 
-                                name="prenom" required placeholder="Enter first name" />
+                            <input id="prenom" type="text" pInputText [(ngModel)]="newArtist.prenom" name="prenom"
+                                required placeholder="Enter first name" />
                         </div>
                         <div class="form-field">
                             <label for="email">
                                 <i class="pi pi-envelope"></i> Email
                             </label>
-                            <input id="email" type="email" pInputText [(ngModel)]="newArtist.email" 
-                                name="email" required placeholder="Enter email" />
+                            <input id="email" type="email" pInputText [(ngModel)]="newArtist.email" name="email"
+                                required placeholder="Enter email" />
                         </div>
                         <div class="form-field">
                             <label for="numero">
                                 <i class="pi pi-phone"></i> Num Tel
                             </label>
-                            <input id="numero" type="text" pInputText [(ngModel)]="newArtist.numero" 
-                                name="numero" required placeholder="Enter phone number" />
+                            <input id="numero" type="text" pInputText [(ngModel)]="newArtist.numero" name="numero"
+                                required placeholder="Enter phone number" />
                         </div>
                         <div class="form-field">
-                            <label for="image">
-                                <i class="pi pi-file"></i> Fichier
+                            <label>
+                                <i class="pi pi-image"></i> Image
                             </label>
-                            <input id="image" type="file" (change)="onFileChange($event)" />
+                            <input type="file" (change)="onFileChange($event)" accept="image/*" />
                         </div>
                         <div class="form-field">
                             <label>
                                 <i class="pi pi-check-circle"></i> Status
                             </label>
                             <div class="status-toggle">
-                                <p-button 
-                                    [label]="'Active'" 
-                                    [icon]="'pi pi-check'" 
-                                    (click)="newArtist.active = true"
+                                <p-button [label]="'Active'" [icon]="'pi pi-check'" (click)="newArtist.active = true"
                                     [styleClass]="newArtist.active ? 'p-button-success' : 'p-button-outlined'"
                                     class="status-btn">
                                 </p-button>
-                                <p-button 
-                                    [label]="'Inactive'" 
-                                    [icon]="'pi pi-times'" 
-                                    (click)="newArtist.active = false"
+                                <p-button [label]="'Inactive'" [icon]="'pi pi-times'" (click)="newArtist.active = false"
                                     [styleClass]="!newArtist.active ? 'p-button-warning' : 'p-button-outlined'"
                                     class="status-btn">
                                 </p-button>
@@ -88,10 +77,9 @@
                         </div>
                     </div>
                     <footer class="form-actions">
-                        <p-button label="Add Artist" icon="pi pi-plus" type="submit" 
+                        <p-button label="Add Artist" icon="pi pi-plus" type="submit"
                             styleClass="p-button-success p-button-raised"></p-button>
-                        <p-button label="Cancel" icon="pi pi-times" type="button" 
-                            (click)="showAddForm = false"
+                        <p-button label="Cancel" icon="pi pi-times" type="button" (click)="showAddForm = false"
                             styleClass="p-button-text"></p-button>
                     </footer>
                 </form>
@@ -102,21 +90,32 @@
         <section class="list-section">
             <div class="list-card">
                 <header class="card-header">
-                    <h2>Artist List ({{artists.length}})</h2>
-                    <i class="pi pi-list"></i>
+                    <div class="header-left">
+                        <h2>Artist List ({{artists.length}})</h2>
+                        <span class="records-info">Total: {{filteredArtists.length}} artists</span>
+                    </div>
+                    <div class="header-right">
+                        <div class="search-filter">
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input type="text" pInputText placeholder="Search by artist name..."
+                                    [(ngModel)]="searchText" (input)="onSearchChange($event)" class="search-input" />
+                            </span>
+                            <button *ngIf="searchText" type="button" pButton icon="pi pi-times" (click)="clearSearch()"
+                                class="p-button-text p-button-sm clear-button" pTooltip="Clear search"
+                                tooltipPosition="top">
+                            </button>
+                        </div>
+                        <i class="pi pi-list header-icon"></i>
+                    </div>
                 </header>
                 <div class="table-wrapper">
-                    <p-table [value]="artists" 
-                        [paginator]="true" 
-                        [rows]="10" 
-                        [showCurrentPageReport]="true"
+                    <p-table [value]="filteredArtists" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} artists"
                         [rowsPerPageOptions]="[5,10,20,50]"
-                        styleClass="p-datatable-gridlines p-datatable-sm artists-table"
-                        responsiveLayout="scroll"
-                        [scrollable]="true"
-                        scrollHeight="70vh">
-                        
+                        styleClass="p-datatable-gridlines p-datatable-sm artists-table" responsiveLayout="scroll"
+                        [scrollable]="true" scrollHeight="70vh">
+
                         <ng-template pTemplate="header">
                             <tr>
                                 <th class="col-image">Image</th>
@@ -129,21 +128,17 @@
                                 <th class="col-actions">Actions</th>
                             </tr>
                         </ng-template>
-                        
+
                         <ng-template pTemplate="body" let-artist>
                             <tr>
                                 <td class="image-cell">
                                     <div class="artist-image">
-                                        <img [src]="url + '/' + artist.image" 
-                                             [alt]="artist.nom + ' ' + artist.prenom" 
-                                             (click)="showImage(artist.image)"/>
+                                        <img [src]="url + '/' + artist.image" [alt]="artist.nom + ' ' + artist.prenom"
+                                            (click)="showImage(artist.image)" />
                                         <div class="image-overlay">
-                                            <p-button 
-                                                icon="pi pi-camera" 
-                                                (click)="openImageEditDialog(artist)"
+                                            <p-button icon="pi pi-camera" (click)="openImageEditDialog(artist)"
                                                 styleClass="p-button-rounded p-button-sm p-button-secondary"
-                                                pTooltip="Change Image"
-                                                tooltipPosition="top">
+                                                pTooltip="Change Image" tooltipPosition="top">
                                             </p-button>
                                         </div>
                                     </div>
@@ -162,7 +157,8 @@
                                         <span class="text-content">{{artist.prenom}}</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(artist)">
-                                        <input pInputText type="text" [(ngModel)]="editedArtist.prenom" class="edit-input">
+                                        <input pInputText type="text" [(ngModel)]="editedArtist.prenom"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="email-cell">
@@ -170,7 +166,8 @@
                                         <span class="text-content">{{artist.email}}</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(artist)">
-                                        <input pInputText type="email" [(ngModel)]="editedArtist.email" class="edit-input">
+                                        <input pInputText type="email" [(ngModel)]="editedArtist.email"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="phone-cell">
@@ -178,30 +175,25 @@
                                         <span class="text-content">{{artist.numero}}</span>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(artist)">
-                                        <input pInputText type="tel" [(ngModel)]="editedArtist.numero" class="edit-input">
+                                        <input pInputText type="tel" [(ngModel)]="editedArtist.numero"
+                                            class="edit-input">
                                     </ng-container>
                                 </td>
                                 <td class="status-cell">
                                     <ng-container *ngIf="!isEditing(artist)">
-                                        <p-tag 
-                                            [value]="artist.active ? 'Active' : 'Inactive'" 
-                                            [severity]="artist.active ? 'success' : 'warning'"
-                                            (click)="toggleActiveStatus(artist)"
-                                            class="status-tag"
-                                            pTooltip="Click to toggle status">
-                                        </p-tag>
+                                        <p-inputSwitch [(ngModel)]="artist.active"
+                                            (onChange)="toggleArtistStatus(artist)"
+                                            [pTooltip]="artist.active ? 'Active - Click to deactivate' : 'Inactive - Click to activate'"
+                                            tooltipPosition="top">
+                                        </p-inputSwitch>
                                     </ng-container>
                                     <ng-container *ngIf="isEditing(artist)">
                                         <div class="status-edit-buttons">
-                                            <p-button 
-                                                [icon]="'pi pi-check'" 
-                                                (click)="editedArtist.active = true"
+                                            <p-button [icon]="'pi pi-check'" (click)="editedArtist.active = true"
                                                 [styleClass]="editedArtist.active ? 'p-button-success p-button-sm' : 'p-button-outlined p-button-sm'"
                                                 pTooltip="Active">
                                             </p-button>
-                                            <p-button 
-                                                [icon]="'pi pi-times'" 
-                                                (click)="editedArtist.active = false"
+                                            <p-button [icon]="'pi pi-times'" (click)="editedArtist.active = false"
                                                 [styleClass]="!editedArtist.active ? 'p-button-warning p-button-sm' : 'p-button-outlined p-button-sm'"
                                                 pTooltip="Inactive">
                                             </p-button>
@@ -210,42 +202,34 @@
                                 </td>
                                 <td class="actions-cell">
                                     <div class="action-buttons">
-                                        <p-button 
-                                            [icon]="isEditing(artist) ? 'pi pi-check' : 'pi pi-pencil'" 
+                                        <p-button [icon]="isEditing(artist) ? 'pi pi-check' : 'pi pi-pencil'"
                                             (click)="toggleEdit(artist)"
                                             [styleClass]="isEditing(artist) ? 'p-button-rounded p-button-success p-button-sm' : 'p-button-rounded p-button-info p-button-sm'"
                                             [pTooltip]="isEditing(artist) ? 'Save' : 'Edit'">
                                         </p-button>
                                         <ng-container *ngIf="isEditing(artist)">
-                                            <p-button 
-                                                icon="pi pi-times" 
-                                                (click)="cancelEdit(artist)"
+                                            <p-button icon="pi pi-times" (click)="cancelEdit(artist)"
                                                 styleClass="p-button-rounded p-button-danger p-button-sm"
                                                 pTooltip="Cancel">
                                             </p-button>
                                         </ng-container>
-                                        <p-button 
-                                            *ngIf="!isEditing(artist)" 
-                                            icon="pi pi-palette" 
+                                        <p-button *ngIf="!isEditing(artist)" icon="pi pi-palette"
                                             (click)="manageTableaux(artist)"
                                             styleClass="p-button-rounded p-button-warning p-button-sm"
                                             pTooltip="Manage Tableaux">
                                         </p-button>
-                                        <p-button 
-                                            *ngIf="!isEditing(artist)" 
-                                            icon="pi pi-trash" 
+                                        <p-button *ngIf="!isEditing(artist)" icon="pi pi-trash"
                                             (click)="DeleteArtist(artist.id)"
-                                            styleClass="p-button-rounded p-button-danger p-button-sm"
-                                            pTooltip="Delete">
+                                            styleClass="p-button-rounded p-button-danger p-button-sm" pTooltip="Delete">
                                         </p-button>
                                     </div>
                                 </td>
                             </tr>
                         </ng-template>
-                        
+
                         <ng-template pTemplate="emptymessage">
                             <tr>
-                                <td colspan="8" class="empty-message">
+                                <td colspan="9" class="empty-message">
                                     <div class="empty-content">
                                         <i class="pi pi-info-circle"></i>
                                         <span>No artists found</span>
@@ -255,55 +239,72 @@
                         </ng-template>
                     </p-table>
                 </div>
+
+                <!-- No results message -->
+                <div *ngIf="filteredArtists.length === 0 && searchText" class="no-results">
+                    <div class="no-results-content">
+                        <i class="pi pi-search"></i>
+                        <h3>No artists found</h3>
+                        <p>No artists match your search for "<strong>{{searchText}}</strong>"</p>
+                        <p-button label="Clear Search" icon="pi pi-times" (click)="clearSearch()"
+                            styleClass="p-button-outlined">
+                        </p-button>
+                    </div>
+                </div>
+
+                <!-- Empty state message -->
+                <div *ngIf="artists.length === 0 && !searchText" class="empty-state">
+                    <div class="empty-state-content">
+                        <i class="pi pi-inbox"></i>
+                        <h3>No artists yet</h3>
+                        <p>Create your first artist using the form above.</p>
+                        <p-button label="Add Artist" icon="pi pi-plus" (click)="showAddForm = true"
+                            styleClass="p-button-success">
+                        </p-button>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
 </div>
 
-<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+
 
 <p-dialog header="Image" [(visible)]="imageDialog" [modal]="true" [style]="{width: '50vw'}" [baseZIndex]="10000">
-    <img [src]="selectedImage" width="100%" *ngIf="selectedImage"/>
+    <img [src]="selectedImage" width="100%" *ngIf="selectedImage" />
 </p-dialog>
 
-<p-dialog header="Edit Artist Image" 
-    [(visible)]="imageEditDialog" 
-    [modal]="true" 
-    [style]="{width: '40vw', minWidth: '300px'}" 
-    [baseZIndex]="10000"
-    [closable]="true">
-    
+<p-dialog header="Edit Artist Image" [(visible)]="imageEditDialog" [modal]="true"
+    [style]="{width: '40vw', minWidth: '300px'}" [baseZIndex]="10000" [closable]="true">
+
     <div class="image-edit-content" *ngIf="selectedArtistForImageEdit">
         <div class="current-image-section">
             <h4>Current Image</h4>
             <div class="current-image">
-                <img [src]="url + '/' + selectedArtistForImageEdit.image" 
-                     [alt]="selectedArtistForImageEdit.nom + ' ' + selectedArtistForImageEdit.prenom"
-                     style="width: 100%; max-width: 200px; height: auto; border-radius: 8px; border: 2px solid #e5e7eb;"/>
+                <img [src]="url + '/' + selectedArtistForImageEdit.image"
+                    [alt]="selectedArtistForImageEdit.nom + ' ' + selectedArtistForImageEdit.prenom"
+                    style="width: 100%; max-width: 200px; height: auto; border-radius: 8px; border: 2px solid #e5e7eb;" />
             </div>
         </div>
-        
+
         <div class="new-image-section">
             <h4>Select New Image</h4>
             <div class="file-upload-section">
                 <div class="file-input-wrapper">
-                    <input 
-                        id="imageEditInput" 
-                        type="file" 
-                        (change)="onImageFileSelect($event)" 
-                        accept="image/*" 
-                        class="file-input"/>
+                    <input id="imageEditInput" type="file" (change)="onImageFileSelect($event)" accept="image/*"
+                        class="file-input" />
                     <label for="imageEditInput" class="file-input-label">
                         <i class="pi pi-upload"></i>
                         Choose Image File
                     </label>
                 </div>
-                
+
                 <div *ngIf="newImageFile" class="selected-file-info">
                     <i class="pi pi-file"></i>
                     <span>Selected: {{newImageFile.name}}</span>
                 </div>
-                
+
                 <div *ngIf="imageUploadProgress > 0 && imageUploadProgress < 100" class="upload-progress">
                     <p-progressBar [value]="imageUploadProgress" [showValue]="true"></p-progressBar>
                     <small>Uploading image...</small>
@@ -311,41 +312,31 @@
             </div>
         </div>
     </div>
-    
+
     <ng-template pTemplate="footer">
         <div class="dialog-footer">
-            <p-button 
-                label="Cancel" 
-                icon="pi pi-times" 
-                (click)="imageEditDialog = false; resetImageEditDialog()"
+            <p-button label="Cancel" icon="pi pi-times" (click)="imageEditDialog = false; resetImageEditDialog()"
                 styleClass="p-button-text">
             </p-button>
-            <p-button 
-                label="Update Image" 
-                icon="pi pi-check" 
-                (click)="updateArtistImage()"
-                styleClass="p-button-success"
-                [disabled]="!newImageFile || imageUploadProgress > 0">
+            <p-button label="Update Image" icon="pi pi-check" (click)="updateArtistImage()"
+                styleClass="p-button-success" [disabled]="!newImageFile || imageUploadProgress > 0">
             </p-button>
         </div>
     </ng-template>
 </p-dialog>
-<p-dialog header="Manage Tableaux" 
-    [(visible)]="tableauDialogVisible" 
-    [modal]="true" 
-    [style]="{width: '90vw', maxWidth: '1200px'}" 
-    [closable]="true"
-    [maximizable]="true">
-    
+<p-dialog header="Manage Tableaux" [(visible)]="tableauDialogVisible" [modal]="true"
+    [style]="{width: '90vw', maxWidth: '1200px'}" [closable]="true" [maximizable]="true">
+
     <div class="tableau-management">
         <!-- Add New Tableau Form -->
         <div class="tableau-form-section">
             <div class="form-card">
                 <header class="form-header">
                     <h3><i class="pi pi-plus-circle"></i> Add New Tableau</h3>
-                    <p class="form-subtitle">Create a new artwork for {{selectedArtist?.nom}} {{selectedArtist?.prenom}}</p>
+                    <p class="form-subtitle">Create a new artwork for {{selectedArtist?.nom}} {{selectedArtist?.prenom}}
+                    </p>
                 </header>
-                
+
                 <form (ngSubmit)="addTableau()" #tableauForm="ngForm" class="tableau-form">
                     <div class="form-content">
                         <!-- Basic Information Section -->
@@ -358,27 +349,16 @@
                                     <label for="titre" class="required-field">
                                         <i class="pi pi-tag"></i> Title
                                     </label>
-                                    <input id="titre" type="text" pInputText 
-                                        [(ngModel)]="newTableau.titre" 
-                                        name="titre" required 
-                                        placeholder="Enter tableau title"
-                                        class="form-input" />
+                                    <input id="titre" type="text" pInputText [(ngModel)]="newTableau.titre" name="titre"
+                                        required placeholder="Enter tableau title" class="form-input" />
                                 </div>
                                 <div class="form-field">
                                     <label for="prix" class="required-field">
                                         <i class="pi pi-dollar"></i> Prix (DT)
                                     </label>
-                                    <p-inputNumber 
-                                        id="prix"
-                                        [(ngModel)]="newTableau.prix" 
-                                        name="prix" 
-                                        required
-                                        mode="decimal" 
-                                        [minFractionDigits]="2"
-                                        [maxFractionDigits]="2"
-                                        suffix=" DT"
-                                        placeholder="0.00"
-                                        class="form-input">
+                                    <p-inputNumber id="prix" [(ngModel)]="newTableau.prix" name="prix" required
+                                        mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" suffix=" DT"
+                                        placeholder="0.00" class="form-input">
                                     </p-inputNumber>
                                 </div>
                             </div>
@@ -386,12 +366,9 @@
                                 <label for="description" class="required-field">
                                     <i class="pi pi-align-left"></i> Description
                                 </label>
-                                <textarea id="description" pInputTextarea 
-                                    [(ngModel)]="newTableau.description" 
-                                    name="description" required 
-                                    placeholder="Enter detailed description of the tableau"
-                                    rows="4"
-                                    class="form-textarea">
+                                <textarea id="description" pInputTextarea [(ngModel)]="newTableau.description"
+                                    name="description" required placeholder="Enter detailed description of the tableau"
+                                    rows="4" class="form-textarea">
                                 </textarea>
                             </div>
                         </div>
@@ -403,10 +380,8 @@
                             </h4>
                             <div class="image-upload-area">
                                 <div class="file-upload-wrapper">
-                                    <input id="tableauImage" type="file" 
-                                        (change)="onTableauFileChange($event)" 
-                                        accept="image/*" 
-                                        class="file-input" />
+                                    <input id="tableauImage" type="file" (change)="onTableauFileChange($event)"
+                                        accept="image/*" class="file-input" />
                                     <label for="tableauImage" class="file-upload-label">
                                         <div class="upload-content">
                                             <i class="pi pi-cloud-upload upload-icon"></i>
@@ -415,30 +390,29 @@
                                         </div>
                                     </label>
                                 </div>
-                                
+
                                 <!-- Selected file info -->
                                 <div *ngIf="tableauFile" class="selected-file">
                                     <div class="file-preview">
                                         <i class="pi pi-file-image file-icon"></i>
                                         <div class="file-details">
                                             <span class="file-name">{{tableauFile.name}}</span>
-                                            <small class="file-size">{{(tableauFile.size / 1024 / 1024).toFixed(2)}} MB</small>
+                                            <small class="file-size">{{(tableauFile.size / 1024 / 1024).toFixed(2)}}
+                                                MB</small>
                                         </div>
                                         <button type="button" class="remove-file-btn" (click)="removeTableauFile()">
                                             <i class="pi pi-times"></i>
                                         </button>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Upload progress -->
                                 <div *ngIf="progress > 0 && progress < 100" class="upload-progress-section">
                                     <div class="progress-info">
                                         <span class="progress-label">Uploading to cloud storage...</span>
                                         <span class="progress-percentage">{{progress}}%</span>
                                     </div>
-                                    <p-progressBar [value]="progress" 
-                                        [showValue]="false" 
-                                        styleClass="custom-progress">
+                                    <p-progressBar [value]="progress" [showValue]="false" styleClass="custom-progress">
                                     </p-progressBar>
                                 </div>
                             </div>
@@ -447,18 +421,10 @@
 
                     <!-- Form Actions -->
                     <div class="form-actions">
-                        <p-button 
-                            label="Cancel" 
-                            icon="pi pi-times" 
-                            type="button"
-                            (click)="resetTableauForm()"
+                        <p-button label="Cancel" icon="pi pi-times" type="button" (click)="resetTableauForm()"
                             styleClass="p-button-outlined p-button-secondary">
                         </p-button>
-                        <p-button 
-                            label="Add Tableau" 
-                            icon="pi pi-plus" 
-                            type="submit" 
-                            styleClass="p-button-success"
+                        <p-button label="Add Tableau" icon="pi pi-plus" type="submit" styleClass="p-button-success"
                             [disabled]="!tableauForm.valid || (progress > 0 && progress < 100)"
                             [loading]="progress > 0 && progress < 100">
                         </p-button>
@@ -470,11 +436,8 @@
         <!-- Existing Tableaux List -->
         <div class="tableau-list-section">
             <h3>Existing Tableaux for {{selectedArtist?.nom}} {{selectedArtist?.prenom}}</h3>
-            <p-table [value]="artistTableaux" 
-                [paginator]="true" 
-                [rows]="5" 
-                styleClass="p-datatable-gridlines p-datatable-sm"
-                [tableStyle]="{'width': '100%'}"
+            <p-table [value]="artistTableaux" [paginator]="true" [rows]="5"
+                styleClass="p-datatable-gridlines p-datatable-sm" [tableStyle]="{'width': '100%'}"
                 responsiveLayout="scroll">
                 <ng-template pTemplate="header">
                     <tr>
@@ -492,34 +455,28 @@
                         <td>
                             <!-- Normal image display when not editing -->
                             <div *ngIf="!isEditingTableau(tableau)" class="tableau-image">
-                                <img [src]="url + '/' + tableau.image" 
-                                    alt="Tableau image" 
+                                <img [src]="url + '/' + tableau.image" alt="Tableau image"
                                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"
-                                    *ngIf="tableau.image"/>
+                                    *ngIf="tableau.image" />
                                 <span *ngIf="!tableau.image" class="no-image">No Image</span>
                             </div>
-                            
+
                             <!-- Image upload control when editing -->
                             <div *ngIf="isEditingTableau(tableau)" class="tableau-image-edit">
                                 <div class="current-image" *ngIf="tableau.image && !tableauFile">
-                                    <img [src]="url + '/' + tableau.image" 
-                                        alt="Current image"
-                                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-bottom: 5px;"/>
+                                    <img [src]="url + '/' + tableau.image" alt="Current image"
+                                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-bottom: 5px;" />
                                 </div>
-                                
+
                                 <div class="file-upload-compact">
-                                    <input 
-                                        id="tableauEditImage" 
-                                        type="file" 
-                                        (change)="onTableauFileChange($event)" 
-                                        accept="image/*"
-                                        style="display: none;" />
+                                    <input id="tableauEditImage" type="file" (change)="onTableauFileChange($event)"
+                                        accept="image/*" style="display: none;" />
                                     <label for="tableauEditImage" class="file-upload-btn">
                                         <i class="pi pi-camera"></i>
                                         <span>Change</span>
                                     </label>
                                 </div>
-                                
+
                                 <div *ngIf="tableauFile" class="selected-file-info">
                                     <small>New: {{tableauFile.name | slice:0:10}}...</small>
                                 </div>
@@ -535,10 +492,12 @@
                         </td>
                         <td>
                             <ng-container *ngIf="!isEditingTableau(tableau)">
-                                <span [title]="tableau.description">{{tableau.description | slice:0:30}}{{tableau.description?.length > 30 ? '...' : ''}}</span>
+                                <span [title]="tableau.description">{{tableau.description |
+                                    slice:0:30}}{{tableau.description?.length > 30 ? '...' : ''}}</span>
                             </ng-container>
                             <ng-container *ngIf="isEditingTableau(tableau)">
-                                <input pInputText type="text" [(ngModel)]="editedTableau.description" class="edit-input">
+                                <input pInputText type="text" [(ngModel)]="editedTableau.description"
+                                    class="edit-input">
                             </ng-container>
                         </td>
                         <td>
@@ -546,31 +505,25 @@
                                 <span>{{tableau.prix}} DT</span>
                             </ng-container>
                             <ng-container *ngIf="isEditingTableau(tableau)">
-                                <input pInputText type="number" [(ngModel)]="editedTableau.prix" class="edit-input" min="0" step="0.01">
+                                <input pInputText type="number" [(ngModel)]="editedTableau.prix" class="edit-input"
+                                    min="0" step="0.01">
                             </ng-container>
                         </td>
                         <td>
                             <div class="action-buttons">
-                                <p-button 
-                                    [icon]="isEditingTableau(tableau) ? 'pi pi-check' : 'pi pi-pencil'" 
+                                <p-button [icon]="isEditingTableau(tableau) ? 'pi pi-check' : 'pi pi-pencil'"
                                     (click)="toggleTableauEdit(tableau)"
                                     [styleClass]="isEditingTableau(tableau) ? 'p-button-rounded p-button-success p-button-sm' : 'p-button-rounded p-button-info p-button-sm'"
                                     [pTooltip]="isEditingTableau(tableau) ? 'Save' : 'Edit'">
                                 </p-button>
                                 <ng-container *ngIf="isEditingTableau(tableau)">
-                                    <p-button 
-                                        icon="pi pi-times" 
-                                        (click)="cancelTableauEdit()"
-                                        styleClass="p-button-rounded p-button-secondary p-button-sm"
-                                        pTooltip="Cancel">
+                                    <p-button icon="pi pi-times" (click)="cancelTableauEdit()"
+                                        styleClass="p-button-rounded p-button-secondary p-button-sm" pTooltip="Cancel">
                                     </p-button>
                                 </ng-container>
-                                <p-button 
-                                    *ngIf="!isEditingTableau(tableau)"
-                                    icon="pi pi-trash" 
+                                <p-button *ngIf="!isEditingTableau(tableau)" icon="pi pi-trash"
                                     (click)="deleteTableau(tableau.id)"
-                                    styleClass="p-button-rounded p-button-danger p-button-sm"
-                                    pTooltip="Delete Tableau">
+                                    styleClass="p-button-rounded p-button-danger p-button-sm" pTooltip="Delete Tableau">
                                 </p-button>
                             </div>
                         </td>
@@ -589,4 +542,5 @@
     </div>
 </p-dialog>
 
-<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000"
+    rejectButtonStyleClass="p-button-text"></p-confirmDialog>

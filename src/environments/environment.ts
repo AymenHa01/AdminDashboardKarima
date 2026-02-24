@@ -2,11 +2,11 @@ import { blob } from "stream/consumers";
 
 export const environment = {
   production: false,
-   apiUrl: 'https://artba-fyc3dkejbpdkgxez.westeurope-01.azurewebsites.net',
-   //apiUrl: 'http://localhost:8086' , 
-  blobUrlSaS: 'sp=racwdli&st=2025-10-10T14:54:51Z&se=2026-01-15T00:09:51Z&spr=https&sv=2024-11-04&sr=c&sig=QeLYUJbtGcc0RPOayx9HYh3Fho1O47I6q4mtkIlb99A%3D',
-blobUrl: 'https://localandtouist.blob.core.windows.net/karima',
-acountName : 'localandtouist', 
-containerName : 'karima'
+  //apiUrl: 'https://karima-abcwa9aqengeh4g5.francecentral-01.azurewebsites.net',
+  apiUrl: 'http://localhost:8086',
+  blobUrlSaS: 'sp=racwdli&st=2026-02-22T16:04:39Z&se=2029-02-23T00:19:39Z&spr=https&sv=2024-11-04&sr=c&sig=y0B4KHVhaQjDrkN%2FnnZRUvFFY%2FTlVOtWECZq4Ffmb2I%3D',
+  blobUrl: 'https://karimablogcontainer.blob.core.windows.net/images',
+  acountName: 'karimablogcontainer',
+  containerName: 'images'
 
 };

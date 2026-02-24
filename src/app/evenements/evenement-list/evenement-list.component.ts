@@ -21,14 +21,18 @@ export class EvenementListComponent implements OnInit {
   editingId: number | null = null;
   editedEvenement: any = null;
   showAddForm: boolean = false;
-  
+
+  // Search filter properties
+  searchText: string = '';
+  filteredEvenements: any[] = [];
+
   newEvenement: any = {
     id: 0,
     name: '',
     description: '',
     dateDebut: '',
     dateFin: '',
-    lieu: '', 
+    lieu: '',
     prix: 0,
     image: '',
     active: true
@@ -37,7 +41,7 @@ export class EvenementListComponent implements OnInit {
   selectedFile: File | null = null;
 
   progress: number = 0;
-  url=environment.blobUrl;
+  url = environment.blobUrl;
   imageDialog: boolean = false;
   selectedImage: string = '';
 
@@ -47,9 +51,10 @@ export class EvenementListComponent implements OnInit {
   evenementMedias: any[] = [];
   selectedFiles: File[] = [];
   uploadProgress: { [key: string]: number } = {};
+  uploadingImages: { [key: string]: boolean } = {};
 
   // Image edit functionality
-imageEditDialog: boolean = false;
+  imageEditDialog: boolean = false;
   selectedEvenementForImageEdit: any = null;
   newImageFile: File | null = null;
   imageUploadProgress: number = 0;
@@ -57,7 +62,7 @@ imageEditDialog: boolean = false;
   // Image zoom functionality
   currentImageIndex: number = 0;
   totalImagesCount: number = 0;
-  
+
   constructor(
     private evenementService: EvenementService,
     private mediaService: MediaService,
@@ -67,7 +72,7 @@ imageEditDialog: boolean = false;
     private messageService: MessageService
   ) {
     // Initialize blob storage URL from service configuration
-    this.url =environment.blobUrl
+    this.url = environment.blobUrl
   }
 
   ngOnInit(): void {
@@ -77,7 +82,7 @@ imageEditDialog: boolean = false;
   toggleEdit(evenement: any) {
     console.log(evenement);
     if (this.editingId === evenement.id) {
-     this.evenementService.AddEvenemt(this.editedEvenement).subscribe(
+      this.evenementService.AddEvenemt(this.editedEvenement).subscribe(
         () => {
           this.messageService.add({
             severity: 'success',
@@ -111,6 +116,11 @@ imageEditDialog: boolean = false;
   cancelEdit(evenement: any) {
     this.editingId = null;
     this.editedEvenement = null;
+    // Clean up upload states
+    if (evenement.id) {
+      delete this.uploadingImages[evenement.id];
+      delete this.uploadProgress[evenement.id];
+    }
   }
 
   DeleteEvenement(id: number) {
@@ -136,28 +146,28 @@ imageEditDialog: boolean = false;
 
   saveEvenement() {
     console.log(this.selectedFile);
-   
-      this.evenementService.AddEvenemt(this.newEvenement).subscribe(
-        response => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Événement ajouté avec succès'
-          });
-          // this.onFileChange(this.file);
-          this.loadEvenements();
-          this.resetNewEvenement();
-        },
-        error => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Erreur lors de l\'ajout de l\'événement'
-          });
-          console.error('Erreur lors de l\'ajout de l\'événement', error);
-        }
-      );
-    
+
+    this.evenementService.AddEvenemt(this.newEvenement).subscribe(
+      response => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Événement ajouté avec succès'
+        });
+        // this.onFileChange(this.file);
+        this.loadEvenements();
+        this.resetNewEvenement();
+      },
+      error => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Erreur lors de l\'ajout de l\'événement'
+        });
+        console.error('Erreur lors de l\'ajout de l\'événement', error);
+      }
+    );
+
   }
 
   loadEvenements(): void {
@@ -165,6 +175,8 @@ imageEditDialog: boolean = false;
       (data: any) => {
         console.log(data)
         this.evenements = data;
+        this.filteredEvenements = [...this.evenements]; // Initialize filtered list
+        this.applyFilter(); // Apply current search filter if any
       },
       (error) => {
         this.messageService.add({
@@ -193,44 +205,44 @@ imageEditDialog: boolean = false;
   }
 
   toggleEvenementStatus(evenement: any): void {
-    
+
     console.log(evenement.active);
-   if (evenement.active) {
+    if (evenement.active) {
       evenement.active = true
-    }else{
+    } else {
       evenement.active = false
     }
     console.log(evenement.active);
-      this.evenementService.EditEvenement(evenement).subscribe({
-        next: (data: any) => {
-          console.log('Status updated successfully:', data);
-          const message = evenement.active ? 'Événement activé avec succès!' : 'Événement désactivé avec succès!';
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: message
-          });
-          this.loadEvenements();
-        },
-        error: (error) => {
-          console.error('Error updating status:', error);
-          // Revert the toggle if there's an error
-          evenement.active = !evenement.active;
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Erreur lors de la modification du statut.'
-          });
-        }
-      });
-    
+    this.evenementService.EditEvenement(evenement).subscribe({
+      next: (data: any) => {
+        console.log('Status updated successfully:', data);
+        const message = evenement.active ? 'Événement activé avec succès!' : 'Événement désactivé avec succès!';
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: message
+        });
+        this.loadEvenements();
+      },
+      error: (error) => {
+        console.error('Error updating status:', error);
+        // Revert the toggle if there's an error
+        evenement.active = !evenement.active;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Erreur lors de la modification du statut.'
+        });
+      }
+    });
+
   }
 
   // UploadImages(file: any) {
   //   console.log(file);
   //   if (file && file.target && file.target.files && file.target.files[0]) {
   //     const fileName = file.target.files[0].name;
-      
+
   //     this.blob.uploadImage(file.target.files[0], fileName, (event: ProgressEvent) => {
   //       if (event.lengthComputable) {
   //         this.progress = Math.round(100 * event.loaded / event.total);
@@ -247,16 +259,114 @@ imageEditDialog: boolean = false;
   //   }
   // }
 
-  onFileChange(event: any) {
+  onFileChange(event: any, evenementId?: number) {
     const file = event.target.files[0];
     if (file) {
-      this.newEvenement.image = file.name;
-      this.selectedFile = file;
-      this.blob.uploadImage(file, file.name, (progressEvent: ProgressEvent) => {
-        if (progressEvent.lengthComputable) {
-          this.progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+      const fileName = file.name;
+
+      if (evenementId) {
+        // Editing existing evenement
+        this.uploadingImages[evenementId] = true;
+        this.uploadProgress[evenementId] = 0;
+
+        // Find the evenement being edited and update its image
+        const index = this.evenements.findIndex(e => e.id === evenementId);
+        if (index !== -1) {
+          this.uploadImageWithCallback(file, fileName, evenementId, index);
         }
-      })
+      } else {
+        // Creating new evenement
+        this.newEvenement.image = fileName;
+        this.selectedFile = file;
+        this.blob.uploadImage(file, fileName, (progressEvent: ProgressEvent) => {
+          if (progressEvent.lengthComputable) {
+            this.progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+          }
+        })
+      }
+    }
+  }
+
+  private uploadImageWithCallback(file: File, fileName: string, evenementId: number, index: number) {
+    const xhr = new XMLHttpRequest();
+    // Use environment variables for blob storage config
+    xhr.open('PUT', `https://${environment.acountName}.blob.core.windows.net/${environment.containerName}/${fileName}?${environment.blobUrlSaS}`, true);
+    xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
+
+    xhr.upload.onprogress = (event: ProgressEvent) => {
+      if (event.lengthComputable) {
+        this.uploadProgress[evenementId] = Math.round((event.loaded / event.total) * 100);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 201 || xhr.status === 200) {
+        // Update the evenement object with new image name
+        this.evenements[index].image = fileName;
+        if (this.editedEvenement && this.editedEvenement.id === evenementId) {
+          this.editedEvenement.image = fileName;
+        }
+        this.uploadingImages[evenementId] = false;
+        this.uploadProgress[evenementId] = 100;
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Image uploaded successfully'
+        });
+
+        setTimeout(() => {
+          this.uploadProgress[evenementId] = 0;
+        }, 2000);
+      } else {
+        this.handleUploadError(evenementId, xhr);
+      }
+    };
+
+    xhr.onerror = () => {
+      this.handleUploadError(evenementId, xhr);
+    };
+
+    xhr.send(file);
+  }
+
+  private handleUploadError(evenementId: number, xhr: XMLHttpRequest) {
+    console.error('Error uploading image:', xhr);
+    this.uploadingImages[evenementId] = false;
+    this.uploadProgress[evenementId] = 0;
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to upload image'
+    });
+  }
+
+  removeImage(evenement: any) {
+    if (confirm('Are you sure you want to remove this image?')) {
+      if (this.isEditing(evenement)) {
+        this.editedEvenement.image = '';
+      } else {
+        evenement.image = '';
+      }
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Image Removed',
+        detail: 'Image removed from view. Save to confirm deletion from record.'
+      });
+    }
+  }
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target) {
+      target.style.display = 'none';
+      const parent = target.parentElement;
+      if (parent && !parent.querySelector('.image-error')) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'image-error';
+        errorDiv.textContent = 'Image not available';
+        parent.appendChild(errorDiv);
+      }
     }
   }
 
@@ -297,11 +407,11 @@ imageEditDialog: boolean = false;
   manageImages(evenement: any) {
     this.selectedEvenement = evenement;
     console.log(this.selectedEvenement);
-    
+
     this.mediaDialogVisible = true;
-     this.evenementMedias = evenement.media || [];
-     console.log('Evenement medias:', this.evenementMedias);
-     
+    this.evenementMedias = evenement.media || [];
+    console.log('Evenement medias:', this.evenementMedias);
+
     this.resetMultipleImagesForm();
   }
 
@@ -326,7 +436,7 @@ imageEditDialog: boolean = false;
   onMultipleFilesChange(event: any) {
     const files = Array.from(event.target.files) as File[];
     this.selectedFiles = files;
-    
+
     if (files.length > 0) {
       this.messageService.add({
         severity: 'info',
@@ -353,16 +463,16 @@ imageEditDialog: boolean = false;
       this.blob.uploadImage(file, fileName, (progressEvent: ProgressEvent) => {
         if (progressEvent.lengthComputable) {
           this.uploadProgress[fileName] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-          
+
           if (this.uploadProgress[fileName] === 100) {
-            this.mediaService.addMediaToEvent(fileName,  this.selectedEvenement.id.toString()).subscribe({
+            this.mediaService.addMediaToEvent(fileName, this.selectedEvenement.id.toString()).subscribe({
               next: (response: any) => {
                 this.messageService.add({
                   severity: 'success',
                   summary: 'Success',
                   detail: `Image ${index + 1} uploaded successfully`
                 });
-                
+
 
                 delete this.uploadProgress[fileName];
               },
@@ -411,7 +521,7 @@ imageEditDialog: boolean = false;
   private resetMultipleImagesForm() {
     this.selectedFiles = [];
     this.uploadProgress = {};
-    
+
     // Reset file input
     const fileInput = document.getElementById('multipleImages') as HTMLInputElement;
     if (fileInput) {
@@ -443,7 +553,7 @@ imageEditDialog: boolean = false;
         });
         return;
       }
-      
+
       // Validate file size (max 5MB)
       const maxSize = 5 * 1024 * 1024; // 5MB in bytes
       if (file.size > maxSize) {
@@ -454,7 +564,7 @@ imageEditDialog: boolean = false;
         });
         return;
       }
-      
+
       this.newImageFile = file;
       this.messageService.add({
         severity: 'info',
@@ -474,7 +584,7 @@ imageEditDialog: boolean = false;
     this.blob.uploadImage(this.newImageFile, this.newImageFile.name, (progressEvent: ProgressEvent) => {
       if (progressEvent.lengthComputable) {
         this.imageUploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-        
+
         if (this.imageUploadProgress === 100) {
           // Update the evenement with the new image
           const updatedEvenement = {
@@ -489,7 +599,7 @@ imageEditDialog: boolean = false;
                 summary: 'Success',
                 detail: 'Event image updated successfully'
               });
-              
+
               this.imageEditDialog = false;
               this.resetImageEditDialog();
               this.loadEvenements();
@@ -512,7 +622,7 @@ imageEditDialog: boolean = false;
     this.newImageFile = null;
     this.imageUploadProgress = 0;
     this.selectedEvenementForImageEdit = null;
-    
+
     // Reset file input
     const fileInput = document.getElementById('imageEditInput') as HTMLInputElement;
     if (fileInput) {
@@ -573,13 +683,13 @@ imageEditDialog: boolean = false;
   // Inline media upload from table
   uploadMediaInline(event: any, evenement: any) {
     const files = Array.from(event.target.files) as File[];
-    
+
     if (files.length > 0) {
       this.selectedEvenement = evenement;
-      
+
       files.forEach((file) => {
         this.uploadProgress[evenement.id] = 0;
-        
+
         this.blob.uploadImage(file, file.name, (progressEvent: ProgressEvent) => {
           if (progressEvent.lengthComputable) {
             this.uploadProgress[evenement.id] = Math.round((progressEvent.loaded / progressEvent.total) * 100);
@@ -595,7 +705,7 @@ imageEditDialog: boolean = false;
 
                   // Reload evenement data to update media list
                   this.loadEvenements();
-                  
+
                   setTimeout(() => {
                     delete this.uploadProgress[evenement.id];
                   }, 1000);
@@ -614,7 +724,7 @@ imageEditDialog: boolean = false;
           }
         });
       });
-      
+
       // Reset file input
       event.target.value = '';
     }
@@ -638,12 +748,12 @@ imageEditDialog: boolean = false;
     if (evenement) {
       this.selectedEvenement = evenement;
     }
-    
+
     if (!this.selectedEvenement?.media) return;
-    
+
     this.selectedImage = this.url + '/' + imagePath;
     this.imageDialog = true;
-    
+
     // Find current image index
     this.currentImageIndex = this.selectedEvenement.media.findIndex((m: any) => m.path === imagePath);
     this.totalImagesCount = this.selectedEvenement.media.length;
@@ -655,11 +765,33 @@ imageEditDialog: boolean = false;
     }
     this.selectedImage = this.url + '/' + videoPath;
     this.imageDialog = true;
-    
+
     // Find current video index
     if (this.selectedEvenement?.media) {
       this.currentImageIndex = this.selectedEvenement.media.findIndex((m: any) => m.path === videoPath);
       this.totalImagesCount = this.selectedEvenement.media.length;
+    }
+  }
+
+  // Search filter methods
+  onSearchChange(event: any) {
+    this.searchText = event.target.value;
+    this.applyFilter();
+  }
+
+  clearSearch() {
+    this.searchText = '';
+    this.applyFilter();
+  }
+
+  applyFilter() {
+    if (!this.searchText || this.searchText.trim() === '') {
+      this.filteredEvenements = [...this.evenements];
+    } else {
+      const searchTerm = this.searchText.toLowerCase().trim();
+      this.filteredEvenements = this.evenements.filter(evenement =>
+        evenement.name && evenement.name.toLowerCase().includes(searchTerm)
+      );
     }
   }
 }

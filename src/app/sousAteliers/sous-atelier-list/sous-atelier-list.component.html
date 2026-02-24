@@ -1,424 +1,332 @@
 <p-toast></p-toast>
 
-<div class="admin-page" [class.sidebar-collapsed]="isSidebarCollapsed">
-    <app-sidebar></app-sidebar>
-NG5002: Unexpected closing tag "div". It may happen when the tag has already been closed by another tag. For more info see https://www.w3.org/TR/html5/syntax.html#closing-elements-that-have-implied-end-tags
-    
-    <p-card header="Sous-Ateliers" subheader="Liste des sous-ateliers"> 
+<div class="admin-container">
+    <div class="main-content">
 
-        <!-- View Toggle Buttons -->
-        <div class="view-controls">
-            <p-button 
-                *ngIf="!showForm" 
-                label="Ajouter un nouveau sous-atelier" 
-                icon="pi pi-plus" 
-                (click)="showAddForm()" 
-                styleClass="p-button-success">
-            </p-button>
-            
-            <div *ngIf="showForm" class="form-controls">
-                <p-button 
-                    label="Voir la liste" 
-                    icon="pi pi-list" 
-                    (click)="showList()" 
-                    styleClass="p-button-info">
+        <p-card header="Sous-Ateliers" subheader="Liste des sous-ateliers">
+
+            <!-- View Toggle Buttons -->
+            <div class="view-controls">
+                <p-button *ngIf="!showForm" label="Ajouter un nouveau sous-atelier" icon="pi pi-plus"
+                    (click)="showAddForm()" styleClass="p-button-success">
                 </p-button>
-                <p-button 
-                    label="Annuler" 
-                    icon="pi pi-times" 
-                    (click)="showList()" 
-                    styleClass="p-button-secondary">
-                </p-button>
-            </div>
-        </div>
 
-        <!-- Vertical Form with Better Structure -->
-        <div class="form-container" *ngIf="showForm">
-            <h4>Ajouter un nouveau sous-atelier</h4>
-            <div class="form-grid">
-                <!-- Name Field -->
-                <div class="form-group">
-                    <label for="name">Nom *</label>
-                    <input 
-                        id="name"
-                        type="text" 
-                        placeholder="Entrez le nom" 
-                        [(ngModel)]="newSousAtelier.name" 
-                        class="form-input">
-                </div>
-
-                <!-- Description Field (Larger) -->
-                <div class="form-group">
-                    <label for="description">Description *</label>
-                    <textarea 
-                        id="description"
-                        placeholder="Entrez la description" 
-                        [(ngModel)]="newSousAtelier.description" 
-                        class="form-textarea"
-                        rows="4">
-                    </textarea>
-                </div>
-
-                <!-- Prix Field -->
-                <div class="form-group">
-                    <label for="prix">Prix *</label>
-                    <input 
-                        id="prix"
-                        type="number" 
-                        placeholder="Entrez le prix" 
-                        [(ngModel)]="newSousAtelier.prix" 
-                        class="form-input">
-                </div>
-
-                <!-- Image Field -->
-                <div class="form-group">
-                    <label for="image">Image</label>
-                    <div class="image-upload-container">
-                        <input 
-                            type="file" 
-                            #imageInput 
-                            (change)="onFormImageSelected($event)" 
-                            accept="image/*" 
-                            class="file-input"
-                            id="image">
-                        <p-button 
-                            label="Choisir une image" 
-                            icon="pi pi-upload" 
-                            (click)="imageInput.click()" 
-                            styleClass="p-button-outlined">
-                        </p-button>
-                        
-                        <!-- Image Preview -->
-                        <div class="image-preview" *ngIf="formImagePreview">
-                            <img [src]="formImagePreview" alt="Preview" class="preview-image">
-                            <p-button 
-                                icon="pi pi-times" 
-                                (click)="formImagePreview = null; selectedFormImage = null; newSousAtelier.image = null" 
-                                styleClass="p-button-rounded p-button-text p-button-sm remove-image-btn">
-                            </p-button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Active Status Field -->
-                <div class="form-group status-field">
-                    <label for="active">Status</label>
-                    <div class="status-toggle">
-                        <p-inputSwitch 
-                            id="active"
-                            [(ngModel)]="newSousAtelier.active">
-                        </p-inputSwitch>
-                        <span class="status-label" [class.active]="newSousAtelier.active">
-                            {{newSousAtelier.active ? 'Actif' : 'Inactif'}}
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Submit Button -->
-                <div class="form-actions">
-                    <p-button 
-                        label="Ajouter le sous-atelier" 
-                        icon="pi pi-plus" 
-                        (click)="checkForm()" 
-                        styleClass="p-button-success">
+                <div *ngIf="showForm" class="form-controls">
+                    <p-button label="Voir la liste" icon="pi pi-list" (click)="showList()" styleClass="p-button-info">
+                    </p-button>
+                    <p-button label="Annuler" icon="pi pi-times" (click)="showList()" styleClass="p-button-secondary">
                     </p-button>
                 </div>
             </div>
-        </div>
 
-        <!-- Separator -->
-        <p-divider *ngIf="showForm"></p-divider>
+            <!-- Vertical Form with Better Structure -->
+            <div class="form-container" *ngIf="showForm">
+                <h4>Ajouter un nouveau sous-atelier</h4>
+                <div class="form-grid">
+                    <!-- Name Field -->
+                    <div class="form-group">
+                        <label for="name">Nom *</label>
+                        <input id="name" type="text" placeholder="Entrez le nom" [(ngModel)]="newSousAtelier.name"
+                            class="form-input">
+                    </div>
 
-        <!-- Sous-Ateliers List Table -->
-        <div class="p-grid" *ngIf="!showForm">
-            <div class="p-col-12">
-                <p-table [paginator]="true" [rows]="5" [value]="sousAteliers" styleClass="p-datatable-gridlines" [tableStyle]="{'min-width': '50rem'}">
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th>Id</th>
-                            <th>Image</th>
-                            <th>Description</th>
-                            <th>Titre</th>
-                            <th>Prix</th>
-                            <th>Status</th>
-                            <th>Atelier</th>
-                            <th>Images</th>
-                            <th>Actions</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-sousAtelier>
-                        <tr>
-                            <td>{{sousAtelier.id}}</td>
-                            <td class="main-image-cell">
-                                <div class="main-image-container">
-                                    <!-- Edit mode image upload -->
-                                    <div *ngIf="isEditing(sousAtelier.id)" class="edit-image-container">
-                                        <div class="current-image" *ngIf="editingImagePreviews[sousAtelier.id] || sousAtelier.image">
-                                            <img 
-                                                [src]="editingImagePreviews[sousAtelier.id] || (url + '/' + sousAtelier.image)"
-                                                alt="{{sousAtelier.name}}" 
-                                                class="main-image-thumbnail">
-                                        </div>
-                                        <div class="image-upload-controls">
-                                            <input 
-                                                type="file" 
-                                                #imageEditInput
-                                                (change)="onInlineImageSelected($event, sousAtelier.id)" 
-                                                accept="image/*" 
-                                                class="file-input">
-                                            <p-button 
-                                                icon="pi pi-upload" 
-                                                (click)="imageEditInput.click()" 
-                                                styleClass="p-button-outlined p-button-sm"
-                                                [disabled]="uploadingInlineImages[sousAtelier.id]"
-                                                title="Changer l'image">
-                                            </p-button>
-                                        </div>
-                                        <!-- Upload progress -->
-                                        <div *ngIf="uploadingInlineImages[sousAtelier.id] || inlineUploadProgress[sousAtelier.id] > 0" class="inline-upload-progress">
-                                            <p-progressBar [value]="inlineUploadProgress[sousAtelier.id]" [showValue]="true"></p-progressBar>
-                                            <small *ngIf="uploadingInlineImages[sousAtelier.id]">Upload en cours...</small>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- View mode -->
-                                    <div *ngIf="!isEditing(sousAtelier.id)">
-                                        <img 
-                                            *ngIf="sousAtelier.image; else noMainImage"
-                                            [src]="url + '/' + sousAtelier.image" 
-                                            alt="{{sousAtelier.name}}" 
-                                            class="main-image-thumbnail"
-                                            (click)="openImageGallery(sousAtelier)">
-                                        <ng-template #noMainImage>
-                                            <div class="no-main-image" (click)="openAddImageDialog(sousAtelier)">
-                                                <i class="pi pi-image"></i>
-                                                <span>Pas d'image</span>
-                                            </div>
-                                        </ng-template>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <input 
-                                    *ngIf="isEditing(sousAtelier.id); else viewDescription"
-                                    type="text" 
-                                    [(ngModel)]="sousAtelier.description" 
-                                    class="editable-field edit-active">
-                                <ng-template #viewDescription>
-                                    <span>{{sousAtelier.description}}</span>
-                                </ng-template>
-                            </td>
-                            <td>
-                                <input 
-                                    *ngIf="isEditing(sousAtelier.id); else viewName"
-                                    type="text" 
-                                    [(ngModel)]="sousAtelier.name" 
-                                    class="editable-field edit-active">
-                                <ng-template #viewName>
-                                    <span>{{sousAtelier.name}}</span>
-                                </ng-template>
-                            </td>
-                            <td>
-                                <input 
-                                    *ngIf="isEditing(sousAtelier.id); else viewPrix"
-                                    type="number" 
-                                    [(ngModel)]="sousAtelier.prix" 
-                                    class="editable-field edit-active">
-                                <ng-template #viewPrix>
-                                    <span>{{sousAtelier.prix}} DT</span>
-                                </ng-template>
-                            </td>
-                            <td class="status-cell">
-                                <div class="status-toggle-container">
-                                    <p-inputSwitch 
-                                        [(ngModel)]="sousAtelier.active"
-                                        (onChange)="toggleSousAtelierStatus(sousAtelier)"
-                                        [disabled]="uploadingInlineImages[sousAtelier.id]">
-                                    </p-inputSwitch>
-                                    <span class="status-label" [class.active]="sousAtelier.active">
-                                        {{sousAtelier.active ? 'Actif' : 'Inactif'}}
-                                    </span>
-                                </div>
-                            </td>
-                            <td>{{sousAtelier.atelier.name}}</td>
-                            <td>
-                                <div class="table-images-container">
-                                    <!-- Add Media Button -->
-                                    <div class="add-media-inline">
-                                        <input type="file" 
-                                               #mediaFileInput
-                                               (change)="uploadMediaInline($event, sousAtelier)" 
-                                               multiple 
-                                               accept="image/*,video/*" 
-                                               class="file-input"
-                                               [id]="'mediaInput' + sousAtelier.id">
-                                        <p-button 
-                                            icon="pi pi-plus" 
-                                            styleClass="p-button-success p-button-sm" 
-                                            (click)="mediaFileInput.click()" 
-                                            title="Ajouter media"
-                                            pTooltip="Ajouter images/vidéos">
-                                        </p-button>
-                                    </div>
-                                    
-                                    <!-- Display existing media -->
-                                    <div class="table-images-grid" *ngIf="sousAtelier.media && sousAtelier.media.length > 0">
-                                        <div *ngFor="let media of sousAtelier.media.slice(0, 4)" 
-                                             class="table-image-item">
-                                            <div class="media-content"
-                                                 (click)="isImage(media.path) ? showImageInZoom(media.path, sousAtelier) : showVideoInZoom(media.path, sousAtelier)">
-                                                <!-- Image thumbnail -->
-                                                <img *ngIf="isImage(media.path)"
-                                                     [src]="url + '/' + media.path" 
-                                                     alt="Sous-atelier media" 
-                                                     class="table-image-thumbnail">
-                                                
-                                                <!-- Video thumbnail -->
-                                                <div *ngIf="isVideo(media.path)" class="table-video-thumbnail">
-                                                    <video class="table-video-element">
-                                                        <source [src]="url + '/' + media.path" [type]="getVideoMimeType(media.path)">
-                                                    </video>
-                                                    <div class="video-play-icon">
-                                                        <i class="pi pi-play"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- Delete button -->
-                                            <button class="delete-media-btn" 
-                                                    (click)="deleteImageFromGallery(media.id); $event.stopPropagation()"
-                                                    pTooltip="Supprimer"
-                                                    tooltipPosition="top">
-                                                <i class="pi pi-times"></i>
-                                            </button>
-                                        </div>
-                                        <div *ngIf="sousAtelier.media.length > 4" 
-                                             class="more-images-indicator"
-                                             (click)="expandMediaView(sousAtelier)"
-                                             pTooltip="Voir tous les media">
-                                            +{{ sousAtelier.media.length - 4 }}
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Upload progress -->
-                                    <div *ngIf="uploadProgress[sousAtelier.id]" class="inline-upload-progress">
-                                        <p-progressBar [value]="uploadProgress[sousAtelier.id]" [showValue]="true"></p-progressBar>
-                                    </div>
-                                    
-                                    <div *ngIf="!sousAtelier.media || sousAtelier.media.length === 0" class="no-table-images">
-                                        <span>Aucun media</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="actions-column">
-                                <div class="action-buttons">
-                                    <!-- Edit mode buttons -->
-                                    <div *ngIf="isEditing(sousAtelier.id)" class="edit-mode-actions">
-                                        <p-button 
-                                            icon="pi pi-check" 
-                                            styleClass="p-button-success p-button-sm" 
-                                            (click)="saveSousAtelier(sousAtelier)"
-                                            [disabled]="uploadingInlineImages[sousAtelier.id]"
-                                            title="Sauvegarder">
-                                        </p-button>
-                                        <p-button 
-                                            icon="pi pi-times" 
-                                            styleClass="p-button-secondary p-button-sm" 
-                                            (click)="exitEditMode(sousAtelier.id)"
-                                            title="Annuler">
-                                        </p-button>
-                                    </div>
-                                    
-                                    <!-- View mode buttons -->
-                                    <div *ngIf="!isEditing(sousAtelier.id)" class="view-mode-actions">
-                                        <p-button 
-                                            icon="pi pi-pencil" 
-                                            styleClass="p-button-warning p-button-sm" 
-                                            (click)="enterEditMode(sousAtelier.id)"
-                                            title="Modifier">
-                                        </p-button>
-                                        <p-button 
-                                            icon="pi pi-trash" 
-                                            styleClass="p-button-danger p-button-sm" 
-                                            (click)="DeleteSousAtelier(sousAtelier.id)"
-                                            title="Supprimer">
-                                        </p-button>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </div>
-        </div>
-    </p-card>
-</div>
-<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+                    <!-- Description Field (Larger) -->
+                    <div class="form-group">
+                        <label for="description">Description *</label>
+                        <textarea id="description" placeholder="Entrez la description"
+                            [(ngModel)]="newSousAtelier.description" class="form-textarea" rows="4">
+                    </textarea>
+                    </div>
 
-<!-- Media Zoom Dialog -->
-<p-dialog [header]="isVideo(selectedImage) ? 'Video' : 'Image'" 
-    [(visible)]="showImageGallery" 
-    [modal]="true" 
-    [style]="{width: '90vw', height: '90vh'}" 
-    [baseZIndex]="10000"
-    [maximizable]="true"
-    [closable]="true"
-    (onHide)="closeImageGallery()">
-    
-    <div class="image-zoom-container" *ngIf="selectedImage">
-        <!-- Navigation arrows -->
-        <div class="image-nav-controls">
-            <p-button 
-                icon="pi pi-chevron-left" 
-                (click)="previousImage()"
-                [disabled]="currentImageIndex === 0"
-                styleClass="p-button-rounded p-button-text p-button-lg nav-btn-left"
-                pTooltip="Media précédent">
-            </p-button>
-            
-            <div class="main-image-wrapper">
-                <!-- Image Display -->
-                <img *ngIf="isImage(selectedImage)" 
-                     [src]="selectedImage" 
-                     alt="Sous-atelier media"
-                     class="zoom-image"/>
-                
-                <!-- Video Display -->
-                <video *ngIf="isVideo(selectedImage)" 
-                       class="zoom-video"
-                       controls
-                       autoplay>
-                    <source [src]="selectedImage" [type]="getVideoMimeType(selectedImage)">
-                    Your browser does not support the video tag.
-                </video>
-                
-                <div class="image-counter">
-                    <span>{{ currentImageIndex + 1 }} / {{ totalImagesCount }}</span>
+                    <!-- Prix Field -->
+                    <div class="form-group">
+                        <label for="prix">Prix *</label>
+                        <input id="prix" type="number" placeholder="Entrez le prix" [(ngModel)]="newSousAtelier.prix"
+                            class="form-input">
+                    </div>
+
+                    <!-- Image Field -->
+                    <div class="form-group">
+                        <label for="image">Image</label>
+                        <div class="image-upload-container">
+                            <input type="file" #imageInput (change)="onFormImageSelected($event)" accept="image/*"
+                                class="file-input" id="image">
+                            <p-button label="Choisir une image" icon="pi pi-upload" (click)="imageInput.click()"
+                                styleClass="p-button-outlined">
+                            </p-button>
+
+                            <!-- Image Preview -->
+                            <div class="image-preview" *ngIf="formImagePreview">
+                                <img [src]="formImagePreview" alt="Preview" class="preview-image">
+                                <p-button icon="pi pi-times"
+                                    (click)="formImagePreview = null; selectedFormImage = null; newSousAtelier.image = null"
+                                    styleClass="p-button-rounded p-button-text p-button-sm remove-image-btn">
+                                </p-button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Status Field -->
+                    <div class="form-group status-field">
+                        <label for="active">Status</label>
+                        <div class="status-toggle">
+                            <p-inputSwitch id="active" [(ngModel)]="newSousAtelier.active">
+                            </p-inputSwitch>
+                            <span class="status-label" [class.active]="newSousAtelier.active">
+                                {{newSousAtelier.active ? 'Actif' : 'Inactif'}}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-actions">
+                        <p-button label="Ajouter le sous-atelier" icon="pi pi-plus" (click)="checkForm()"
+                            styleClass="p-button-success">
+                        </p-button>
+                    </div>
                 </div>
             </div>
-            
-            <p-button 
-                icon="pi pi-chevron-right" 
-                (click)="nextImage()"
-                [disabled]="currentImageIndex === totalImagesCount - 1"
-                styleClass="p-button-rounded p-button-text p-button-lg nav-btn-right"
-                pTooltip="Media suivant">
-            </p-button>
-        </div>
-        
-        <!-- Thumbnail strip -->
-        <div class="thumbnail-strip" *ngIf="selectedSousAtelier?.media && selectedSousAtelier.media.length > 1">
-            <div *ngFor="let media of selectedSousAtelier.media; let i = index" 
-                 class="thumbnail-item"
-                 [class.active]="i === currentImageIndex"
-                 (click)="goToImage(i)">
-                <img *ngIf="isImage(media.path)"
-                     [src]="url + '/' + media.path" 
-                     alt="Thumbnail"
-                     class="thumbnail-image">
-                <video *ngIf="isVideo(media.path)" class="thumbnail-video">
-                    <source [src]="url + '/' + media.path" [type]="getVideoMimeType(media.path)">
-                </video>
+
+            <!-- Separator -->
+            <p-divider *ngIf="showForm"></p-divider>
+
+            <!-- Sous-Ateliers List Table -->
+            <div class="p-grid" *ngIf="!showForm">
+                <div class="p-col-12">
+                    <p-table [paginator]="true" [rows]="5" [value]="sousAteliers" styleClass="p-datatable-gridlines"
+                        [tableStyle]="{'min-width': '50rem'}">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Id</th>
+                                <th>Image</th>
+                                <th>Description</th>
+                                <th>Titre</th>
+                                <th>Prix</th>
+                                <th>Status</th>
+                                <th>Atelier</th>
+                                <th>Images</th>
+                                <th>Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-sousAtelier>
+                            <tr>
+                                <td>{{sousAtelier.id}}</td>
+                                <td class="main-image-cell">
+                                    <div class="main-image-container">
+                                        <!-- Edit mode image upload -->
+                                        <div *ngIf="isEditing(sousAtelier.id)" class="edit-image-container">
+                                            <div class="current-image"
+                                                *ngIf="editingImagePreviews[sousAtelier.id] || sousAtelier.image">
+                                                <img [src]="editingImagePreviews[sousAtelier.id] || (url + '/' + sousAtelier.image)"
+                                                    alt="{{sousAtelier.name}}" class="main-image-thumbnail">
+                                            </div>
+                                            <div class="image-upload-controls">
+                                                <input type="file" #imageEditInput
+                                                    (change)="onInlineImageSelected($event, sousAtelier.id)"
+                                                    accept="image/*" class="file-input">
+                                                <p-button icon="pi pi-upload" (click)="imageEditInput.click()"
+                                                    styleClass="p-button-outlined p-button-sm"
+                                                    [disabled]="uploadingInlineImages[sousAtelier.id]"
+                                                    title="Changer l'image">
+                                                </p-button>
+                                            </div>
+                                            <!-- Upload progress -->
+                                            <div *ngIf="uploadingInlineImages[sousAtelier.id] || inlineUploadProgress[sousAtelier.id] > 0"
+                                                class="inline-upload-progress">
+                                                <p-progressBar [value]="inlineUploadProgress[sousAtelier.id]"
+                                                    [showValue]="true"></p-progressBar>
+                                                <small *ngIf="uploadingInlineImages[sousAtelier.id]">Upload en
+                                                    cours...</small>
+                                            </div>
+                                        </div>
+
+                                        <!-- View mode -->
+                                        <div *ngIf="!isEditing(sousAtelier.id)">
+                                            <img *ngIf="sousAtelier.image; else noMainImage"
+                                                [src]="url + '/' + sousAtelier.image" alt="{{sousAtelier.name}}"
+                                                class="main-image-thumbnail" (click)="openImageGallery(sousAtelier)">
+                                            <ng-template #noMainImage>
+                                                <div class="no-main-image" (click)="openAddImageDialog(sousAtelier)">
+                                                    <i class="pi pi-image"></i>
+                                                    <span>Pas d'image</span>
+                                                </div>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input *ngIf="isEditing(sousAtelier.id); else viewDescription" type="text"
+                                        [(ngModel)]="sousAtelier.description" class="editable-field edit-active">
+                                    <ng-template #viewDescription>
+                                        <span>{{sousAtelier.description}}</span>
+                                    </ng-template>
+                                </td>
+                                <td>
+                                    <input *ngIf="isEditing(sousAtelier.id); else viewName" type="text"
+                                        [(ngModel)]="sousAtelier.name" class="editable-field edit-active">
+                                    <ng-template #viewName>
+                                        <span>{{sousAtelier.name}}</span>
+                                    </ng-template>
+                                </td>
+                                <td>
+                                    <input *ngIf="isEditing(sousAtelier.id); else viewPrix" type="number"
+                                        [(ngModel)]="sousAtelier.prix" class="editable-field edit-active">
+                                    <ng-template #viewPrix>
+                                        <span>{{sousAtelier.prix}} DT</span>
+                                    </ng-template>
+                                </td>
+                                <td class="status-cell">
+                                    <div class="status-toggle-container">
+                                        <p-inputSwitch [(ngModel)]="sousAtelier.active"
+                                            (onChange)="toggleSousAtelierStatus(sousAtelier)"
+                                            [disabled]="uploadingInlineImages[sousAtelier.id]">
+                                        </p-inputSwitch>
+                                        <span class="status-label" [class.active]="sousAtelier.active">
+                                            {{sousAtelier.active ? 'Actif' : 'Inactif'}}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>{{sousAtelier.atelier.name}}</td>
+                                <td>
+                                    <div class="table-images-container">
+                                        <!-- Add Media Button -->
+                                        <div class="add-media-inline">
+                                            <input type="file" #mediaFileInput
+                                                (change)="uploadMediaInline($event, sousAtelier)" multiple
+                                                accept="image/*,video/*" class="file-input"
+                                                [id]="'mediaInput' + sousAtelier.id">
+                                            <p-button icon="pi pi-plus" styleClass="p-button-success p-button-sm"
+                                                (click)="mediaFileInput.click()" title="Ajouter media"
+                                                pTooltip="Ajouter images/vidéos">
+                                            </p-button>
+                                        </div>
+
+                                        <!-- Display existing media -->
+                                        <div class="table-images-grid"
+                                            *ngIf="sousAtelier.media && sousAtelier.media.length > 0">
+                                            <div *ngFor="let media of sousAtelier.media.slice(0, 4)"
+                                                class="table-image-item">
+                                                <div class="media-content"
+                                                    (click)="isImage(media.path) ? showImageInZoom(media.path, sousAtelier) : showVideoInZoom(media.path, sousAtelier)">
+                                                    <!-- Image thumbnail -->
+                                                    <img *ngIf="isImage(media.path)" [src]="url + '/' + media.path"
+                                                        alt="Sous-atelier media" class="table-image-thumbnail">
+
+                                                    <!-- Video thumbnail -->
+                                                    <div *ngIf="isVideo(media.path)" class="table-video-thumbnail">
+                                                        <video class="table-video-element">
+                                                            <source [src]="url + '/' + media.path"
+                                                                [type]="getVideoMimeType(media.path)">
+                                                        </video>
+                                                        <div class="video-play-icon">
+                                                            <i class="pi pi-play"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Delete button -->
+                                                <button class="delete-media-btn"
+                                                    (click)="deleteImageFromGallery(media.id); $event.stopPropagation()"
+                                                    pTooltip="Supprimer" tooltipPosition="top">
+                                                    <i class="pi pi-times"></i>
+                                                </button>
+                                            </div>
+                                            <div *ngIf="sousAtelier.media.length > 4" class="more-images-indicator"
+                                                (click)="expandMediaView(sousAtelier)" pTooltip="Voir tous les media">
+                                                +{{ sousAtelier.media.length - 4 }}
+                                            </div>
+                                        </div>
+
+                                        <!-- Upload progress -->
+                                        <div *ngIf="uploadProgress[sousAtelier.id]" class="inline-upload-progress">
+                                            <p-progressBar [value]="uploadProgress[sousAtelier.id]"
+                                                [showValue]="true"></p-progressBar>
+                                        </div>
+
+                                        <div *ngIf="!sousAtelier.media || sousAtelier.media.length === 0"
+                                            class="no-table-images">
+                                            <span>Aucun media</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="actions-column">
+                                    <div class="action-buttons">
+                                        <!-- Edit mode buttons -->
+                                        <div *ngIf="isEditing(sousAtelier.id)" class="edit-mode-actions">
+                                            <p-button icon="pi pi-check" styleClass="p-button-success p-button-sm"
+                                                (click)="saveSousAtelier(sousAtelier)"
+                                                [disabled]="uploadingInlineImages[sousAtelier.id]" title="Sauvegarder">
+                                            </p-button>
+                                            <p-button icon="pi pi-times" styleClass="p-button-secondary p-button-sm"
+                                                (click)="exitEditMode(sousAtelier.id)" title="Annuler">
+                                            </p-button>
+                                        </div>
+
+                                        <!-- View mode buttons -->
+                                        <div *ngIf="!isEditing(sousAtelier.id)" class="view-mode-actions">
+                                            <p-button icon="pi pi-pencil" styleClass="p-button-warning p-button-sm"
+                                                (click)="enterEditMode(sousAtelier.id)" title="Modifier">
+                                            </p-button>
+                                            <p-button icon="pi pi-trash" styleClass="p-button-danger p-button-sm"
+                                                (click)="DeleteSousAtelier(sousAtelier.id)" title="Supprimer">
+                                            </p-button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </p-card>
+    </div>
+    <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000"
+        rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+    <!-- Media Zoom Dialog -->
+    <p-dialog [header]="isVideo(selectedImage) ? 'Video' : 'Image'" [(visible)]="showImageGallery" [modal]="true"
+        [style]="{width: '90vw', height: '90vh'}" [baseZIndex]="10000" [maximizable]="true" [closable]="true"
+        (onHide)="closeImageGallery()">
+
+        <div class="image-zoom-container" *ngIf="selectedImage">
+            <!-- Navigation arrows -->
+            <div class="image-nav-controls">
+                <p-button icon="pi pi-chevron-left" (click)="previousImage()" [disabled]="currentImageIndex === 0"
+                    styleClass="p-button-rounded p-button-text p-button-lg nav-btn-left" pTooltip="Media précédent">
+                </p-button>
+
+                <div class="main-image-wrapper">
+                    <!-- Image Display -->
+                    <img *ngIf="isImage(selectedImage)" [src]="selectedImage" alt="Sous-atelier media"
+                        class="zoom-image" />
+
+                    <!-- Video Display -->
+                    <video *ngIf="isVideo(selectedImage)" class="zoom-video" controls autoplay>
+                        <source [src]="selectedImage" [type]="getVideoMimeType(selectedImage)">
+                        Your browser does not support the video tag.
+                    </video>
+
+                    <div class="image-counter">
+                        <span>{{ currentImageIndex + 1 }} / {{ totalImagesCount }}</span>
+                    </div>
+                </div>
+
+                <p-button icon="pi pi-chevron-right" (click)="nextImage()"
+                    [disabled]="currentImageIndex === totalImagesCount - 1"
+                    styleClass="p-button-rounded p-button-text p-button-lg nav-btn-right" pTooltip="Media suivant">
+                </p-button>
+            </div>
+
+            <!-- Thumbnail strip -->
+            <div class="thumbnail-strip" *ngIf="selectedSousAtelier?.media && selectedSousAtelier.media.length > 1">
+                <div *ngFor="let media of selectedSousAtelier.media; let i = index" class="thumbnail-item"
+                    [class.active]="i === currentImageIndex" (click)="goToImage(i)">
+                    <img *ngIf="isImage(media.path)" [src]="url + '/' + media.path" alt="Thumbnail"
+                        class="thumbnail-image">
+                    <video *ngIf="isVideo(media.path)" class="thumbnail-video">
+                        <source [src]="url + '/' + media.path" [type]="getVideoMimeType(media.path)">
+                    </video>
+                </div>
             </div>
         </div>
-    </div>
-</p-dialog>
+    </p-dialog>
+</div>
