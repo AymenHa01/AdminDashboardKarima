@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 })
 export class EvenementService {
   private apiUrl = `${environment.apiUrl}/Admin`;
-  private api = `${environment.apiUrl}/Evenement`;
+  private api = `${environment.apiUrl}/Evenemet`;
 
   constructor(
     private http: HttpClient,
