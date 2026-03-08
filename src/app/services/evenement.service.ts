@@ -7,13 +7,13 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class EvenementService {
-  private apiUrl = `${environment.apiUrl}/Admin`; 
-  private api = `${environment.apiUrl}/Evenemet`; 
+  private apiUrl = `${environment.apiUrl}/Admin`;
+  private api = `${environment.apiUrl}/Evenement`;
 
   constructor(
     private http: HttpClient,
     private cookieService: CookieService
-  ) {}
+  ) { }
 
   private getHeaders(): HttpHeaders {
     const token = this.cookieService.get('access_token');
